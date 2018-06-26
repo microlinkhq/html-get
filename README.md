@@ -1,11 +1,11 @@
-# get-html
+# html-get
 
-![Last version](https://img.shields.io/github/tag/Kikobeats/get-html.svg?style=flat-square)
-[![Build Status](https://img.shields.io/travis/Kikobeats/get-html/master.svg?style=flat-square)](https://travis-ci.org/Kikobeats/get-html)
-[![Coverage Status](https://img.shields.io/coveralls/Kikobeats/get-html.svg?style=flat-square)](https://coveralls.io/github/Kikobeats/get-html)
-[![Dependency status](https://img.shields.io/david/Kikobeats/get-html.svg?style=flat-square)](https://david-dm.org/Kikobeats/get-html)
-[![Dev Dependencies Status](https://img.shields.io/david/dev/Kikobeats/get-html.svg?style=flat-square)](https://david-dm.org/Kikobeats/get-html#info=devDependencies)
-[![NPM Status](https://img.shields.io/npm/dm/get-html.svg?style=flat-square)](https://www.npmjs.org/package/get-html)
+![Last version](https://img.shields.io/github/tag/Kikobeats/html-get.svg?style=flat-square)
+[![Build Status](https://img.shields.io/travis/Kikobeats/html-get/master.svg?style=flat-square)](https://travis-ci.org/Kikobeats/html-get)
+[![Coverage Status](https://img.shields.io/coveralls/Kikobeats/html-get.svg?style=flat-square)](https://coveralls.io/github/Kikobeats/html-get)
+[![Dependency status](https://img.shields.io/david/Kikobeats/html-get.svg?style=flat-square)](https://david-dm.org/Kikobeats/html-get)
+[![Dev Dependencies Status](https://img.shields.io/david/dev/Kikobeats/html-get.svg?style=flat-square)](https://david-dm.org/Kikobeats/html-get#info=devDependencies)
+[![NPM Status](https://img.shields.io/npm/dm/html-get.svg?style=flat-square)](https://www.npmjs.org/package/html-get)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square)](https://paypal.me/Kikobeats)
 
 > Get the HTML from any website, using prerendering when is necessary.
@@ -20,7 +20,7 @@
 ## Install
 
 ```bash
-$ npm install get-html --save
+$ npm install html-get --save
 ```
 
 ## Usage
@@ -28,11 +28,12 @@ $ npm install get-html --save
 ```js
 'use strict'
 
-const getHtml = require('get-html')
+const getHTML = require('html-get')
 ;(async () => {
   const url = 'https://kikobeats.com'
   const { html, stats } = await getHTML(url)
   console.log(html)
+  console.log(stats)
 })()
 ```
 
@@ -105,7 +106,7 @@ Under non `mode=fetch`, pass configuration object to [puppeteer](https://www.npm
 
 ## License
 
-**get-html** © [Kiko Beats](https://kikobeats.com), released under the [MIT](https://github.com/Kikobeats/get-html/blob/master/LICENSE.md) License.<br>
-Authored and maintained by Kiko Beats with help from [contributors](https://github.com/Kikobeats/get-html/contributors).
+**html-get** © [Kiko Beats](https://kikobeats.com), released under the [MIT](https://github.com/Kikobeats/html-get/blob/master/LICENSE.md) License.<br>
+Authored and maintained by Kiko Beats with help from [contributors](https://github.com/Kikobeats/html-get/contributors).
 
 > [kikobeats.com](https://kikobeats.com) · GitHub [Kiko Beats](https://github.com/Kikobeats) · Twitter [@Kikobeats](https://twitter.com/Kikobeats)
