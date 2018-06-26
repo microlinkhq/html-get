@@ -17,6 +17,17 @@
 - Speed up process blocking ads trackers.
 - Encoding body response properly.
 
+Headless technology like [puppeteer](https://github.com/GoogleChrome/puppeteer) brings us to get the HTML markup from any website, even when the target URL is client side app and we need to wait until dom events fire for getting the real markup.
+
+This works better than a simple GET request from the target URL, but because you need to wait for dom events, prerendering could be slow and in some scenario unnecessary (sites that use server side rendering could be resolved with a simple GET).
+
+**html-get** bring the best of both worlds, doing the following algorithm:
+
+- Determinate if the target URL needs prerendering (internally it has a [whitelisted of well-known site domains](https://github.com/Kikobeats/html-get/blob/master/src/auto-domains.js)).
+- If it needs prerendering, perform the action using Headless technology, blocking ads trackers requests for speed up the process, trying to resolve the main request in the minimal amount of time.
+- If it does not need prerendering or prerendering fails for any reason (for example, timeout), the request will be resolved doing a GET request.
+
+
 ## Install
 
 ```bash
