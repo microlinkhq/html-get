@@ -6,7 +6,7 @@
 [![Dependency status](https://img.shields.io/david/Kikobeats/html-get.svg?style=flat-square)](https://david-dm.org/Kikobeats/html-get)
 [![Dev Dependencies Status](https://img.shields.io/david/dev/Kikobeats/html-get.svg?style=flat-square)](https://david-dm.org/Kikobeats/html-get#info=devDependencies)
 [![NPM Status](https://img.shields.io/npm/dm/html-get.svg?style=flat-square)](https://www.npmjs.org/package/html-get)
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square)](https://paypal.me/Kikobeats)
+[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square)](https://paypal.me/Kikobeats) [![Greenkeeper badge](https://badges.greenkeeper.io/Kikobeats/html-get.svg)](https://greenkeeper.io/)
 
 > Get the HTML from any website, using prerendering when is necessary.
 
