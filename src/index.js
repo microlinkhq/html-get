@@ -8,6 +8,26 @@ const got = require('got')
 
 const autoDomains = require('./auto-domains')
 
+const PUPPETEER_CONFIG = {
+  ignoreHTTPSErrors: true,
+  args: [
+    '--disable-notifications',
+    '--disable-offer-store-unmasked-wallet-cards',
+    '--disable-offer-upload-credit-cards',
+    '--disable-setuid-sandbox',
+    '--enable-async-dns',
+    '--enable-simple-cache-backend',
+    '--enable-tcp-fast-open',
+    '--media-cache-size=33554432',
+    '--no-default-browser-check',
+    '--no-pings',
+    '--no-sandbox',
+    '--no-zygote',
+    '--prerender-from-omnibox=disabled',
+    '--single-process'
+  ]
+}
+
 const fetch = async (url, { toEncode, ...opts }) => {
   const res = await got(url, { encoding: null, ...opts })
   return toEncode(res.body, res.headers['content-type'])
@@ -15,7 +35,12 @@ const fetch = async (url, { toEncode, ...opts }) => {
 
 const prerender = async (
   url,
-  { browserless = createBrowserless(), gotOptions, toEncode, ...opts }
+  {
+    browserless = createBrowserless(PUPPETEER_CONFIG),
+    gotOptions,
+    toEncode,
+    ...opts
+  }
 ) => {
   const fetchData = fetch(url, { toEncode, ...gotOptions })
   let html
