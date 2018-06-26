@@ -12,7 +12,7 @@
 
 ## Features
 
-- Get HTML markup from any website (client side apps as well)
+- Get HTML markup from any website (client side apps as well).
 - Prerendering detection based on domains whitelist.
 - Speed up process blocking ads trackers.
 - Encoding body response properly.
