@@ -1,3 +1,11 @@
+<a name="1.0.2"></a>
+## 1.0.2 (2018-06-28)
+
+* Add puppeteer as peer dependency ([48b0ec8](https://github.com/Kikobeats/html-get/commit/48b0ec8))
+* Update README.md ([4425c3c](https://github.com/Kikobeats/html-get/commit/4425c3c))
+
+
+
 <a name="1.0.1"></a>
 ## 1.0.1 (2018-06-26)
 
