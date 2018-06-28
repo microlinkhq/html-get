@@ -1,7 +1,7 @@
 'use strict'
 
-const createBrowserless = require('browserless')
 const parseDomain = require('parse-domain')
+const browserless = require('browserless')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const got = require('got')
@@ -27,6 +27,8 @@ const PUPPETEER_CONFIG = {
     '--single-process'
   ]
 }
+
+const createBrowserless = opts => browserless({ ...PUPPETEER_CONFIG, ...opts })
 
 const fetch = async (url, { toEncode, ...opts }) => {
   const res = await got(url, { encoding: null, ...opts })
@@ -84,3 +86,5 @@ module.exports = async (
   const html = await FETCH_MODE[mode](url, opts)
   return { html, stats: { mode, timing: time() } }
 }
+
+module.exports.createBrowserless = createBrowserless
