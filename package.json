@@ -36,7 +36,6 @@
     "got": "~8.3.1",
     "html-encode": "~2.0.1",
     "parse-domain": "~2.1.2",
-    "puppeteer": "~1.5.0",
     "time-span": "~2.0.0"
   },
   "devDependencies": {
@@ -49,6 +48,7 @@
     "lint-staged": "latest",
     "nyc": "latest",
     "prettier-standard": "latest",
+    "puppeteer": "latest",
     "standard": "latest",
     "standard-markdown": "latest"
   },
@@ -81,5 +81,8 @@
       "standard-markdown",
       "git add"
     ]
+  },
+  "peerDependencies": {
+    "puppeteer": "1.x"
   }
 }
