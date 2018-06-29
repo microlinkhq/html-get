@@ -1,3 +1,10 @@
+<a name="1.0.6"></a>
+## 1.0.6 (2018-06-29)
+
+* Unify browserless instance ([40aae0e](https://github.com/Kikobeats/html-get/commit/40aae0e))
+
+
+
 <a name="1.0.5"></a>
 ## 1.0.5 (2018-06-29)
 
