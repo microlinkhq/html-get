@@ -1,3 +1,14 @@
+<a name="1.0.4"></a>
+## 1.0.4 (2018-06-29)
+
+* Lazy browserless initialization ([47f69da](https://github.com/Kikobeats/get-html/commit/47f69da))
+* Update ([184ae17](https://github.com/Kikobeats/get-html/commit/184ae17))
+* Update copy ([af3d011](https://github.com/Kikobeats/get-html/commit/af3d011))
+* Update README.md ([df3799b](https://github.com/Kikobeats/get-html/commit/df3799b))
+* docs(readme): add Greenkeeper badge ([b80cd1e](https://github.com/Kikobeats/get-html/commit/b80cd1e))
+
+
+
 <a name="1.0.3"></a>
 ## 1.0.3 (2018-06-28)
 
