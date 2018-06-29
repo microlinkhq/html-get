@@ -1,7 +1,7 @@
 {
-  "name": "get-html",
+  "name": "html-get",
   "description": "Get the HTML from any website, using prerendering when is necessary.",
-  "homepage": "https://documentup.com/Kikobeats/get-html",
+  "homepage": "https://documentup.com/Kikobeats/html-get",
   "version": "1.0.4",
   "main": "src/index.js",
   "author": {
@@ -17,10 +17,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kikobeats/get-html.git"
+    "url": "git+https://github.com/Kikobeats/html-get.git"
   },
   "bugs": {
-    "url": "https://github.com/Kikobeats/get-html/issues"
+    "url": "https://github.com/Kikobeats/html-get/issues"
   },
   "keywords": [
     "fetch",
