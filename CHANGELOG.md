@@ -1,3 +1,10 @@
+<a name="1.0.5"></a>
+## 1.0.5 (2018-06-29)
+
+* Rename ([a6240ec](https://github.com/Kikobeats/html-get/commit/a6240ec))
+
+
+
 <a name="1.0.4"></a>
 ## 1.0.4 (2018-06-29)
 
