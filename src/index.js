@@ -1,34 +1,12 @@
 'use strict'
 
+const { create: createBrowserless } = require('browserless')
 const parseDomain = require('parse-domain')
-const browserless = require('browserless')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const got = require('got')
 
 const autoDomains = require('./auto-domains')
-
-const PUPPETEER_CONFIG = {
-  ignoreHTTPSErrors: true,
-  args: [
-    '--disable-notifications',
-    '--disable-offer-store-unmasked-wallet-cards',
-    '--disable-offer-upload-credit-cards',
-    '--disable-setuid-sandbox',
-    '--enable-async-dns',
-    '--enable-simple-cache-backend',
-    '--enable-tcp-fast-open',
-    '--media-cache-size=33554432',
-    '--no-default-browser-check',
-    '--no-pings',
-    '--no-sandbox',
-    '--no-zygote',
-    '--prerender-from-omnibox=disabled',
-    '--single-process'
-  ]
-}
-
-const createBrowserless = () => browserless(PUPPETEER_CONFIG)
 
 const fetch = async (url, { toEncode, ...opts }) => {
   const res = await got(url, { encoding: null, ...opts })
@@ -37,9 +15,10 @@ const fetch = async (url, { toEncode, ...opts }) => {
 
 const prerender = async (
   url,
-  { getBrowserless = createBrowserless, gotOptions, toEncode, ...opts }
+  { getBrowserless, gotOptions, toEncode, ...opts }
 ) => {
   const fetchData = fetch(url, { toEncode, ...gotOptions })
+  const browserless = await createBrowserless()
   let html
 
   try {
@@ -63,7 +42,7 @@ const getFetchMode = (url, { prerender }) => {
 module.exports = async (
   url,
   {
-    browserless,
+    getBrowserless = createBrowserless,
     encoding = 'utf-8',
     fetchMode = getFetchMode,
     gotOptions,
@@ -76,7 +55,7 @@ module.exports = async (
   const opts =
     mode === 'fetch'
       ? { toEncode, ...gotOptions }
-      : { toEncode, browserless, gotOptions, ...puppeteerOpts }
+      : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
   const time = timeSpan()
   const html = await FETCH_MODE[mode](url, opts)
   return { html, stats: { mode, timing: time() } }
