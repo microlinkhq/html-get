@@ -28,7 +28,7 @@ const PUPPETEER_CONFIG = {
   ]
 }
 
-const createBrowserless = opts => browserless({ ...PUPPETEER_CONFIG, ...opts })
+const createBrowserless = () => browserless(PUPPETEER_CONFIG)
 
 const fetch = async (url, { toEncode, ...opts }) => {
   const res = await got(url, { encoding: null, ...opts })
@@ -37,12 +37,7 @@ const fetch = async (url, { toEncode, ...opts }) => {
 
 const prerender = async (
   url,
-  {
-    browserless = createBrowserless(PUPPETEER_CONFIG),
-    gotOptions,
-    toEncode,
-    ...opts
-  }
+  { getBrowserless = createBrowserless, gotOptions, toEncode, ...opts }
 ) => {
   const fetchData = fetch(url, { toEncode, ...gotOptions })
   let html
