@@ -1,11 +1,11 @@
-# html-get
+# get-html
 
-![Last version](https://img.shields.io/github/tag/Kikobeats/html-get.svg?style=flat-square)
-[![Build Status](https://img.shields.io/travis/Kikobeats/html-get/master.svg?style=flat-square)](https://travis-ci.org/Kikobeats/html-get)
-[![Coverage Status](https://img.shields.io/coveralls/Kikobeats/html-get.svg?style=flat-square)](https://coveralls.io/github/Kikobeats/html-get)
-[![Dependency status](https://img.shields.io/david/Kikobeats/html-get.svg?style=flat-square)](https://david-dm.org/Kikobeats/html-get)
-[![Dev Dependencies Status](https://img.shields.io/david/dev/Kikobeats/html-get.svg?style=flat-square)](https://david-dm.org/Kikobeats/html-get#info=devDependencies)
-[![NPM Status](https://img.shields.io/npm/dm/html-get.svg?style=flat-square)](https://www.npmjs.org/package/html-get)
+![Last version](https://img.shields.io/github/tag/Kikobeats/get-html.svg?style=flat-square)
+[![Build Status](https://img.shields.io/travis/Kikobeats/get-html/master.svg?style=flat-square)](https://travis-ci.org/Kikobeats/get-html)
+[![Coverage Status](https://img.shields.io/coveralls/Kikobeats/get-html.svg?style=flat-square)](https://coveralls.io/github/Kikobeats/get-html)
+[![Dependency status](https://img.shields.io/david/Kikobeats/get-html.svg?style=flat-square)](https://david-dm.org/Kikobeats/get-html)
+[![Dev Dependencies Status](https://img.shields.io/david/dev/Kikobeats/get-html.svg?style=flat-square)](https://david-dm.org/Kikobeats/get-html#info=devDependencies)
+[![NPM Status](https://img.shields.io/npm/dm/get-html.svg?style=flat-square)](https://www.npmjs.org/package/get-html)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square)](https://paypal.me/Kikobeats)
 
 > Get the HTML from any website, using prerendering when is necessary.
@@ -23,9 +23,9 @@ Headless technology like [puppeteer](https://github.com/GoogleChrome/puppeteer) 
 
 Generally this approach better than a simple GET request from the target URL, but because you need to wait for dom events, prerendering could be slow and in some scenario unnecessary (sites that use server side rendering could be resolved with a simple GET).
 
-**html-get** bring the best of both worlds, doing the following algorithm:
+**get-html** bring the best of both worlds, doing the following algorithm:
 
-- Determinate if the target URL actually needs prerendering (internally it has a [whitelisted of popular site domains](https://github.com/Kikobeats/html-get/blob/master/src/auto-domains.js) that don't need it).
+- Determinate if the target URL actually needs prerendering (internally it has a [whitelisted of popular site domains](https://github.com/Kikobeats/get-html/blob/master/src/auto-domains.js) that don't need it).
 - If it needs prerendering, perform the action using Headless technology, blocking ads trackers requests for speed up the process, trying to resolve the main request in the minimum amount of time.
 - If it does not need prerendering or prerendering fails for any reason (for example, timeout), the request will be resolved doing a GET request.
 
@@ -33,7 +33,7 @@ Generally this approach better than a simple GET request from the target URL, bu
 ## Install
 
 ```bash
-$ npm install html-get --save
+$ npm install get-html --save
 ```
 
 ## Usage
@@ -41,7 +41,7 @@ $ npm install html-get --save
 ```js
 'use strict'
 
-const getHTML = require('html-get')
+const getHTML = require('get-html')
 ;(async () => {
   const url = 'https://kikobeats.com'
   const { html, stats } = await getHTML(url)
@@ -119,7 +119,7 @@ Under non `mode=fetch`, pass configuration object to [puppeteer](https://www.npm
 
 ## License
 
-**html-get** © [Kiko Beats](https://kikobeats.com), released under the [MIT](https://github.com/Kikobeats/html-get/blob/master/LICENSE.md) License.<br>
-Authored and maintained by Kiko Beats with help from [contributors](https://github.com/Kikobeats/html-get/contributors).
+**get-html** © [Kiko Beats](https://kikobeats.com), released under the [MIT](https://github.com/Kikobeats/get-html/blob/master/LICENSE.md) License.<br>
+Authored and maintained by Kiko Beats with help from [contributors](https://github.com/Kikobeats/get-html/contributors).
 
 > [kikobeats.com](https://kikobeats.com) · GitHub [Kiko Beats](https://github.com/Kikobeats) · Twitter [@Kikobeats](https://twitter.com/Kikobeats)
