@@ -32,7 +32,7 @@
     "request"
   ],
   "dependencies": {
-    "browserless": "~3.6.1",
+    "browserless": "~3.7.0",
     "got": "~8.3.1",
     "html-encode": "~2.0.1",
     "parse-domain": "~2.1.2",
