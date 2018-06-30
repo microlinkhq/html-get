@@ -1,6 +1,6 @@
 'use strict'
 
-const { create: createBrowserless } = require('browserless')
+const createBrowserless = require('browserless')
 const parseDomain = require('parse-domain')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
