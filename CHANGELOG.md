@@ -1,3 +1,11 @@
+<a name="1.0.7"></a>
+## 1.0.7 (2018-06-30)
+
+* Fix typo ([126a8d2](https://github.com/Kikobeats/html-get/commit/126a8d2))
+* Update deps ([aa08a96](https://github.com/Kikobeats/html-get/commit/aa08a96))
+
+
+
 <a name="1.0.6"></a>
 ## 1.0.6 (2018-06-29)
 
