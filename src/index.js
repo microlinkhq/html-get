@@ -18,7 +18,7 @@ const prerender = async (
   { getBrowserless, gotOptions, toEncode, ...opts }
 ) => {
   const fetchData = fetch(url, { toEncode, ...gotOptions })
-  const browserless = await createBrowserless()
+  const browserless = await getBrowserless()
   let html
 
   try {
