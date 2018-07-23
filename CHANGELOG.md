@@ -1,3 +1,10 @@
+<a name="1.0.8"></a>
+## 1.0.8 (2018-07-23)
+
+* Fix cancel fetch ([aff43a4](https://github.com/Kikobeats/html-get/commit/aff43a4))
+
+
+
 <a name="1.0.7"></a>
 ## 1.0.7 (2018-06-30)
 
