@@ -2,16 +2,20 @@
 
 const createBrowserless = require('browserless')
 const parseDomain = require('parse-domain')
+const PCancelable = require('p-cancelable')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const got = require('got')
 
 const autoDomains = require('./auto-domains')
 
-const fetch = async (url, { toEncode, ...opts }) => {
-  const res = await got(url, { encoding: null, ...opts })
-  return toEncode(res.body, res.headers['content-type'])
-}
+const fetch = (url, { toEncode, ...opts }) =>
+  new PCancelable((resolve, reject, onCancel) => {
+    const req = got(url, { encoding: null, ...opts })
+    onCancel(() => req.cancel())
+    req.catch(reject)
+    req.then(res => resolve(toEncode(res.body, res.headers['content-type'])))
+  })
 
 const prerender = async (
   url,
@@ -22,7 +26,7 @@ const prerender = async (
   let html
 
   try {
-    html = await browserless.getHTML(url, opts)
+    html = await browserless.html(url, opts)
     fetchData.cancel()
   } catch (err) {
     html = await fetchData
