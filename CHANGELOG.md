@@ -1,3 +1,10 @@
+<a name="1.0.9"></a>
+## 1.0.9 (2018-08-07)
+
+* fix(package): update got to version 9.0.0 ([33e5d52](https://github.com/Kikobeats/html-get/commit/33e5d52))
+
+
+
 <a name="1.0.8"></a>
 ## 1.0.8 (2018-07-23)
 
