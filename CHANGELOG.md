@@ -1,3 +1,11 @@
+<a name="1.0.10"></a>
+## 1.0.10 (2018-08-29)
+
+* fix(package): update browserless to version 4.1.0 ([bb9b68c](https://github.com/Kikobeats/html-get/commit/bb9b68c))
+* fix(package): update got to version 9.1.0 ([065bd3d](https://github.com/Kikobeats/html-get/commit/065bd3d))
+
+
+
 <a name="1.0.9"></a>
 ## 1.0.9 (2018-08-07)
 
