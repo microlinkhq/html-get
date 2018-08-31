@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "browserless": "~4.1.0",
-    "got": "~9.1.0",
+    "got": "~9.2.0",
     "html-encode": "~2.0.1",
     "p-cancelable": "~0.5.0",
     "parse-domain": "~2.1.2",
