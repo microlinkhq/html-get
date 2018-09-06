@@ -50,7 +50,7 @@
     "nyc": "latest",
     "prettier-standard": "latest",
     "puppeteer": "latest",
-    "standard": "latest",
+    "standard": "11",
     "standard-markdown": "latest"
   },
   "engines": {
