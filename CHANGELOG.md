@@ -1,3 +1,12 @@
+<a name="1.0.11"></a>
+## 1.0.11 (2018-09-10)
+
+* Lock standard version ([1ce4e76](https://github.com/Kikobeats/html-get/commit/1ce4e76))
+* Reflect fetch mode used on the output ([5d926fe](https://github.com/Kikobeats/html-get/commit/5d926fe))
+* fix(package): update got to version 9.2.0 ([183ec72](https://github.com/Kikobeats/html-get/commit/183ec72))
+
+
+
 <a name="1.0.10"></a>
 ## 1.0.10 (2018-08-29)
 
