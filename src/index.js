@@ -14,7 +14,12 @@ const fetch = (url, { toEncode, ...opts }) =>
     const req = got(url, { encoding: null, ...opts })
     onCancel(() => req.cancel())
     req.catch(reject)
-    req.then(res => resolve(toEncode(res.body, res.headers['content-type'])))
+    req.then(async res =>
+      resolve({
+        html: await toEncode(res.body, res.headers['content-type']),
+        mode: 'fetch'
+      })
+    )
   })
 
 const prerender = async (
@@ -22,17 +27,15 @@ const prerender = async (
   { getBrowserless, gotOptions, toEncode, ...opts }
 ) => {
   const fetchData = fetch(url, { toEncode, ...gotOptions })
-  const browserless = await getBrowserless()
-  let html
 
   try {
-    html = await browserless.html(url, opts)
+    const browserless = await getBrowserless()
+    const res = { html: await browserless.html(url, opts), mode: 'prerender' }
     fetchData.cancel()
+    return res
   } catch (err) {
-    html = await fetchData
+    return fetchData
   }
-
-  return html
 }
 
 const FETCH_MODE = { fetch, prerender }
@@ -55,13 +58,14 @@ module.exports = async (
   } = {}
 ) => {
   const toEncode = htmlEncode(encoding)
-  const mode = fetchMode(url, { prerender })
+  const targetFetchMode = fetchMode(url, { prerender })
   const opts =
-    mode === 'fetch'
+    targetFetchMode === 'fetch'
       ? { toEncode, ...gotOptions }
       : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
+
   const time = timeSpan()
-  const html = await FETCH_MODE[mode](url, opts)
+  const { html, mode } = await FETCH_MODE[targetFetchMode](url, opts)
   return { html, stats: { mode, timing: time() } }
 }
 
