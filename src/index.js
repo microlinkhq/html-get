@@ -5,9 +5,18 @@ const parseDomain = require('parse-domain')
 const PCancelable = require('p-cancelable')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
+const pTimeout = require('p-timeout')
 const got = require('got')
 
 const autoDomains = require('./auto-domains')
+
+// TODO: This is a hard timeout to ensure prerender mode
+// doesn't take too much time an reach the global timeout.
+// Currently puppeteer is not handling a global timeout,
+// need to wait until 2.0 to setup `.defaultTimeout`
+// https://github.com/GoogleChrome/puppeteer/issues/2079
+
+const PRERENDER_TIMEOUT = 5000
 
 const fetch = (url, { toEncode, ...opts }) =>
   new PCancelable((resolve, reject, onCancel) => {
@@ -30,7 +39,8 @@ const prerender = async (
 
   try {
     const browserless = await getBrowserless()
-    const res = { html: await browserless.html(url, opts), mode: 'prerender' }
+    const html = await pTimeout(browserless.html(url, opts), PRERENDER_TIMEOUT)
+    const res = { html: html, mode: 'prerender' }
     fetchData.cancel()
     return res
   } catch (err) {

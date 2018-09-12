@@ -36,6 +36,7 @@
     "got": "~9.2.0",
     "html-encode": "~2.0.1",
     "p-cancelable": "~0.5.0",
+    "p-timeout": "~2.0.1",
     "parse-domain": "~2.1.2",
     "time-span": "~2.0.0"
   },
@@ -62,7 +63,7 @@
   "scripts": {
     "clean": "rm -rf node_modules",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "lint": "standard-markdown && standard",
+    "lint": "standard-markdown README.md && standard",
     "precommit": "lint-staged",
     "pretest": "npm run lint",
     "pretty": "prettier-standard index.js {core,test,bin,scripts}/**/*.js --single-quote --print-width 100",
