@@ -1,3 +1,10 @@
+<a name="1.1.0"></a>
+# 1.1.0 (2018-09-12)
+
+* Add hard timeout ([c0e39b3](https://github.com/Kikobeats/html-get/commit/c0e39b3))
+
+
+
 <a name="1.0.11"></a>
 ## 1.0.11 (2018-09-10)
 
