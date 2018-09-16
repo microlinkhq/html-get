@@ -1,3 +1,10 @@
+<a name="1.1.1"></a>
+## 1.1.1 (2018-09-16)
+
+* Reflect fetch on prerender ([ea2d230](https://github.com/Kikobeats/html-get/commit/ea2d230))
+
+
+
 <a name="1.1.0"></a>
 # 1.1.0 (2018-09-12)
 
