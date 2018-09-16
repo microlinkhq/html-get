@@ -6,6 +6,7 @@ const PCancelable = require('p-cancelable')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const pTimeout = require('p-timeout')
+
 const got = require('got')
 
 const autoDomains = require('./auto-domains')
@@ -18,24 +19,28 @@ const autoDomains = require('./auto-domains')
 
 const PRERENDER_TIMEOUT = 5000
 
-const fetch = (url, { toEncode, ...opts }) =>
-  new PCancelable((resolve, reject, onCancel) => {
+const fetch = (url, { toEncode, reflect = false, ...opts }) =>
+  new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, { encoding: null, ...opts })
-    onCancel(() => req.cancel())
-    req.catch(reject)
-    req.then(async res =>
-      resolve({
+    onCancel(req.cancel)
+
+    try {
+      const res = await req
+      return resolve({
         html: await toEncode(res.body, res.headers['content-type']),
         mode: 'fetch'
       })
-    )
+    } catch (err) {
+      if (reflect) return resolve({ isRejected: true, err })
+      return reject(err)
+    }
   })
 
 const prerender = async (
   url,
   { getBrowserless, gotOptions, toEncode, ...opts }
 ) => {
-  const fetchData = fetch(url, { toEncode, ...gotOptions })
+  const fetchData = fetch(url, { reflect: true, toEncode, ...gotOptions })
 
   try {
     const browserless = await getBrowserless()
@@ -44,7 +49,8 @@ const prerender = async (
     fetchData.cancel()
     return res
   } catch (err) {
-    return fetchData
+    if (fetchData.isRejected) return fetchData
+    throw fetchData.err
   }
 }
 
