@@ -1,3 +1,10 @@
+<a name="1.1.2"></a>
+## 1.1.2 (2018-09-18)
+
+* Resolve req properly under prerender timeout ([c63ebe9](https://github.com/Kikobeats/html-get/commit/c63ebe9))
+
+
+
 <a name="1.1.1"></a>
 ## 1.1.1 (2018-09-16)
 
