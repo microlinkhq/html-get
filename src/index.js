@@ -40,17 +40,17 @@ const prerender = async (
   url,
   { getBrowserless, gotOptions, toEncode, ...opts }
 ) => {
-  const fetchData = fetch(url, { reflect: true, toEncode, ...gotOptions })
-
+  const fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
   try {
     const browserless = await getBrowserless()
     const html = await pTimeout(browserless.html(url, opts), PRERENDER_TIMEOUT)
     const res = { html: html, mode: 'prerender' }
-    fetchData.cancel()
+    fetchReq.cancel()
     return res
   } catch (err) {
-    if (fetchData.isRejected) return fetchData
-    throw fetchData.err
+    const fetchData = await fetchReq
+    if (fetchData.isRejected) throw fetchData.err
+    return fetchData
   }
 }
 
