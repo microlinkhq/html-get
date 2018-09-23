@@ -48,11 +48,14 @@
     "git-dirty": "latest",
     "husky": "latest",
     "lint-staged": "latest",
+    "lodash": "latest",
     "nyc": "latest",
     "prettier-standard": "latest",
     "puppeteer": "latest",
     "standard": "11",
-    "standard-markdown": "latest"
+    "standard-markdown": "latest",
+    "top-sites": "latest",
+    "write-json-file": "latest"
   },
   "engines": {
     "node": ">= 8"
@@ -73,6 +76,10 @@
   "lint-staged": {
     "package.json": [
       "finepack",
+      "git add"
+    ],
+    "src/auto-domains.json": [
+      "node sort",
       "git add"
     ],
     "*.js": [
