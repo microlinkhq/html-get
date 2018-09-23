@@ -1,3 +1,10 @@
+<a name="1.2.0"></a>
+# 1.2.0 (2018-09-23)
+
+* Sort domains based on ranking ([d905800](https://github.com/Kikobeats/html-get/commit/d905800))
+
+
+
 <a name="1.1.3"></a>
 ## 1.1.3 (2018-09-23)
 
