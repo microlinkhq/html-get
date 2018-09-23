@@ -22,7 +22,7 @@ const PRERENDER_TIMEOUT = 5000
 const fetch = (url, { toEncode, reflect = false, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, { encoding: null, ...opts })
-    onCancel(req.cancel)
+    onCancel(req.cancel.bind(req))
 
     try {
       const res = await req
