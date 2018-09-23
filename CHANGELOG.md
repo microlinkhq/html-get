@@ -1,3 +1,10 @@
+<a name="1.1.3"></a>
+## 1.1.3 (2018-09-23)
+
+* Bind context ([ae0971b](https://github.com/Kikobeats/html-get/commit/ae0971b))
+
+
+
 <a name="1.1.2"></a>
 ## 1.1.2 (2018-09-18)
 
