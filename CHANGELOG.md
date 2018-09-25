@@ -1,3 +1,10 @@
+<a name="1.3.0"></a>
+# 1.3.0 (2018-09-25)
+
+* Use timeout for  version ([2664d51](https://github.com/Kikobeats/html-get/commit/2664d51))
+
+
+
 <a name="1.2.0"></a>
 # 1.2.0 (2018-09-23)
 
