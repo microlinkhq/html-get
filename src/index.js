@@ -17,11 +17,16 @@ const autoDomains = require('./auto-domains')
 // need to wait until 2.0 to setup `.defaultTimeout`
 // https://github.com/GoogleChrome/puppeteer/issues/2079
 
-const PRERENDER_TIMEOUT = 5000
+const REQ_TIMEOUT = 5000
 
 const fetch = (url, { toEncode, reflect = false, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
-    const req = got(url, { encoding: null, ...opts })
+    const req = got(url, {
+      encoding: null,
+      timeout: REQ_TIMEOUT,
+      ...opts
+    })
+
     onCancel(req.cancel.bind(req))
 
     try {
@@ -43,14 +48,12 @@ const prerender = async (
   const fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
   try {
     const browserless = await getBrowserless()
-    const html = await pTimeout(browserless.html(url, opts), PRERENDER_TIMEOUT)
-    const res = { html: html, mode: 'prerender' }
+    const html = await pTimeout(browserless.html(url, opts), REQ_TIMEOUT)
     fetchReq.cancel()
-    return res
+    return { html, mode: 'prerender' }
   } catch (err) {
     const fetchData = await fetchReq
-    if (fetchData.isRejected) throw fetchData.err
-    return fetchData
+    return { html: fetchData.isRejected ? '' : fetchData, mode: 'prerender' }
   }
 }
 
