@@ -1,3 +1,10 @@
+<a name="1.3.2"></a>
+## 1.3.2 (2018-10-09)
+
+* Remove Amazon ([99f4481](https://github.com/Kikobeats/html-get/commit/99f4481))
+
+
+
 <a name="1.3.1"></a>
 ## 1.3.1 (2018-10-09)
 
