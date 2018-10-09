@@ -1,3 +1,11 @@
+<a name="1.3.1"></a>
+## 1.3.1 (2018-10-09)
+
+* Add Amazon as fetch mode ([bebb03c](https://github.com/Kikobeats/html-get/commit/bebb03c))
+* Update dependencies ([1bae7ef](https://github.com/Kikobeats/html-get/commit/1bae7ef))
+
+
+
 <a name="1.3.0"></a>
 # 1.3.0 (2018-09-25)
 
