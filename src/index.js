@@ -19,6 +19,8 @@ const autoDomains = require('./auto-domains')
 
 const REQ_TIMEOUT = 5000
 
+const getDomain = url => (parseDomain(url) || {}).domain
+
 const fetch = (url, { toEncode, reflect = false, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
@@ -62,7 +64,7 @@ const FETCH_MODE = { fetch, prerender }
 const getFetchMode = (url, { prerender }) => {
   if (prerender === false) return 'fetch'
   if (prerender !== 'auto') return 'prerender'
-  return autoDomains.includes(parseDomain(url).domain) ? 'fetch' : 'prerender'
+  return autoDomains.includes(getDomain(url)) ? 'fetch' : 'prerender'
 }
 
 module.exports = async (
@@ -78,10 +80,9 @@ module.exports = async (
 ) => {
   const toEncode = htmlEncode(encoding)
   const targetFetchMode = fetchMode(url, { prerender })
-  const opts =
-    targetFetchMode === 'fetch'
-      ? { toEncode, ...gotOptions }
-      : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
+  const opts = targetFetchMode === 'fetch'
+    ? { toEncode, ...gotOptions }
+    : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
 
   const time = timeSpan()
   const { html, mode } = await FETCH_MODE[targetFetchMode](url, opts)
