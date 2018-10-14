@@ -1,3 +1,10 @@
+<a name="1.3.3"></a>
+## 1.3.3 (2018-10-14)
+
+* Ensure always return domain ([07e4184](https://github.com/Kikobeats/html-get/commit/07e4184))
+
+
+
 <a name="1.3.2"></a>
 ## 1.3.2 (2018-10-09)
 
