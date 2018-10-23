@@ -1,3 +1,10 @@
+<a name="1.3.5"></a>
+## 1.3.5 (2018-10-23)
+
+* Migrate linter staged ([3b140f9](https://github.com/Kikobeats/html-get/commit/3b140f9))
+
+
+
 <a name="1.3.4"></a>
 ## 1.3.4 (2018-10-23)
 
