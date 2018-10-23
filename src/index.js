@@ -17,7 +17,7 @@ const autoDomains = require('./auto-domains')
 // need to wait until 2.0 to setup `.defaultTimeout`
 // https://github.com/GoogleChrome/puppeteer/issues/2079
 
-const REQ_TIMEOUT = 5000
+const REQ_TIMEOUT = 8000
 
 const getDomain = url => (parseDomain(url) || {}).domain
 
