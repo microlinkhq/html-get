@@ -1,3 +1,10 @@
+<a name="1.3.4"></a>
+## 1.3.4 (2018-10-23)
+
+* Increment prerender time to 8s ([342f4ce](https://github.com/Kikobeats/html-get/commit/342f4ce))
+
+
+
 <a name="1.3.3"></a>
 ## 1.3.3 (2018-10-14)
 
