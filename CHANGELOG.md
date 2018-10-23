@@ -1,3 +1,10 @@
+<a name="1.3.6"></a>
+## 1.3.6 (2018-10-23)
+
+* fix: remove youtube from auto domains ([5f20ed0](https://github.com/Kikobeats/html-get/commit/5f20ed0))
+
+
+
 <a name="1.3.5"></a>
 ## 1.3.5 (2018-10-23)
 
