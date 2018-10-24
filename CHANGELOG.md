@@ -1,3 +1,15 @@
+<a name="1.4.0"></a>
+# 1.4.0 (2018-10-24)
+
+* Add debug logs ([c419eed](https://github.com/Kikobeats/html-get/commit/c419eed))
+* Add timeout for ping ([db1913f](https://github.com/Kikobeats/html-get/commit/db1913f))
+* Add url resolution ([43fa92c](https://github.com/Kikobeats/html-get/commit/43fa92c))
+* Adjust timeouts ([c5da87e](https://github.com/Kikobeats/html-get/commit/c5da87e))
+* Release 1.3.7 ([d429c89](https://github.com/Kikobeats/html-get/commit/d429c89))
+* Update scripts ([24b93f1](https://github.com/Kikobeats/html-get/commit/24b93f1))
+
+
+
 <a name="1.3.7"></a>
 ## 1.3.7 (2018-10-24)
 
