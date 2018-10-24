@@ -23,14 +23,17 @@ const ONE_DAY_MS = ONE_HOUR_MS * 24
 // Currently puppeteer is not handling a global timeout,
 // need to wait until 2.0 to setup `.defaultTimeout`
 // https://github.com/GoogleChrome/puppeteer/issues/2079
-const REQ_TIMEOUT = 6500
+const REQ_TIMEOUT = 5000
+const REQ_TIMOUT_REACHABLE = REQ_TIMEOUT * 0.25
 
 // Puppeteer doesn't resolve redirection well.
 // We need to ensure we have the right url.
 const getUrl = mem(
   async targetUrl => {
     try {
-      const { url } = await reachableUrl(targetUrl, { timeout: REQ_TIMEOUT })
+      const { url } = await reachableUrl(targetUrl, {
+        timeout: REQ_TIMOUT_REACHABLE
+      })
       return url
     } catch (err) {
       return targetUrl
@@ -45,7 +48,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
       encoding: null,
-      timeout: REQ_TIMEOUT,
+      timeout: reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
       ...opts
     })
 
@@ -59,7 +62,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
         mode: 'fetch'
       })
     } catch (err) {
-      console.log('fetch error', err.message)
+      debug('fetch:error', err)
       if (reflect) return resolve({ isRejected: true, err })
       else resolve({ url, html: '', mode: 'fetch' })
     }
@@ -76,17 +79,19 @@ const prerender = async (
   let url
 
   try {
+    debug(`getUrl:resolving`)
     url = await getUrl(targetUrl)
-    debug(`getUrl ${targetUrl} → ${url}`)
+    debug(`getUrl:resolved ${targetUrl} → ${url}`)
     fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
     const browserless = await getBrowserless()
     html = await pTimeout(browserless.html(url, opts), REQ_TIMEOUT)
     fetchReq.cancel()
+    debug('prerender:success')
     return { url, html, mode: 'prerender' }
   } catch (err) {
-    debug('prerender error', err.message)
+    debug('prerender:error', err)
     const { isRejected, ...dataProps } = await fetchReq
-    console.log('isRejected?', isRejected)
+    debug('prerender:error:isRejected?', isRejected)
     isFetchRejected = isRejected
     fetchDataProps = dataProps
   }

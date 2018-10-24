@@ -36,7 +36,8 @@ test('follow redirect', async t => {
 })
 
 test('prerender error fallback into fetch mode', async t => {
-  const url = 'https://www.washingtonpost.com/gdpr-consent/?noredirect=on'
+  const url =
+    'https://www.sportsnet.ca/hockey/nhl/leafs-john-tavares-return-new-york-hope-positive/'
   const { stats, html } = await getHTML(url, { prerender: true })
   t.true(!!html)
   t.is(stats.mode, 'fetch')
