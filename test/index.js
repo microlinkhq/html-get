@@ -36,7 +36,7 @@ test('follow redirect', async t => {
 })
 
 test('prerender error fallback into fetch mode', async t => {
-  const url = 'https://www.washingtonpost.com/gdpr-consent'
+  const url = 'https://www.washingtonpost.com/gdpr-consent/?noredirect=on'
   const { stats, html } = await getHTML(url, { prerender: true })
   t.true(!!html)
   t.is(stats.mode, 'fetch')

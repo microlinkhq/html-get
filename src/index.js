@@ -4,6 +4,7 @@ const createBrowserless = require('browserless')
 const reachableUrl = require('reachable-url')
 const parseDomain = require('parse-domain')
 const PCancelable = require('p-cancelable')
+const debug = require('debug')('html-get')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const pTimeout = require('p-timeout')
@@ -58,6 +59,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
         mode: 'fetch'
       })
     } catch (err) {
+      console.log('fetch error', err.message)
       if (reflect) return resolve({ isRejected: true, err })
       else resolve({ url, html: '', mode: 'fetch' })
     }
@@ -75,13 +77,16 @@ const prerender = async (
 
   try {
     url = await getUrl(targetUrl)
+    debug(`getUrl ${targetUrl} → ${url}`)
     fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
     const browserless = await getBrowserless()
     html = await pTimeout(browserless.html(url, opts), REQ_TIMEOUT)
     fetchReq.cancel()
     return { url, html, mode: 'prerender' }
   } catch (err) {
+    debug('prerender error', err.message)
     const { isRejected, ...dataProps } = await fetchReq
+    console.log('isRejected?', isRejected)
     isFetchRejected = isRejected
     fetchDataProps = dataProps
   }
