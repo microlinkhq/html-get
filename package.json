@@ -33,11 +33,14 @@
   ],
   "dependencies": {
     "browserless": "~4.1.3",
+    "debug": "~4.1.0",
     "got": "~9.2.2",
     "html-encode": "~2.0.1",
+    "mem": "~4.0.0",
     "p-cancelable": "~0.5.1",
     "p-timeout": "~2.0.1",
     "parse-domain": "~2.1.2",
+    "reachable-url": "~1.1.6",
     "time-span": "~2.0.0"
   },
   "devDependencies": {
@@ -69,7 +72,7 @@
     "lint": "standard-markdown README.md && standard",
     "pretest": "npm run lint",
     "pretty": "prettier-standard index.js {core,test,bin,scripts}/**/*.js --single-quote --print-width 100",
-    "test": "nyc ava"
+    "test": "nyc ava --verbose --serial"
   },
   "license": "MIT",
   "husky": {

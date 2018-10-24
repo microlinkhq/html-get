@@ -43,10 +43,8 @@ $ npm install html-get --save
 
 const getHTML = require('html-get')
 ;(async () => {
-  const url = 'https://kikobeats.com'
-  const { html, stats } = await getHTML(url)
-  console.log(html)
-  console.log(stats)
+  const { url, html, stats } = await getHTML('https://kikobeats.com')
+  console.log(url, stats, html.length)
 })()
 ```
 
