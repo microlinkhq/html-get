@@ -29,7 +29,7 @@ const REQ_TIMEOUT = 6500
 const getUrl = mem(
   async targetUrl => {
     try {
-      const { url } = await reachableUrl(targetUrl)
+      const { url } = await reachableUrl(targetUrl, { timeout: REQ_TIMEOUT })
       return url
     } catch (err) {
       return targetUrl
@@ -59,7 +59,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
       })
     } catch (err) {
       if (reflect) return resolve({ isRejected: true, err })
-      return reject(err)
+      else resolve({ url, html: '', mode: 'fetch' })
     }
   })
 
@@ -67,13 +67,15 @@ const prerender = async (
   targetUrl,
   { getBrowserless, gotOptions, toEncode, ...opts }
 ) => {
-  const url = await getUrl(targetUrl)
-  const fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
-  let html = ''
+  let fetchReq
   let fetchDataProps = {}
   let isFetchRejected = false
+  let html = ''
+  let url
 
   try {
+    url = await getUrl(targetUrl)
+    fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
     const browserless = await getBrowserless()
     html = await pTimeout(browserless.html(url, opts), REQ_TIMEOUT)
     fetchReq.cancel()
