@@ -15,7 +15,7 @@ plugins:
       command: 'git add CHANGELOG.md package.json && git commit -m "Release $newVersion"'
     Detecting problems before publish:
       plugin: bumped-terminal
-      command: 'git-dirty && npm test'
+      command: 'git-dirty'
     Publishing tag to GitHub:
       plugin: bumped-terminal
       command: 'git tag $newVersion && git push && git push --tags'
