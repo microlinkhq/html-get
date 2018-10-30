@@ -23,8 +23,8 @@ const ONE_DAY_MS = ONE_HOUR_MS * 24
 // Currently puppeteer is not handling a global timeout,
 // need to wait until 2.0 to setup `.defaultTimeout`
 // https://github.com/GoogleChrome/puppeteer/issues/2079
-const REQ_TIMEOUT = 5000
-const REQ_TIMOUT_REACHABLE = REQ_TIMEOUT * 0.25
+const REQ_TIMEOUT = Number(process.env.REQ_TIMEOUT || 5000)
+const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
 
 // Puppeteer doesn't resolve redirection well.
 // We need to ensure we have the right url.
@@ -32,7 +32,7 @@ const getUrl = mem(
   async targetUrl => {
     try {
       const { url } = await reachableUrl(targetUrl, {
-        timeout: REQ_TIMOUT_REACHABLE
+        timeout: REQ_TIMEOUT_REACHABLE
       })
       return url
     } catch (err) {
@@ -63,6 +63,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
       })
     } catch (err) {
       debug('fetch:error', err)
+      debug('fetch:reflect', reflect)
       if (reflect) return resolve({ isRejected: true, err })
       else resolve({ url, html: '', mode: 'fetch' })
     }
@@ -85,7 +86,8 @@ const prerender = async (
     fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
     const browserless = await getBrowserless()
     html = await pTimeout(browserless.html(url, opts), REQ_TIMEOUT)
-    fetchReq.cancel()
+
+    await fetchReq.cancel()
     debug('prerender:success')
     return { url, html, mode: 'prerender' }
   } catch (err) {

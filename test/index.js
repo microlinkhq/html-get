@@ -10,13 +10,13 @@ const wait = async (promise, prop) => {
 }
 
 test('prerender by default', async t => {
-  const url = 'https://kikobeats.com'
+  const url = 'https://example.com'
   const { stats } = await getHTML(url)
   t.is(stats.mode, 'prerender')
 })
 
 test('disable prerender explicitly', async t => {
-  const url = 'https://kikobeats.com'
+  const url = 'https://example.com'
   const { stats } = await getHTML(url, { prerender: false })
   t.is(stats.mode, 'fetch')
 })
@@ -35,7 +35,7 @@ test('follow redirect', async t => {
   t.is(await wait(getHTML(url, { prerender: true }), 'url'), redirectUrl)
 })
 
-test('prerender error fallback into fetch mode', async t => {
+test.skip('prerender error fallback into fetch mode', async t => {
   const url =
     'https://www.sportsnet.ca/hockey/nhl/leafs-john-tavares-return-new-york-hope-positive/'
   const { stats, html } = await getHTML(url, { prerender: true })
