@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.3"></a>
+## [1.4.3](https://github.com/Kikobeats/html-get/compare/v1.4.2...v1.4.3) (2018-11-15)
+
+
+### Bug Fixes
+
+* **package:** update browserless to version 4.2.0 ([25085e4](https://github.com/Kikobeats/html-get/commit/25085e4))
+
+
+
 <a name="1.4.2"></a>
 ## [1.4.2](https://github.com/Kikobeats/html-get/compare/v1.4.1...v1.4.2) (2018-10-30)
 

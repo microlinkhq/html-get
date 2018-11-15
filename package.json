@@ -2,7 +2,7 @@
   "name": "html-get",
   "description": "Get the HTML from any website, using prerendering when is necessary.",
   "homepage": "https://documentup.com/Kikobeats/html-get",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "main": "src/index.js",
   "author": {
     "email": "josefrancisco.verdu@gmail.com",
