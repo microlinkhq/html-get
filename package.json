@@ -29,7 +29,7 @@
     "request"
   ],
   "dependencies": {
-    "browserless": "~4.1.3",
+    "browserless": "~4.2.0",
     "debug": "~4.1.0",
     "got": "~9.3.0",
     "html-encode": "~2.0.1",
