@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.4"></a>
+## [1.4.4](https://github.com/Kikobeats/html-get/compare/v1.4.3...v1.4.4) (2018-11-17)
+
+
+
 <a name="1.4.3"></a>
 ## [1.4.3](https://github.com/Kikobeats/html-get/compare/v1.4.2...v1.4.3) (2018-11-15)
 
