@@ -48,3 +48,10 @@ test('unreachable urls', async t => {
   t.is(await wait(getHTML(url, { prerender: false }), 'html'), '')
   t.is(await wait(getHTML(url, { prerender: true }), 'html'), '')
 })
+
+test.only('decode base64 entities', async t => {
+  const url =
+    'https://gist.githubusercontent.com/Kikobeats/912a6c2158de3f3c30d0d7c7697af393/raw/d47d9df77696d9a42df192b7aedbf6cfd2ad393e/index.html'
+  t.snapshot(await wait(getHTML(url, { prerender: true }), 'html'))
+  t.snapshot(await wait(getHTML(url, { prerender: false }), 'html'))
+})

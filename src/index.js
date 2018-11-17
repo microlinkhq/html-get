@@ -9,6 +9,7 @@ const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const pTimeout = require('p-timeout')
 const mem = require('mem')
+const he = require('he')
 
 const got = require('got')
 
@@ -44,6 +45,8 @@ const getUrl = mem(
 
 const getDomain = url => (parseDomain(url) || {}).domain
 
+const getHtml = html => he.decode(html)
+
 const fetch = (url, { toEncode, reflect = false, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
@@ -58,7 +61,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
       const res = await req
       return resolve({
         url: res.url,
-        html: await toEncode(res.body, res.headers['content-type']),
+        html: getHtml(await toEncode(res.body, res.headers['content-type'])),
         mode: 'fetch'
       })
     } catch (err) {
@@ -89,7 +92,7 @@ const prerender = async (
 
     await fetchReq.cancel()
     debug('prerender:success')
-    return { url, html, mode: 'prerender' }
+    return { url, html: getHtml(html), mode: 'prerender' }
   } catch (err) {
     debug('prerender:error', err)
     const { isRejected, ...dataProps } = await fetchReq
