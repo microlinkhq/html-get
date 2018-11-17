@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.5"></a>
+## [1.4.5](https://github.com/Kikobeats/html-get/compare/v1.4.4...v1.4.5) (2018-11-17)
+
+
+### Bug Fixes
+
+* ensure to decode HTML entities ([d47fd4e](https://github.com/Kikobeats/html-get/commit/d47fd4e))
+
+
+
 <a name="1.4.4"></a>
 ## [1.4.4](https://github.com/Kikobeats/html-get/compare/v1.4.3...v1.4.4) (2018-11-17)
 
