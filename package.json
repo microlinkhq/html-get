@@ -32,7 +32,7 @@
     "browserless": "~4.2.0",
     "debug": "~4.1.0",
     "got": "~9.3.0",
-    "html-encode": "~2.0.1",
+    "html-encode": "~2.1.0",
     "mem": "~4.0.0",
     "p-cancelable": "~0.5.1",
     "p-timeout": "~2.0.1",
