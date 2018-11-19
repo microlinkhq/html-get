@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/Kikobeats/html-get/compare/v1.4.5...v1.5.0) (2018-11-19)
+
+
+### Features
+
+* add cli ([aeff0a4](https://github.com/Kikobeats/html-get/commit/aeff0a4))
+* ensure url is encoded ([8ae42b3](https://github.com/Kikobeats/html-get/commit/8ae42b3))
+
+
+
 <a name="1.4.5"></a>
 ## [1.4.5](https://github.com/Kikobeats/html-get/compare/v1.4.4...v1.4.5) (2018-11-17)
 
