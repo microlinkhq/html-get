@@ -49,9 +49,18 @@ test('unreachable urls', async t => {
   t.is(await wait(getHTML(url, { prerender: true }), 'html'), '')
 })
 
-test.only('decode base64 entities', async t => {
+test('decode base64 entities', async t => {
   const url =
     'https://gist.githubusercontent.com/Kikobeats/912a6c2158de3f3c30d0d7c7697af393/raw/d47d9df77696d9a42df192b7aedbf6cfd2ad393e/index.html'
   t.snapshot(await wait(getHTML(url, { prerender: true }), 'html'))
   t.snapshot(await wait(getHTML(url, { prerender: false }), 'html'))
+})
+
+test('encode URL', async t => {
+  const url =
+    'https://medium.com/@Acegikmo/the-ever-so-lovely-bézier-curve-eb27514da3bf'
+  t.is(
+    await wait(getHTML(url, { prerender: false }), 'url'),
+    'https://medium.com/@Acegikmo/the-ever-so-lovely-b%C3%A9zier-curve-eb27514da3bf'
+  )
 })

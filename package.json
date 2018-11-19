@@ -4,6 +4,9 @@
   "homepage": "https://documentup.com/Kikobeats/html-get",
   "version": "1.4.5",
   "main": "src/index.js",
+  "bin": {
+    "html-get": "bin/index.js"
+  },
   "author": {
     "email": "josefrancisco.verdu@gmail.com",
     "name": "Kiko Beats",
