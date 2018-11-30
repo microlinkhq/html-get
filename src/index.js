@@ -6,12 +6,12 @@ const parseDomain = require('parse-domain')
 const PCancelable = require('p-cancelable')
 const debug = require('debug')('html-get')
 const htmlEncode = require('html-encode')
+const encodeUrl = require('encodeurl')
 const timeSpan = require('time-span')
 const pTimeout = require('p-timeout')
+const got = require('got')
 const mem = require('mem')
 const he = require('he')
-
-const got = require('got')
 
 const autoDomains = require('./auto-domains')
 
@@ -123,7 +123,7 @@ module.exports = async (
     puppeteerOpts
   } = {}
 ) => {
-  const encodedUrl = encodeURI(targetUrl)
+  const encodedUrl = encodeUrl(targetUrl)
   const toEncode = htmlEncode(encoding)
   const targetFetchMode = fetchMode(encodedUrl, { prerender })
   const opts =
