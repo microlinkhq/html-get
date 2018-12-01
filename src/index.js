@@ -55,7 +55,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
       ...opts
     })
 
-    onCancel(req.cancel.bind(req))
+    onCancel(() => req.cancel && req.cancel())
 
     try {
       const res = await req
