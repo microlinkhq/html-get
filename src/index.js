@@ -24,7 +24,7 @@ const ONE_DAY_MS = ONE_HOUR_MS * 24
 // Currently puppeteer is not handling a global timeout,
 // need to wait until 2.0 to setup `.defaultTimeout`
 // https://github.com/GoogleChrome/puppeteer/issues/2079
-const REQ_TIMEOUT = Number(process.env.REQ_TIMEOUT || 5000)
+const REQ_TIMEOUT = Number(process.env.REQ_TIMEOUT || 6000)
 const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
 
 // Puppeteer doesn't resolve redirection well.
