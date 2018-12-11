@@ -37,15 +37,14 @@
   "dependencies": {
     "browserless": "~4.2.1",
     "debug": "~4.1.0",
-    "encodeurl": "~1.0.2",
     "got": "~9.4.0",
     "he": "~1.2.0",
     "html-encode": "~2.1.1",
     "mem": "~4.0.0",
     "p-cancelable": "~1.0.0",
     "p-timeout": "~2.0.1",
-    "parse-domain": "~2.1.6",
-    "reachable-url": "~1.1.6",
+    "parse-domain": "~2.1.7",
+    "reachable-url": "~1.1.7",
     "time-span": "~2.0.0"
   },
   "devDependencies": {
