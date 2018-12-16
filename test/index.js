@@ -65,15 +65,6 @@ test('unencoded URL', async t => {
   )
 })
 
-test('unencoded URL', async t => {
-  const url =
-    'https://medium.com/@Acegikmo/the-ever-so-lovely-b%C3%A9zier-curve-eb27514da3bf'
-  t.is(
-    await wait(getHTML(url, { prerender: false }), 'url'),
-    'https://medium.com/@Acegikmo/the-ever-so-lovely-b%C3%A9zier-curve-eb27514da3bf'
-  )
-})
-
 test('get html from audio url', async t => {
   const url = 'https://audiodemos.github.io/vctk_set0/embedadapt_100sample.wav'
   const { url: urlDetected, stats, html } = await getHTML(url, {
