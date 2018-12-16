@@ -70,7 +70,7 @@ Enable or disable prerendering as mechanism for getting the HTML markup explicit
 
 The value `auto` means that that internally use a list of whitelist website that don't need to use prerendering by default. This list is used for speedup the process, using `fetch` mode for these websites.
 
-See [fetchMode parameter](#fetchMode) for know more.
+See [getMode parameter](#getMode) for know more.
 
 ##### getBrowserless
 
@@ -89,19 +89,19 @@ Encoding the HTML markup properly from the body response.
 
 It determines the encode to use A Node.js library for converting HTML documents of arbitrary encoding into a target encoding (utf8, utf16, etc).
 
-##### fetchMode
+##### getMode
 
 Type: `function`<br>
 
 A function evaluation that will be invoked to determinate the resolutive `mode` for getting the HTML markup from the target URL.
 
-The default `fetchMode` is:
+The default `getMode` is:
 
 ```js
-const getFetchMode = (url, { prerender }) => {
+const getMode = (url, { prerender }) => {
   if (prerender === false) return 'fetch'
   if (prerender !== 'auto') return 'prerender'
-  return autoDomains.includes(parseDomain(url).domain) ? 'fetch' : 'prerender'
+  return autoDomains.includes(getDomain(url)) ? 'fetch' : 'prerender'
 }
 ```
 

@@ -65,11 +65,35 @@ test('unencoded URL', async t => {
   )
 })
 
-test('unencoded URL', async t => {
-  const url =
-    'https://medium.com/@Acegikmo/the-ever-so-lovely-b%C3%A9zier-curve-eb27514da3bf'
-  t.is(
-    await wait(getHTML(url, { prerender: false }), 'url'),
-    'https://medium.com/@Acegikmo/the-ever-so-lovely-b%C3%A9zier-curve-eb27514da3bf'
-  )
+test('get html from audio url', async t => {
+  const url = 'https://audiodemos.github.io/vctk_set0/embedadapt_100sample.wav'
+  const { url: urlDetected, stats, html } = await getHTML(url, {
+    prerender: false
+  })
+
+  t.true(!!html)
+  t.is(stats.mode, 'fetch')
+  t.is(url, urlDetected)
+})
+
+test('get html from image url', async t => {
+  const url = 'https://kikobeats.com/images/avatar.jpg'
+  const { url: urlDetected, stats, html } = await getHTML(url, {
+    prerender: false
+  })
+
+  t.true(!!html)
+  t.is(stats.mode, 'fetch')
+  t.is(url, urlDetected)
+})
+
+test('get html from video url', async t => {
+  const url = 'https://microlink.io/preview.mp4'
+  const { url: urlDetected, stats, html } = await getHTML(url, {
+    prerender: false
+  })
+
+  t.true(!!html)
+  t.is(stats.mode, 'fetch')
+  t.is(url, urlDetected)
 })
