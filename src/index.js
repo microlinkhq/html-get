@@ -1,5 +1,6 @@
 'use strict'
 
+const { isMime } = require('@metascraper/helpers')
 const createBrowserless = require('browserless')
 const reachableUrl = require('reachable-url')
 const parseDomain = require('parse-domain')
@@ -9,6 +10,7 @@ const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const pTimeout = require('p-timeout')
 const { URL } = require('url')
+const path = require('path')
 const got = require('got')
 const mem = require('mem')
 const he = require('he')
@@ -32,12 +34,12 @@ const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
 const getUrl = mem(
   async targetUrl => {
     try {
-      const { url } = await reachableUrl(targetUrl, {
+      const res = await reachableUrl(targetUrl, {
         timeout: REQ_TIMEOUT_REACHABLE
       })
-      return url
+      return res
     } catch (err) {
-      return targetUrl
+      return { url: targetUrl, headers: {} }
     }
   },
   { maxAge: ONE_DAY_MS }
@@ -73,23 +75,18 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
   })
 
 const prerender = async (
-  targetUrl,
+  url,
   { getBrowserless, gotOptions, toEncode, ...opts }
 ) => {
   let fetchReq
   let fetchDataProps = {}
   let isFetchRejected = false
   let html = ''
-  let url
 
   try {
-    debug(`getUrl:resolving`)
-    url = await getUrl(targetUrl)
-    debug(`getUrl:resolved ${targetUrl} → ${url}`)
     fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
     const browserless = await getBrowserless()
     html = await pTimeout(browserless.html(url, opts), REQ_TIMEOUT)
-
     await fetchReq.cancel()
     debug('prerender:success')
     return { url, html: getHtml(html), mode: 'prerender' }
@@ -104,12 +101,88 @@ const prerender = async (
   return isFetchRejected ? { url, html, mode: 'prerender' } : fetchDataProps
 }
 
-const FETCH_MODE = { fetch, prerender }
+const modes = { fetch, prerender }
 
-const getFetchMode = (url, { prerender }) => {
+const determinateMode = (url, { prerender }) => {
   if (prerender === false) return 'fetch'
   if (prerender !== 'auto') return 'prerender'
   return autoDomains.includes(getDomain(url)) ? 'fetch' : 'prerender'
+}
+
+const baseHtml = (url, headers, html = '') => {
+  const { hostname } = new URL(url)
+  const { date, expires } = headers
+
+  return {
+    url,
+    mode: 'fetch',
+    html: `
+    <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, minimum-scale=0.1">
+        <head>
+          <meta charset="utf-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
+          <title>${path.basename(url)}</title>
+          <meta property="og:site_name" content="${hostname}">
+          ${
+  date
+    ? `<meta property="article:published_time" content="${date}">`
+    : ''
+}
+          ${
+  expires
+    ? `<meta property="article:expiration_time" content="${expires}">`
+    : ''
+}
+          <meta property="og:locale" content="en">
+          <meta property="og:url" content="${url}">
+          <meta property="og:image" content="${url}">
+          ${html}
+          <link rel="canonical" href="${url}">
+        </head>
+      </head>
+      <body>
+        <img src="${url}">
+      </body>
+    </html>`.trim()
+  }
+}
+
+const getImageHtml = (url, headers) =>
+  baseHtml(url, headers, `<meta property="og:image" content="${url}">`)
+
+const getVideoHtml = (url, headers) => {
+  const { protocol } = new URL(url)
+  const isHttps = protocol === 'https:'
+  const videoProperty = `og:video${isHttps ? ':secure_url' : ''}`
+  return baseHtml(
+    url,
+    headers,
+    `<meta property="${videoProperty}" content="${url}">`
+  )
+}
+
+const getAudioHtml = (url, headers) => {
+  const { protocol } = new URL(url)
+  const isHttps = protocol === 'https:'
+  const audioProperty = `og:audio${isHttps ? ':secure_url' : ''}`
+  return baseHtml(
+    url,
+    headers,
+    `<meta property="${audioProperty}" content="${url}">`
+  )
+}
+
+const getContent = async (encodedUrl, mode, opts) => {
+  const { url, headers } = await getUrl(encodedUrl)
+  debug(`getUrl ${encodedUrl === url ? url : `${encodedUrl} → ${url}`}`)
+  const contentType = headers['content-type']
+  if (isMime(contentType, 'image')) return getImageHtml(url, headers)
+  if (isMime(contentType, 'video')) return getVideoHtml(url, headers)
+  if (isMime(contentType, 'audio')) return getAudioHtml(url, headers)
+  return modes[mode](url, opts)
 }
 
 module.exports = async (
@@ -117,7 +190,7 @@ module.exports = async (
   {
     getBrowserless = createBrowserless,
     encoding = 'utf-8',
-    fetchMode = getFetchMode,
+    getMode = determinateMode,
     gotOptions,
     prerender = 'auto',
     puppeteerOpts
@@ -125,17 +198,15 @@ module.exports = async (
 ) => {
   const { href: encodedUrl } = new URL(targetUrl)
   const toEncode = htmlEncode(encoding)
-  const targetFetchMode = fetchMode(encodedUrl, { prerender })
+  const reqMode = getMode(encodedUrl, { prerender })
+
   const opts =
-    targetFetchMode === 'fetch'
+    reqMode === 'fetch'
       ? { toEncode, ...gotOptions }
       : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
 
   const time = timeSpan()
-  const { url, html, mode } = await FETCH_MODE[targetFetchMode](
-    encodedUrl,
-    opts
-  )
+  const { url, html, mode } = await getContent(encodedUrl, reqMode, opts)
   return { url, html, stats: { mode, timing: time() } }
 }
 
