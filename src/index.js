@@ -138,7 +138,6 @@ const baseHtml = (url, headers, html = '') => {
 }
           <meta property="og:locale" content="en">
           <meta property="og:url" content="${url}">
-          <meta property="og:image" content="${url}">
           ${html}
           <link rel="canonical" href="${url}">
         </head>
