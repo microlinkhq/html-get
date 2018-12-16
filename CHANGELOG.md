@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/Kikobeats/html-get/compare/v1.6.5...v2.0.0) (2018-12-16)
+
+
+### Features
+
+* Ensure to resolve media URLs ([61aee97](https://github.com/Kikobeats/html-get/commit/61aee97))
+
+
+### BREAKING CHANGES
+
+* Rename fetchMode → getMode
+
+
+
 <a name="1.6.5"></a>
 ## [1.6.5](https://github.com/Kikobeats/html-get/compare/v1.6.4...v1.6.5) (2018-12-11)
 
