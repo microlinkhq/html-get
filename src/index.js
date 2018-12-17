@@ -109,7 +109,7 @@ const determinateMode = (url, { prerender }) => {
   return autoDomains.includes(getDomain(url)) ? 'fetch' : 'prerender'
 }
 
-const baseHtml = (url, headers, html = '') => {
+const baseHtml = ({ url, headers, head, body }) => {
   const { hostname } = new URL(url)
   const { date, expires } = headers
 
@@ -138,40 +138,49 @@ const baseHtml = (url, headers, html = '') => {
 }
           <meta property="og:locale" content="en">
           <meta property="og:url" content="${url}">
-          ${html}
+          ${head}
           <link rel="canonical" href="${url}">
         </head>
       </head>
       <body>
-        <img src="${url}">
+        ${body}
       </body>
     </html>`.trim()
   }
 }
 
 const getImageHtml = (url, headers) =>
-  baseHtml(url, headers, `<meta property="og:image" content="${url}">`)
+  baseHtml({
+    url,
+    headers,
+    head: `<meta property="og:image" content="${url}">`,
+    body: `<img src="${url}">`
+  })
 
 const getVideoHtml = (url, headers) => {
   const { protocol } = new URL(url)
   const isHttps = protocol === 'https:'
   const videoProperty = `og:video${isHttps ? ':secure_url' : ''}`
-  return baseHtml(
+
+  return baseHtml({
     url,
     headers,
-    `<meta property="${videoProperty}" content="${url}">`
-  )
+    head: `<meta property="${videoProperty}" content="${url}">`,
+    body: `<video src="${url}">`
+  })
 }
 
 const getAudioHtml = (url, headers) => {
   const { protocol } = new URL(url)
   const isHttps = protocol === 'https:'
   const audioProperty = `og:audio${isHttps ? ':secure_url' : ''}`
-  return baseHtml(
+
+  return baseHtml({
     url,
     headers,
-    `<meta property="${audioProperty}" content="${url}">`
-  )
+    head: `<meta property="${audioProperty}" content="${url}">`,
+    body: `<audio src="${url}">`
+  })
 }
 
 const getContent = async (encodedUrl, mode, opts) => {

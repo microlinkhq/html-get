@@ -71,7 +71,7 @@ test('get html from audio url', async t => {
     prerender: false
   })
 
-  t.true(!!html)
+  t.true(html.includes('<audio src'))
   t.is(stats.mode, 'fetch')
   t.is(url, urlDetected)
 })
@@ -82,7 +82,7 @@ test('get html from image url', async t => {
     prerender: false
   })
 
-  t.true(!!html)
+  t.true(html.includes('<img src'))
   t.is(stats.mode, 'fetch')
   t.is(url, urlDetected)
 })
@@ -93,7 +93,7 @@ test('get html from video url', async t => {
     prerender: false
   })
 
-  t.true(!!html)
+  t.true(html.includes('<video src'))
   t.is(stats.mode, 'fetch')
   t.is(url, urlDetected)
 })
