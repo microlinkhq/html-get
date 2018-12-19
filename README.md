@@ -33,7 +33,7 @@ Generally this approach better than a simple GET request from the target URL, bu
 ## Install
 
 ```bash
-$ npm install html-get --save
+$ npm install puppeteer html-get --save
 ```
 
 ## Usage
