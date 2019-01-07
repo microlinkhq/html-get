@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.6"></a>
+## [2.0.6](https://github.com/Kikobeats/html-get/compare/v2.0.5...v2.0.6) (2019-01-07)
+
+
+### Bug Fixes
+
+* **package:** update browserless to version 5.1.0 ([338d339](https://github.com/Kikobeats/html-get/commit/338d339))
+
+
+
 <a name="2.0.5"></a>
 ## [2.0.5](https://github.com/Kikobeats/html-get/compare/v2.0.4...v2.0.5) (2019-01-07)
 
