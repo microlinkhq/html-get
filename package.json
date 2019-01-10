@@ -35,7 +35,7 @@
     "request"
   ],
   "dependencies": {
-    "@metascraper/helpers": "~4.8.3",
+    "@metascraper/helpers": "~4.9.0",
     "browserless": "~5.1.0",
     "debug": "~4.1.0",
     "got": "~9.5.0",
