@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.7"></a>
+## [2.0.7](https://github.com/Kikobeats/html-get/compare/v2.0.6...v2.0.7) (2019-01-10)
+
+
+### Bug Fixes
+
+* **package:** update [@metascraper](https://github.com/metascraper)/helpers to version 4.9.0 ([14bf5f0](https://github.com/Kikobeats/html-get/commit/14bf5f0))
+
+
+
 <a name="2.0.6"></a>
 ## [2.0.6](https://github.com/Kikobeats/html-get/compare/v2.0.5...v2.0.6) (2019-01-07)
 
