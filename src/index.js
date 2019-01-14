@@ -1,7 +1,7 @@
 'use strict'
 
 const { isMime } = require('@metascraper/helpers')
-const createBrowserless = require('browserless')
+const requireOneOf = require('require-one-of')
 const reachableUrl = require('reachable-url')
 const parseDomain = require('parse-domain')
 const PCancelable = require('p-cancelable')
@@ -196,7 +196,7 @@ const getContent = async (encodedUrl, mode, opts) => {
 module.exports = async (
   targetUrl,
   {
-    getBrowserless = createBrowserless,
+    getBrowserless = requireOneOf(['@browserless/pool', 'browserless']),
     encoding = 'utf-8',
     getMode = determinateMode,
     gotOptions,
@@ -217,5 +217,3 @@ module.exports = async (
   const { url, html, mode } = await getContent(encodedUrl, reqMode, opts)
   return { url, html, stats: { mode, timing: time() } }
 }
-
-module.exports.createBrowserless = createBrowserless

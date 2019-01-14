@@ -78,7 +78,7 @@ Type: `function`<br>
 
 A function that should return a [browserless](https://browserless.js.org/) instance to be used for interact with puppeteer.
 
-If you don't provide one, a browser instance will be created in each library call.
+If you don't provide a value, then the library try to load [`@browserless/pool`](https://www.npmjs.com/package/@browserless/pool) or [`browserless`](https://www.npmjs.com/package/browserless) from your dependencies.
 
 ##### encoding
 
