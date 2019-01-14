@@ -52,6 +52,7 @@
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "ava": "latest",
+    "browserless": "latest",
     "ci-publish": "latest",
     "conventional-github-releaser": "latest",
     "coveralls": "latest",
