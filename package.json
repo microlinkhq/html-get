@@ -36,16 +36,16 @@
   ],
   "dependencies": {
     "@metascraper/helpers": "~4.9.0",
-    "debug": "~4.1.0",
-    "got": "~9.5.0",
+    "debug": "~4.1.1",
+    "got": "~9.5.1",
     "he": "~1.2.0",
     "html-encode": "~2.1.1",
     "mem": "~4.0.0",
     "p-cancelable": "~1.0.0",
     "p-timeout": "~2.0.1",
     "parse-domain": "~2.1.7",
-    "reachable-url": "~1.1.7",
-    "require-one-of": "~1.0.0",
+    "reachable-url": "~1.1.8",
+    "require-one-of": "~1.0.3",
     "time-span": "~2.0.0"
   },
   "devDependencies": {
