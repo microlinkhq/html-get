@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.8"></a>
+## [2.0.8](https://github.com/Kikobeats/html-get/compare/v2.0.7...v2.0.8) (2019-01-14)
+
+
+### Bug Fixes
+
+* add missing dev dependency ([26b51ca](https://github.com/Kikobeats/html-get/commit/26b51ca))
+
+
+
 <a name="2.0.7"></a>
 ## [2.0.7](https://github.com/Kikobeats/html-get/compare/v2.0.6...v2.0.7) (2019-01-10)
 
