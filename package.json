@@ -37,7 +37,7 @@
   "dependencies": {
     "@metascraper/helpers": "~4.9.0",
     "debug": "~4.1.1",
-    "got": "~9.5.1",
+    "got": "~9.6.0",
     "he": "~1.2.0",
     "html-encode": "~2.1.1",
     "mem": "~4.0.0",
