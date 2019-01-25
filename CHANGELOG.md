@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.10"></a>
+## [2.0.10](https://github.com/Kikobeats/html-get/compare/v2.0.9...v2.0.10) (2019-01-25)
+
+
+### Bug Fixes
+
+* remove timeout ([a02046f](https://github.com/Kikobeats/html-get/commit/a02046f)), closes [#13](https://github.com/Kikobeats/html-get/issues/13)
+
+
+
 <a name="2.0.9"></a>
 ## [2.0.9](https://github.com/Kikobeats/html-get/compare/v2.0.8...v2.0.9) (2019-01-17)
 
