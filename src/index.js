@@ -8,7 +8,6 @@ const PCancelable = require('p-cancelable')
 const debug = require('debug')('html-get')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
-const pTimeout = require('p-timeout')
 const { URL } = require('url')
 const path = require('path')
 const got = require('got')
@@ -86,7 +85,7 @@ const prerender = async (
   try {
     fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
     const browserless = await getBrowserless()
-    html = await pTimeout(browserless.html(url, opts), REQ_TIMEOUT)
+    html = await browserless.html(url, { timeout: REQ_TIMEOUT, ...opts })
     await fetchReq.cancel()
     debug('prerender:success')
     return { url, html: getHtml(html), mode: 'prerender' }
