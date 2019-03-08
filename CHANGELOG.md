@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.11"></a>
+## [2.0.11](https://github.com/Kikobeats/html-get/compare/v2.0.10...v2.0.11) (2019-03-08)
+
+
+### Bug Fixes
+
+* **package:** update p-cancelable to version 1.1.0 ([2631d34](https://github.com/Kikobeats/html-get/commit/2631d34))
+* **package:** update time-span to version 3.0.0 ([b53deef](https://github.com/Kikobeats/html-get/commit/b53deef))
+
+
+
 <a name="2.0.10"></a>
 ## [2.0.10](https://github.com/Kikobeats/html-get/compare/v2.0.9...v2.0.10) (2019-01-25)
 
