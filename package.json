@@ -45,7 +45,7 @@
     "parse-domain": "~2.1.7",
     "reachable-url": "~1.1.8",
     "require-one-of": "~1.0.3",
-    "time-span": "~2.0.0"
+    "time-span": "~3.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "latest",
