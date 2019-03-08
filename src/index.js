@@ -31,10 +31,11 @@ const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
 // Puppeteer doesn't resolve redirection well.
 // We need to ensure we have the right url.
 const getUrl = mem(
-  async targetUrl => {
+  async (targetUrl, { dnsCache }) => {
     try {
       const res = await reachableUrl(targetUrl, {
-        timeout: REQ_TIMEOUT_REACHABLE
+        timeout: REQ_TIMEOUT_REACHABLE,
+        dnsCache
       })
       return res
     } catch (err) {
@@ -73,17 +74,14 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
     }
   })
 
-const prerender = async (
-  url,
-  { getBrowserless, gotOptions, toEncode, ...opts }
-) => {
+const prerender = async (url, { getBrowserless, gotOptions, toEncode, dnsCache, ...opts }) => {
   let fetchReq
   let fetchDataProps = {}
   let isFetchRejected = false
   let html = ''
 
   try {
-    fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
+    fetchReq = fetch(url, { reflect: true, toEncode, dnsCache, ...gotOptions })
     const browserless = await getBrowserless()
     html = await browserless.html(url, { timeout: REQ_TIMEOUT, ...opts })
     await fetchReq.cancel()
@@ -125,16 +123,8 @@ const baseHtml = ({ url, headers, head, body }) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
           <title>${path.basename(url)}</title>
           <meta property="og:site_name" content="${hostname}">
-          ${
-  date
-    ? `<meta property="article:published_time" content="${date}">`
-    : ''
-}
-          ${
-  expires
-    ? `<meta property="article:expiration_time" content="${expires}">`
-    : ''
-}
+          ${date ? `<meta property="article:published_time" content="${date}">` : ''}
+          ${expires ? `<meta property="article:expiration_time" content="${expires}">` : ''}
           <meta property="og:locale" content="en">
           <meta property="og:url" content="${url}">
           ${head}
@@ -183,7 +173,7 @@ const getAudioHtml = (url, headers) => {
 }
 
 const getContent = async (encodedUrl, mode, opts) => {
-  const { url, headers } = await getUrl(encodedUrl)
+  const { url, headers } = await getUrl(encodedUrl, opts)
   debug(`getUrl ${encodedUrl === url ? url : `${encodedUrl} → ${url}`}`)
   const contentType = headers['content-type']
   if (isMime(contentType, 'image')) return getImageHtml(url, headers)
@@ -200,7 +190,8 @@ module.exports = async (
     getMode = determinateMode,
     gotOptions,
     prerender = 'auto',
-    puppeteerOpts
+    puppeteerOpts,
+    dnsCache = new Map()
   } = {}
 ) => {
   const { href: encodedUrl } = new URL(targetUrl)
@@ -209,8 +200,8 @@ module.exports = async (
 
   const opts =
     reqMode === 'fetch'
-      ? { toEncode, ...gotOptions }
-      : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
+      ? { dnsCache, toEncode, ...gotOptions }
+      : { dnsCache, toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
 
   const time = timeSpan()
   const { url, html, mode } = await getContent(encodedUrl, reqMode, opts)

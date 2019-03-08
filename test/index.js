@@ -57,8 +57,7 @@ test('decode base64 entities', async t => {
 })
 
 test('unencoded URL', async t => {
-  const url =
-    'https://medium.com/@Acegikmo/the-ever-so-lovely-bézier-curve-eb27514da3bf'
+  const url = 'https://medium.com/@Acegikmo/the-ever-so-lovely-bézier-curve-eb27514da3bf'
   t.is(
     await wait(getHTML(url, { prerender: false }), 'url'),
     'https://medium.com/@Acegikmo/the-ever-so-lovely-b%C3%A9zier-curve-eb27514da3bf'
@@ -96,4 +95,12 @@ test('get html from video url', async t => {
   t.true(html.includes('<video src'))
   t.is(stats.mode, 'fetch')
   t.is(url, urlDetected)
+})
+
+test('cache dns lookup', async t => {
+  const url = 'https://kikobeats.com'
+  const dnsCache = new Map()
+
+  await getHTML(url, { prerender: false })
+  t.is(dnsCache.size, 1)
 })
