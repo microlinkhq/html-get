@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.12"></a>
+## [2.0.12](https://github.com/Kikobeats/html-get/compare/v2.0.10...v2.0.12) (2019-03-17)
+
+
+### Bug Fixes
+
+* **package:** update [@metascraper](https://github.com/metascraper)/helpers to version 5.0.0 ([138879a](https://github.com/Kikobeats/html-get/commit/138879a))
+* **package:** update mem to version 4.2.0 ([60f8b90](https://github.com/Kikobeats/html-get/commit/60f8b90))
+* **package:** update p-cancelable to version 1.1.0 ([2631d34](https://github.com/Kikobeats/html-get/commit/2631d34))
+* **package:** update time-span to version 3.0.0 ([b53deef](https://github.com/Kikobeats/html-get/commit/b53deef))
+
+
+
 <a name="2.0.11"></a>
 ## [2.0.11](https://github.com/Kikobeats/html-get/compare/v2.0.10...v2.0.11) (2019-03-08)
 
