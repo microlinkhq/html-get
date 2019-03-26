@@ -56,6 +56,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
       ...opts
     })
 
+    onCancel.shouldReject = false
     onCancel(() => req.cancel && req.cancel())
 
     try {
@@ -73,10 +74,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
     }
   })
 
-const prerender = async (
-  url,
-  { getBrowserless, gotOptions, toEncode, ...opts }
-) => {
+const prerender = async (url, { getBrowserless, gotOptions, toEncode, ...opts }) => {
   let fetchReq
   let fetchDataProps = {}
   let isFetchRejected = false
@@ -125,16 +123,8 @@ const baseHtml = ({ url, headers, head, body }) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
           <title>${path.basename(url)}</title>
           <meta property="og:site_name" content="${hostname}">
-          ${
-  date
-    ? `<meta property="article:published_time" content="${date}">`
-    : ''
-}
-          ${
-  expires
-    ? `<meta property="article:expiration_time" content="${expires}">`
-    : ''
-}
+          ${date ? `<meta property="article:published_time" content="${date}">` : ''}
+          ${expires ? `<meta property="article:expiration_time" content="${expires}">` : ''}
           <meta property="og:locale" content="en">
           <meta property="og:url" content="${url}">
           ${head}
