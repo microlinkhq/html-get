@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.15"></a>
+## [2.0.15](https://github.com/Kikobeats/html-get/compare/v2.0.14...v2.0.15) (2019-03-31)
+
+
+### Bug Fixes
+
+* **package:** update mem to version 4.3.0 ([a13ff0c](https://github.com/Kikobeats/html-get/commit/a13ff0c))
+
+
+
 <a name="2.0.14"></a>
 ## [2.0.14](https://github.com/Kikobeats/html-get/compare/v2.0.13...v2.0.14) (2019-03-31)
 
