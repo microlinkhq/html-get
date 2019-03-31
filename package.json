@@ -41,7 +41,7 @@
     "he": "~1.2.0",
     "html-encode": "~2.1.1",
     "mem": "~4.2.0",
-    "p-cancelable": "~1.1.0",
+    "p-cancelable": "~2.0.0",
     "parse-domain": "~2.1.7",
     "reachable-url": "~1.1.8",
     "require-one-of": "~1.0.3",
