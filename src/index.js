@@ -1,9 +1,9 @@
 'use strict'
 
+const { getDomain, getPublicSuffix } = require('tldts')
 const { isMime } = require('@metascraper/helpers')
 const requireOneOf = require('require-one-of')
 const reachableUrl = require('reachable-url')
-const parseDomain = require('parse-domain')
 const PCancelable = require('p-cancelable')
 const debug = require('debug')('html-get')
 const htmlEncode = require('html-encode')
@@ -43,8 +43,6 @@ const getUrl = mem(
   },
   { maxAge: ONE_DAY_MS }
 )
-
-const getDomain = url => (parseDomain(url) || {}).domain
 
 const getHtml = html => he.decode(html)
 
@@ -100,10 +98,16 @@ const prerender = async (url, { getBrowserless, gotOptions, toEncode, ...opts })
 
 const modes = { fetch, prerender }
 
+const isFetchMode = mem(url => {
+  const suffix = getPublicSuffix(url)
+  const domain = getDomain(url)
+  return autoDomains.includes(suffix ? domain.replace(`.${suffix}`, '') : domain)
+})
+
 const determinateMode = (url, { prerender }) => {
   if (prerender === false) return 'fetch'
   if (prerender !== 'auto') return 'prerender'
-  return autoDomains.includes(getDomain(url)) ? 'fetch' : 'prerender'
+  return isFetchMode(url) ? 'fetch' : 'prerender'
 }
 
 const baseHtml = ({ url, headers, head, body }) => {
