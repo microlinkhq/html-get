@@ -120,20 +120,17 @@ const baseHtml = ({ url, headers, head, body }) => {
     html: `
     <html lang="en">
       <head>
-        <meta name="viewport" content="width=device-width, minimum-scale=0.1">
-        <head>
-          <meta charset="utf-8">
-          <meta http-equiv="X-UA-Compatible" content="IE=edge">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
-          <title>${path.basename(url)}</title>
-          <meta property="og:site_name" content="${hostname}">
-          ${date ? `<meta property="article:published_time" content="${date}">` : ''}
-          ${expires ? `<meta property="article:expiration_time" content="${expires}">` : ''}
-          <meta property="og:locale" content="en">
-          <meta property="og:url" content="${url}">
-          ${head}
-          <link rel="canonical" href="${url}">
-        </head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
+        <title>${path.basename(url)}</title>
+        <meta property="og:site_name" content="${hostname}">
+        ${date ? `<meta property="article:published_time" content="${date}">` : ''}
+        ${expires ? `<meta property="article:expiration_time" content="${expires}">` : ''}
+        <meta property="og:locale" content="en">
+        <meta property="og:url" content="${url}">
+        ${head}
+        <link rel="canonical" href="${url}">
       </head>
       <body>
         ${body}
@@ -146,7 +143,10 @@ const getImageHtml = (url, headers) =>
   baseHtml({
     url,
     headers,
-    head: `<meta property="og:image" content="${url}">`,
+    head: `
+      <meta property="og:image" content="${url}">
+      <meta property="og:image:type" content="${headers['content-type']}">
+    `,
     body: `<img src="${url}">`
   })
 
@@ -158,7 +158,10 @@ const getVideoHtml = (url, headers) => {
   return baseHtml({
     url,
     headers,
-    head: `<meta property="${videoProperty}" content="${url}">`,
+    head: `
+      <meta property="${videoProperty}" content="${url}">
+      <meta property="og:video:type" content="${headers['content-type']}">
+    `,
     body: `<video src="${url}">`
   })
 }
@@ -171,7 +174,10 @@ const getAudioHtml = (url, headers) => {
   return baseHtml({
     url,
     headers,
-    head: `<meta property="${audioProperty}" content="${url}">`,
+    head: `
+      <meta property="${audioProperty}" content="${url}">
+      <meta property="og:audio:type" content="${headers['content-type']}">
+    `,
     body: `<audio src="${url}">`
   })
 }
@@ -183,6 +189,7 @@ const getContent = async (encodedUrl, mode, opts) => {
   if (isMime(contentType, 'image')) return getImageHtml(url, headers)
   if (isMime(contentType, 'video')) return getVideoHtml(url, headers)
   if (isMime(contentType, 'audio')) return getAudioHtml(url, headers)
+
   return modes[mode](url, opts)
 }
 
