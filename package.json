@@ -35,7 +35,7 @@
     "request"
   ],
   "dependencies": {
-    "@metascraper/helpers": "~5.2.0",
+    "@metascraper/helpers": "~5.2.4",
     "cheerio": "~1.0.0-rc.3",
     "debug": "~4.1.1",
     "got": "~9.6.0",
@@ -45,9 +45,9 @@
     "mime-types": "~2.1.24",
     "p-cancelable": "~2.0.0",
     "reachable-url": "~1.1.8",
-    "require-one-of": "~1.0.3",
+    "require-one-of": "~1.0.9",
     "time-span": "~3.1.0",
-    "tldts": "~4.0.5"
+    "tldts": "~4.0.6"
   },
   "devDependencies": {
     "@commitlint/cli": "latest",
