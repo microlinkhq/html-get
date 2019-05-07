@@ -1,6 +1,27 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [2.0.17](https://github.com/Kikobeats/html-get/compare/v2.0.16...v2.0.17) (2019-05-07)
+
+
+### Bug Fixes
+
+* **package:** update @metascraper/helpers to version 5.1.0 ([7bff17c](https://github.com/Kikobeats/html-get/commit/7bff17c))
+* **package:** update @metascraper/helpers to version 5.2.0 ([e3eef70](https://github.com/Kikobeats/html-get/commit/e3eef70))
+* **package:** update time-span to version 3.1.0 ([1001609](https://github.com/Kikobeats/html-get/commit/1001609))
+* command ([fc18507](https://github.com/Kikobeats/html-get/commit/fc18507))
+
+
+### Build System
+
+* add og:type as metadata ([57bd613](https://github.com/Kikobeats/html-get/commit/57bd613))
+* add og:type as metadata ([#48](https://github.com/Kikobeats/html-get/issues/48)) ([32c45bb](https://github.com/Kikobeats/html-get/commit/32c45bb))
+* update dependencies ([70ca8f1](https://github.com/Kikobeats/html-get/commit/70ca8f1))
+* use html detection based on file type ([c5e099e](https://github.com/Kikobeats/html-get/commit/c5e099e))
+* use html detection based on headers and content ([27d52c6](https://github.com/Kikobeats/html-get/commit/27d52c6))
+
+
 
 <a name="2.0.16"></a>
 ## [2.0.16](https://github.com/Kikobeats/html-get/compare/v2.0.15...v2.0.16) (2019-04-01)
