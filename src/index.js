@@ -1,20 +1,21 @@
 'use strict'
 
 const { getDomain, getPublicSuffix } = require('tldts')
-const { isMime } = require('@metascraper/helpers')
+const { isMediaUrl } = require('@metascraper/helpers')
 const requireOneOf = require('require-one-of')
 const reachableUrl = require('reachable-url')
 const PCancelable = require('p-cancelable')
 const debug = require('debug')('html-get')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
+
 const { URL } = require('url')
-const path = require('path')
 const got = require('got')
 const mem = require('mem')
 const he = require('he')
 
 const autoDomains = require('./auto-domains')
+const addHtml = require('./html')
 
 const ONE_MIN_MS = 60 * 1000
 const ONE_HOUR_MS = ONE_MIN_MS * 60
@@ -107,83 +108,19 @@ const isFetchMode = mem(url => {
 const determinateMode = (url, { prerender }) => {
   if (prerender === false) return 'fetch'
   if (prerender !== 'auto') return 'prerender'
+  if (isMediaUrl(url)) return 'fetch'
   return isFetchMode(url) ? 'fetch' : 'prerender'
-}
-
-const baseHtml = ({ url, headers, head, body }) => {
-  const { hostname } = new URL(url)
-  const { date, expires } = headers
-
-  return {
-    url,
-    mode: 'fetch',
-    html: `
-    <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, minimum-scale=0.1">
-        <head>
-          <meta charset="utf-8">
-          <meta http-equiv="X-UA-Compatible" content="IE=edge">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
-          <title>${path.basename(url)}</title>
-          <meta property="og:site_name" content="${hostname}">
-          ${date ? `<meta property="article:published_time" content="${date}">` : ''}
-          ${expires ? `<meta property="article:expiration_time" content="${expires}">` : ''}
-          <meta property="og:locale" content="en">
-          <meta property="og:url" content="${url}">
-          ${head}
-          <link rel="canonical" href="${url}">
-        </head>
-      </head>
-      <body>
-        ${body}
-      </body>
-    </html>`.trim()
-  }
-}
-
-const getImageHtml = (url, headers) =>
-  baseHtml({
-    url,
-    headers,
-    head: `<meta property="og:image" content="${url}">`,
-    body: `<img src="${url}">`
-  })
-
-const getVideoHtml = (url, headers) => {
-  const { protocol } = new URL(url)
-  const isHttps = protocol === 'https:'
-  const videoProperty = `og:video${isHttps ? ':secure_url' : ''}`
-
-  return baseHtml({
-    url,
-    headers,
-    head: `<meta property="${videoProperty}" content="${url}">`,
-    body: `<video src="${url}">`
-  })
-}
-
-const getAudioHtml = (url, headers) => {
-  const { protocol } = new URL(url)
-  const isHttps = protocol === 'https:'
-  const audioProperty = `og:audio${isHttps ? ':secure_url' : ''}`
-
-  return baseHtml({
-    url,
-    headers,
-    head: `<meta property="${audioProperty}" content="${url}">`,
-    body: `<audio src="${url}">`
-  })
 }
 
 const getContent = async (encodedUrl, mode, opts) => {
   const { url, headers } = await getUrl(encodedUrl)
   debug(`getUrl ${encodedUrl === url ? url : `${encodedUrl} → ${url}`}`)
-  const contentType = headers['content-type']
-  if (isMime(contentType, 'image')) return getImageHtml(url, headers)
-  if (isMime(contentType, 'video')) return getVideoHtml(url, headers)
-  if (isMime(contentType, 'audio')) return getAudioHtml(url, headers)
-  return modes[mode](url, opts)
+  const content = await modes[mode](url, opts)
+
+  return {
+    ...content,
+    html: addHtml({ ...content, headers })
+  }
 }
 
 module.exports = async (
