@@ -1,8 +1,8 @@
 'use strict'
 
 const { isMime } = require('@metascraper/helpers')
+const mimeTypes = require('mime-types')
 const { getDomain } = require('tldts')
-const fileType = require('file-type')
 const cheerio = require('cheerio')
 const { URL } = require('url')
 const path = require('path')
@@ -86,8 +86,9 @@ const htmlTemplate = () => `
 
 module.exports = ({ html, url, headers }) => {
   const contentType = headers['content-type']
-  const htmlTyle = fileType(Buffer.from(html, 0, fileType.minimumBytes))
-  const content = htmlTyle === undefined ? html : htmlTemplate()
+  const isHTML =
+    mimeTypes.extension(contentType) === 'html' && typeof html === 'string' && html.length
+  const content = isHTML ? html : htmlTemplate()
 
   const $ = cheerio.load(content, {
     decodeEntities: false,
