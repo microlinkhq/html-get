@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.18](https://github.com/microlinkhq/html-get/compare/v2.0.17...v2.0.18) (2019-05-09)
+
+
+### Build System
+
+* update copy ([8c6306e](https://github.com/microlinkhq/html-get/commit/8c6306e))
+
+
+
 ### [2.0.17](https://github.com/Kikobeats/html-get/compare/v2.0.16...v2.0.17) (2019-05-07)
 
 
