@@ -1,7 +1,7 @@
 {
   "name": "html-get",
   "description": "Get the HTML from any website, using prerendering when is necessary.",
-  "homepage": "https://documentup.com/Kikobeats/html-get",
+  "homepage": "https://nicedoc.com/microlinkhq/html-get",
   "version": "2.0.17",
   "main": "src/index.js",
   "bin": {
@@ -20,10 +20,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kikobeats/html-get.git"
+    "url": "git+https://github.com/microlinkhq/html-get.git"
   },
   "bugs": {
-    "url": "https://github.com/Kikobeats/html-get/issues"
+    "url": "https://github.com/microlinkhq/html-get/issues"
   },
   "keywords": [
     "fetch",

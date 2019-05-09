@@ -1,12 +1,11 @@
 # html-get
 
-![Last version](https://img.shields.io/github/tag/Kikobeats/html-get.svg?style=flat-square)
-[![Build Status](https://img.shields.io/travis/Kikobeats/html-get/master.svg?style=flat-square)](https://travis-ci.org/Kikobeats/html-get)
-[![Coverage Status](https://img.shields.io/coveralls/Kikobeats/html-get.svg?style=flat-square)](https://coveralls.io/github/Kikobeats/html-get)
-[![Dependency status](https://img.shields.io/david/Kikobeats/html-get.svg?style=flat-square)](https://david-dm.org/Kikobeats/html-get)
-[![Dev Dependencies Status](https://img.shields.io/david/dev/Kikobeats/html-get.svg?style=flat-square)](https://david-dm.org/Kikobeats/html-get#info=devDependencies)
+![Last version](https://img.shields.io/github/tag/microlinkhq/html-get.svg?style=flat-square)
+[![Build Status](https://img.shields.io/travis/microlinkhq/html-get/master.svg?style=flat-square)](https://travis-ci.org/microlinkhq/html-get)
+[![Coverage Status](https://img.shields.io/coveralls/microlinkhq/html-get.svg?style=flat-square)](https://coveralls.io/github/microlinkhq/html-get)
+[![Dependency status](https://img.shields.io/david/microlinkhq/html-get.svg?style=flat-square)](https://david-dm.org/microlinkhq/html-get)
+[![Dev Dependencies Status](https://img.shields.io/david/dev/microlinkhq/html-get.svg?style=flat-square)](https://david-dm.org/microlinkhq/html-get#info=devDependencies)
 [![NPM Status](https://img.shields.io/npm/dm/html-get.svg?style=flat-square)](https://www.npmjs.org/package/html-get)
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square)](https://paypal.me/Kikobeats)
 
 > Get the HTML from any website, using prerendering when is necessary.
 
@@ -25,7 +24,7 @@ Generally this approach better than a simple GET request from the target URL, bu
 
 **html-get** bring the best of both worlds, doing the following algorithm:
 
-- Determinate if the target URL actually needs prerendering (internally it has a [whitelisted of popular site domains](https://github.com/Kikobeats/html-get/blob/master/src/auto-domains.js) that don't need it).
+- Determinate if the target URL actually needs prerendering (internally it has a [whitelisted of popular site domains](https://github.com/microlinkhq/html-get/blob/master/src/auto-domains.js) that don't need it).
 - If it needs prerendering, perform the action using Headless technology, blocking ads trackers requests for speed up the process, trying to resolve the main request in the minimum amount of time.
 - If it does not need prerendering or prerendering fails for any reason (for example, timeout), the request will be resolved doing a GET request.
 
@@ -119,7 +118,7 @@ Under non `mode=fetch`, pass configuration object to [puppeteer](https://www.npm
 
 ## License
 
-**html-get** © [Kiko Beats](https://kikobeats.com), released under the [MIT](https://github.com/Kikobeats/html-get/blob/master/LICENSE.md) License.<br>
-Authored and maintained by Kiko Beats with help from [contributors](https://github.com/Kikobeats/html-get/contributors).
+**html-get** © [Microlink](https://microlink.io), Released under the [MIT](https://github.com/microlinkhq/html-get/blob/master/LICENSE.md) License.<br>
+Authored and maintained by Kiko Beats with help from [contributors](https://github.com/microlinkhq/html-get/contributors).
 
-> [kikobeats.com](https://kikobeats.com) · GitHub [Kiko Beats](https://github.com/Kikobeats) · Twitter [@Kikobeats](https://twitter.com/Kikobeats)
+> [microlink.io](https://microlink.io) · GitHub [@MicrolinkHQ](https://github.com/microlinkhq) · Twitter [@microlinkhq](https://twitter.com/microlinkhq)
