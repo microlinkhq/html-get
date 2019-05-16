@@ -79,6 +79,7 @@
   },
   "files": [
     "bin",
+    "scripts",
     "src"
   ],
   "scripts": {
