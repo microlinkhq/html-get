@@ -47,6 +47,12 @@ const getHTML = require('html-get')
 })()
 ```
 
+### Command Line
+
+```
+$ npx html-get https://kikobeats.com
+```
+
 ## API
 
 ### getHTML(url, [options])
