@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.2](https://github.com/microlinkhq/html-get/compare/v2.1.0...v2.1.2) (2019-05-16)
+
+
+### Bug Fixes
+
+* add scripts to files ([4fc3cb8](https://github.com/microlinkhq/html-get/commit/4fc3cb8))
+
+
+### Build System
+
+* short error log ([f08a9ee](https://github.com/microlinkhq/html-get/commit/f08a9ee))
+
+
+
 ### [2.1.1](https://github.com/microlinkhq/html-get/compare/v2.1.0...v2.1.1) (2019-05-16)
 
 
