@@ -1,8 +1,18 @@
-# Changelog
+# Change Log
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [2.0.18](https://github.com/microlinkhq/html-get/compare/v2.0.17...v2.0.18) (2019-05-09)
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/microlinkhq/html-get/compare/v2.0.18...v2.1.0) (2019-05-16)
+
+
+### Features
+
+* Improve domains auto detection ([#50](https://github.com/microlinkhq/html-get/issues/50)) ([782446d](https://github.com/microlinkhq/html-get/commit/782446d))
+
+
+
+## [2.0.18](https://github.com/microlinkhq/html-get/compare/v2.0.17...v2.0.18) (2019-05-09)
 
 
 ### Build System
