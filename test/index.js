@@ -56,8 +56,8 @@ test('unreachable urls', async t => {
       <title>notexisturl.dev</title>
       <meta property="og:site_name" content="notexisturl.dev">
       <meta property="og:locale" content="en">
-      <meta property="og:url" content="https://notexisturl.dev/">
-      <link rel="canonical" href="https://notexisturl.dev/">
+      <meta property="og:url" content="https://notexisturl.dev">
+      <link rel="canonical" href="https://notexisturl.dev">
     </head>
     <body>
     </body>
