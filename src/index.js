@@ -7,8 +7,6 @@ const PCancelable = require('p-cancelable')
 const debug = require('debug')('html-get')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
-
-const { URL } = require('url')
 const got = require('got')
 const mem = require('mem')
 const he = require('he')
@@ -40,6 +38,7 @@ const getUrl = mem(
       })
       return res
     } catch (err) {
+      debug('getUrl:err', err)
       return { url: targetUrl, headers: {} }
     }
   },
