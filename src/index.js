@@ -32,10 +32,11 @@ const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
 // Puppeteer doesn't resolve redirection well.
 // We need to ensure we have the right url.
 const getUrl = mem(
-  async targetUrl => {
+  async (targetUrl, opts) => {
     try {
       const res = await reachableUrl(targetUrl, {
-        timeout: REQ_TIMEOUT_REACHABLE
+        timeout: REQ_TIMEOUT_REACHABLE,
+        ...opts
       })
       return res
     } catch (err) {
@@ -113,7 +114,7 @@ const determinateMode = (url, { prerender }) => {
 }
 
 const getContent = async (encodedUrl, mode, opts) => {
-  const { url, headers } = await getUrl(encodedUrl)
+  const { url, headers } = await getUrl(encodedUrl, opts)
   debug(`getUrl ${encodedUrl === url ? url : `${encodedUrl} → ${url}`}`)
   const content = await modes[mode](url, opts)
 
