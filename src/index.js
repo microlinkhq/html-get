@@ -1,6 +1,5 @@
 'use strict'
 
-const { getDomain, getPublicSuffix } = require('tldts')
 const { isMediaUrl } = require('@metascraper/helpers')
 const requireOneOf = require('require-one-of')
 const reachableUrl = require('reachable-url')
@@ -14,6 +13,7 @@ const got = require('got')
 const mem = require('mem')
 const he = require('he')
 
+const { getDomainWithoutSuffix } = require('./tlds')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
@@ -101,11 +101,7 @@ const prerender = async (url, { getBrowserless, gotOptions, toEncode, ...opts })
 
 const modes = { fetch, prerender }
 
-const isFetchMode = mem(url => {
-  const suffix = getPublicSuffix(url)
-  const domain = getDomain(url)
-  return autoDomains.includes(suffix ? domain.replace(`.${suffix}`, '') : domain)
-})
+const isFetchMode = url => autoDomains.includes(getDomainWithoutSuffix(url))
 
 const determinateMode = (url, { prerender }) => {
   if (prerender === false) return 'fetch'

@@ -3,15 +3,10 @@
 'use strict'
 
 const { compact, reduce, findIndex } = require('lodash')
-const { getDomain, getPublicSuffix } = require('tldts')
 const writeJsonFile = require('write-json-file')
 const topsites = require('top-sites')
 
-const getDomainWithoutSuffix = url => {
-  const suffix = getPublicSuffix(url)
-  const domain = getDomain(url)
-  return suffix ? domain.replace(`.${suffix}`, '') : domain
-}
+const { getDomainWithoutSuffix } = require('../src/tlds')
 
 const domains = [
   'facebook',
