@@ -136,16 +136,14 @@ module.exports = async (
     puppeteerOpts
   } = {}
 ) => {
-  const { href: encodedUrl } = new URL(targetUrl)
   const toEncode = htmlEncode(encoding)
-  const reqMode = getMode(encodedUrl, { prerender })
+  const reqMode = getMode(targetUrl, { prerender })
 
   const opts =
     reqMode === 'fetch'
       ? { toEncode, ...gotOptions }
       : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
-
   const time = timeSpan()
-  const { url, html, mode } = await getContent(encodedUrl, reqMode, opts)
+  const { url, html, mode } = await getContent(targetUrl, reqMode, opts)
   return { url, html, stats: { mode, timing: time() } }
 }
