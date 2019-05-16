@@ -41,13 +41,16 @@
     "got": "~9.6.0",
     "he": "~1.2.0",
     "html-encode": "~2.1.1",
+    "lodash": "~4.17.11",
     "mem": "~4.3.0",
     "mime-types": "~2.1.24",
     "p-cancelable": "~2.0.0",
     "reachable-url": "~1.1.8",
     "require-one-of": "~1.0.9",
     "time-span": "~3.1.0",
-    "tldts": "~4.0.6"
+    "tldts": "~4.0.6",
+    "top-sites": "~1.1.8",
+    "write-json-file": "~3.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "latest",
@@ -62,7 +65,6 @@
     "git-dirty": "latest",
     "husky": "latest",
     "lint-staged": "latest",
-    "lodash": "latest",
     "npm-check-updates": "latest",
     "nyc": "latest",
     "prettier-standard": "latest",
@@ -70,9 +72,7 @@
     "puppeteer": "latest",
     "standard": "latest",
     "standard-markdown": "latest",
-    "standard-version": "latest",
-    "top-sites": "latest",
-    "write-json-file": "latest"
+    "standard-version": "latest"
   },
   "engines": {
     "node": ">= 8"
@@ -85,6 +85,7 @@
     "clean": "rm -rf node_modules",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "standard-markdown README.md && standard",
+    "postinstall": "node scripts/postinstall",
     "postrelease": "npm run release:tags && npm run release:github && ci-publish",
     "prerelease": "npm run update:check && git-authors-cli",
     "pretest": "npm run lint",
@@ -112,10 +113,6 @@
     "linters": {
       "package.json": [
         "finepack",
-        "git add"
-      ],
-      "src/auto-domains.json": [
-        "node sort",
         "git add"
       ],
       "*.js": [

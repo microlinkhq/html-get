@@ -1,0 +1,61 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const { compact, reduce, findIndex } = require('lodash')
+const { getDomain, getPublicSuffix } = require('tldts')
+const writeJsonFile = require('write-json-file')
+const topsites = require('top-sites')
+
+const getDomainWithoutSuffix = url => {
+  const suffix = getPublicSuffix(url)
+  const domain = getDomain(url)
+  return suffix ? domain.replace(`.${suffix}`, '') : domain
+}
+
+const domains = [
+  'facebook',
+  'twitter',
+  'instagram',
+  'pinterest',
+  'apple',
+  'vimeo',
+  'flickr',
+  'microsoft',
+  'reddit',
+  'nytimes',
+  'github',
+  'bbc',
+  'digg',
+  'yelp',
+  'imdb',
+  'huffingtonpost',
+  'etsy',
+  'slideshare',
+  'eventbrite',
+  'sourceforge',
+  'telegraph',
+  'bloomberg',
+  'medium',
+  'techcrunch',
+  'washingtonpost',
+  'engadget',
+  'theverge',
+  'giphy'
+]
+
+const { top, rest } = reduce(
+  domains,
+  (acc, domain) => {
+    const index = findIndex(topsites, ({ rootDomain }) => getDomainWithoutSuffix(rootDomain) === domain)
+    if (index !== -1) acc.top[index] = domain
+    else acc.rest.push(domain)
+    return acc
+  },
+  { top: new Array(topsites.length), rest: [] }
+
+)
+
+writeJsonFile('./src/auto-domains.json', compact(top).concat(rest))
+  .then(() => process.exit())
+  .catch(err => console.log(err))
