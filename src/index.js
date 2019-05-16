@@ -1,6 +1,5 @@
 'use strict'
 
-const { getDomain, getPublicSuffix } = require('tldts')
 const { isMediaUrl } = require('@metascraper/helpers')
 const requireOneOf = require('require-one-of')
 const reachableUrl = require('reachable-url')
@@ -8,12 +7,11 @@ const PCancelable = require('p-cancelable')
 const debug = require('debug')('html-get')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
-
-const { URL } = require('url')
 const got = require('got')
 const mem = require('mem')
 const he = require('he')
 
+const { getDomainWithoutSuffix } = require('./tlds')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
@@ -32,13 +30,15 @@ const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
 // Puppeteer doesn't resolve redirection well.
 // We need to ensure we have the right url.
 const getUrl = mem(
-  async targetUrl => {
+  async (targetUrl, opts) => {
     try {
       const res = await reachableUrl(targetUrl, {
-        timeout: REQ_TIMEOUT_REACHABLE
+        timeout: REQ_TIMEOUT_REACHABLE,
+        ...opts
       })
       return res
     } catch (err) {
+      debug('getUrl:err', err)
       return { url: targetUrl, headers: {} }
     }
   },
@@ -51,6 +51,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
       encoding: null,
+      retry: 0,
       timeout: reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
       ...opts
     })
@@ -99,11 +100,7 @@ const prerender = async (url, { getBrowserless, gotOptions, toEncode, ...opts })
 
 const modes = { fetch, prerender }
 
-const isFetchMode = mem(url => {
-  const suffix = getPublicSuffix(url)
-  const domain = getDomain(url)
-  return autoDomains.includes(suffix ? domain.replace(`.${suffix}`, '') : domain)
-})
+const isFetchMode = url => autoDomains.includes(getDomainWithoutSuffix(url))
 
 const determinateMode = (url, { prerender }) => {
   if (prerender === false) return 'fetch'
@@ -113,7 +110,7 @@ const determinateMode = (url, { prerender }) => {
 }
 
 const getContent = async (encodedUrl, mode, opts) => {
-  const { url, headers } = await getUrl(encodedUrl)
+  const { url, headers } = await getUrl(encodedUrl, opts)
   debug(`getUrl ${encodedUrl === url ? url : `${encodedUrl} → ${url}`}`)
   const content = await modes[mode](url, opts)
 
@@ -134,16 +131,14 @@ module.exports = async (
     puppeteerOpts
   } = {}
 ) => {
-  const { href: encodedUrl } = new URL(targetUrl)
   const toEncode = htmlEncode(encoding)
-  const reqMode = getMode(encodedUrl, { prerender })
+  const reqMode = getMode(targetUrl, { prerender })
 
   const opts =
     reqMode === 'fetch'
       ? { toEncode, ...gotOptions }
       : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
-
   const time = timeSpan()
-  const { url, html, mode } = await getContent(encodedUrl, reqMode, opts)
+  const { url, html, mode } = await getContent(targetUrl, reqMode, opts)
   return { url, html, stats: { mode, timing: time() } }
 }
