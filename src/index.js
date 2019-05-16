@@ -52,6 +52,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
       encoding: null,
+      retry: 0,
       timeout: reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
       ...opts
     })
