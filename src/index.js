@@ -19,13 +19,10 @@ const ONE_MIN_MS = 60 * 1000
 const ONE_HOUR_MS = ONE_MIN_MS * 60
 const ONE_DAY_MS = ONE_HOUR_MS * 24
 
-// TODO: This is a soft timeout to ensure prerender mode
-// doesn't take too much time an reach the global timeout.
-// Currently puppeteer is not handling a global timeout,
-// need to wait until 2.0 to setup `.defaultTimeout`
-// https://github.com/GoogleChrome/puppeteer/issues/2079
 const REQ_TIMEOUT = Number(process.env.REQ_TIMEOUT || 6000)
 const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
+
+const getHost = mem(url => new URL(url).host)
 
 // Puppeteer doesn't resolve redirection well.
 // We need to ensure we have the right url.
@@ -47,12 +44,13 @@ const getUrl = mem(
 
 const getHtml = html => he.decode(html)
 
-const fetch = (url, { toEncode, reflect = false, ...opts }) =>
+const fetch = (url, { toEncode, reflect = false, headers, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
       encoding: null,
       retry: 0,
       timeout: reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
+      headers: { host: getHost(url), ...headers },
       ...opts
     })
 
@@ -74,7 +72,7 @@ const fetch = (url, { toEncode, reflect = false, ...opts }) =>
     }
   })
 
-const prerender = async (url, { getBrowserless, gotOptions, toEncode, ...opts }) => {
+const prerender = async (url, { getBrowserless, toEncode, headers, gotOptions, ...opts }) => {
   let fetchReq
   let fetchDataProps = {}
   let isFetchRejected = false
@@ -83,7 +81,12 @@ const prerender = async (url, { getBrowserless, gotOptions, toEncode, ...opts })
   try {
     fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
     const browserless = await getBrowserless()
-    html = await browserless.html(url, { timeout: REQ_TIMEOUT, ...opts })
+
+    html = await browserless.html(url, {
+      headers: { host: getHost(url), ...headers },
+      timeout: REQ_TIMEOUT,
+      ...opts
+    })
     await fetchReq.cancel()
     debug('prerender:success')
     return { url, html: getHtml(html), mode: 'prerender' }
@@ -107,15 +110,14 @@ const determinateMode = (url, { prerender }) => {
   if (isMediaUrl(url)) return 'fetch'
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
-
 const getContent = async (encodedUrl, mode, opts) => {
-  const { url, headers } = await getUrl(encodedUrl, opts)
+  const { url, headers: resHeaders } = await getUrl(encodedUrl, opts)
   debug(`getUrl ${encodedUrl === url ? url : `${encodedUrl} → ${url}`}`)
   const content = await modes[mode](url, opts)
 
   return {
     ...content,
-    html: addHtml({ ...content, headers })
+    html: addHtml({ ...content, headers: resHeaders })
   }
 }
 
