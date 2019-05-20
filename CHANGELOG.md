@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.5](https://github.com/microlinkhq/html-get/compare/v2.1.4...v2.1.5) (2019-05-20)
+
+
+### Build System
+
+* change git-authors-cli position ([d75aedd](https://github.com/microlinkhq/html-get/commit/d75aedd))
+
+
+
 ### [2.1.4](https://github.com/microlinkhq/html-get/compare/v2.1.3...v2.1.4) (2019-05-17)
 
 
