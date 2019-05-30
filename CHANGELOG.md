@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/microlinkhq/html-get/compare/v2.1.5...v2.2.0) (2019-05-30)
+
+
+### Features
+
+* expose .getDomainWithoutSuffix method ([c1d87da](https://github.com/microlinkhq/html-get/commit/c1d87da))
+
+
+
 ### [2.1.5](https://github.com/microlinkhq/html-get/compare/v2.1.4...v2.1.5) (2019-05-20)
 
 
