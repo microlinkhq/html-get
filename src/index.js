@@ -144,3 +144,5 @@ module.exports = async (
   const { url, html, mode } = await getContent(targetUrl, reqMode, opts)
   return { url, html, stats: { mode, timing: time() } }
 }
+
+module.exports.getDomainWithoutSuffix = getDomainWithoutSuffix
