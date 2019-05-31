@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/microlinkhq/html-get/compare/v2.2.0...v2.2.1) (2019-05-31)
+
+
+### Build System
+
+* remove pass host ([43f3af3](https://github.com/microlinkhq/html-get/commit/43f3af3))
+
+
+
 ## [2.2.0](https://github.com/microlinkhq/html-get/compare/v2.1.5...v2.2.0) (2019-05-30)
 
 
