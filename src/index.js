@@ -7,7 +7,6 @@ const PCancelable = require('p-cancelable')
 const debug = require('debug')('html-get')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
-const { URL } = require('url')
 const got = require('got')
 const mem = require('mem')
 const he = require('he')
@@ -22,8 +21,6 @@ const ONE_DAY_MS = ONE_HOUR_MS * 24
 
 const REQ_TIMEOUT = Number(process.env.REQ_TIMEOUT || 6000)
 const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
-
-const getHost = mem(url => new URL(url).host)
 
 // Puppeteer doesn't resolve redirection well.
 // We need to ensure we have the right url.
@@ -51,7 +48,7 @@ const fetch = (url, { toEncode, reflect = false, headers, ...opts }) =>
       encoding: null,
       retry: 0,
       timeout: reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
-      headers: { host: getHost(url), ...headers },
+      headers,
       ...opts
     })
 
@@ -84,7 +81,7 @@ const prerender = async (url, { getBrowserless, toEncode, headers, gotOptions, .
     const browserless = await getBrowserless()
 
     html = await browserless.html(url, {
-      headers: { host: getHost(url), ...headers },
+      headers: headers,
       timeout: REQ_TIMEOUT,
       ...opts
     })
