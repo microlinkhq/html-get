@@ -85,10 +85,10 @@ const htmlTemplate = () => `
 `
 
 module.exports = ({ html, url, headers }) => {
-  const contentType = headers['content-type']
-  const isHTML =
+  const contentType = headers['content-type'] || 'text/html'
+  const hasHTML =
     mimeTypes.extension(contentType) === 'html' && typeof html === 'string' && html.length
-  const content = isHTML ? html : htmlTemplate()
+  const content = hasHTML ? html : htmlTemplate()
 
   const $ = cheerio.load(content, {
     decodeEntities: false,
@@ -101,9 +101,19 @@ module.exports = ({ html, url, headers }) => {
   if (isMime(contentType, 'image')) {
     addMedia('image', { $, url, headers, body: url => `<img src="${url}">` })
   } else if (isMime(contentType, 'video')) {
-    addMedia('video', { $, url, headers, body: url => `<video src="${url}"></video>` })
+    addMedia('video', {
+      $,
+      url,
+      headers,
+      body: url => `<video src="${url}"></video>`
+    })
   } else if (isMime(contentType, 'audio')) {
-    addMedia('audio', { $, url, headers, body: url => `<audio src="${url}"></audio>` })
+    addMedia('audio', {
+      $,
+      url,
+      headers,
+      body: url => `<audio src="${url}"></audio>`
+    })
   }
 
   return $.html()
