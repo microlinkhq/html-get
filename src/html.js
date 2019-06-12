@@ -62,7 +62,9 @@ const addMedia = (media, { $, url, headers, body }) => {
 
   const ogMediaType = $(`meta[property="og:${media}:type"]`)
   if (!ogMediaType.length) {
-    tags.push(`<meta property="og:${media}:type" content="${headers['content-type']}">`)
+    tags.push(
+      `<meta property="og:${media}:type" content="${headers['content-type']}">`
+    )
   }
 
   const head = $('head')
@@ -87,7 +89,9 @@ const htmlTemplate = () => `
 module.exports = ({ html, url, headers }) => {
   const contentType = headers['content-type'] || 'text/html'
   const hasHTML =
-    mimeTypes.extension(contentType) === 'html' && typeof html === 'string' && html.length > 0
+    mimeTypes.extension(contentType) === 'html' &&
+    typeof html === 'string' &&
+    html.length > 0
 
   const content = hasHTML ? html : htmlTemplate()
 
