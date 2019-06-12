@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/microlinkhq/html-get/compare/v2.2.1...v2.2.2) (2019-06-12)
+
+
+### Bug Fixes
+
+* setup default content type ([00615c4](https://github.com/microlinkhq/html-get/commit/00615c4))
+
+
+### Tests
+
+* update ([aaa7107](https://github.com/microlinkhq/html-get/commit/aaa7107))
+* use a valid mp4 video url ([5b1ecfd](https://github.com/microlinkhq/html-get/commit/5b1ecfd))
+
+
+
 ### [2.2.1](https://github.com/microlinkhq/html-get/compare/v2.2.0...v2.2.1) (2019-05-31)
 
 
