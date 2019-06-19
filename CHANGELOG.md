@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.5](https://github.com/microlinkhq/html-get/compare/v2.2.4...v2.2.5) (2019-06-19)
+
+
+### Build System
+
+* update travis ([92ad2df](https://github.com/microlinkhq/html-get/commit/92ad2df))
+
+
+
 ### [2.2.4](https://github.com/microlinkhq/html-get/compare/v2.2.3...v2.2.4) (2019-06-12)
 
 
