@@ -7,8 +7,7 @@ const cheerio = require('cheerio')
 const { URL } = require('url')
 const path = require('path')
 
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
-const TEXT_MIME_TYPES = ['htm', 'html', 'xml', 'xhtml', 'txt']
+const HTML_MIME_EXT = ['html', 'xml', 'txt']
 
 const addHead = ({ $, url, headers }) => {
   const tags = []
@@ -89,15 +88,14 @@ const htmlTemplate = () => `
   </html>
 `
 
+const isHTML = (html, contentType) =>
+  HTML_MIME_EXT.includes(mimeTypes.extension(contentType)) &&
+  typeof html === 'string' &&
+  html.length > 0
+
 module.exports = ({ html, url, headers }) => {
   const contentType = headers['content-type'] || 'text/html'
-  const mime = mimeTypes.extension(contentType)
-  const hasHTML =
-    TEXT_MIME_TYPES.includes(mime) &&
-    typeof html === 'string' &&
-    html.length > 0
-
-  const content = hasHTML ? html : htmlTemplate()
+  const content = isHTML(html, contentType) ? html : htmlTemplate()
 
   const $ = cheerio.load(content, {
     decodeEntities: false,
@@ -127,3 +125,5 @@ module.exports = ({ html, url, headers }) => {
 
   return $.html()
 }
+
+module.exports.isHTML = isHTML
