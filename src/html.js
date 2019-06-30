@@ -8,7 +8,7 @@ const { URL } = require('url')
 const path = require('path')
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
-const TEXT_MIME_TYPES = ['htm', 'html', 'xml', 'xhtml', 'text']
+const TEXT_MIME_TYPES = ['htm', 'html', 'xml', 'xhtml', 'txt']
 
 const addHead = ({ $, url, headers }) => {
   const tags = []
