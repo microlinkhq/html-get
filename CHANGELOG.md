@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.10](https://github.com/microlinkhq/html-get/compare/v2.2.9...v2.2.10) (2019-07-04)
+
+
+### Build System
+
+* **deps:** update tldts requirement from ~5.1.0 to ~5.3.0 ([c778854](https://github.com/microlinkhq/html-get/commit/c778854))
+* **deps:** update tldts requirement from ~5.1.0 to ~5.3.0 ([#51](https://github.com/microlinkhq/html-get/issues/51)) ([425dfe5](https://github.com/microlinkhq/html-get/commit/425dfe5))
+
+
+
 ### [2.2.9](https://github.com/microlinkhq/html-get/compare/v2.2.8...v2.2.9) (2019-06-30)
 
 
