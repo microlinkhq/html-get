@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.12](https://github.com/microlinkhq/html-get/compare/v2.2.11...v2.2.12) (2019-07-31)
+
+
+### Build System
+
+* **deps:** update write-json-file requirement from ~4.1.0 to ~4… ([#53](https://github.com/microlinkhq/html-get/issues/53)) ([f62afa6](https://github.com/microlinkhq/html-get/commit/f62afa6))
+* **deps:** update write-json-file requirement from ~4.1.0 to ~4.2.0 ([452fcfa](https://github.com/microlinkhq/html-get/commit/452fcfa))
+
+
+
 ### [2.2.11](https://github.com/microlinkhq/html-get/compare/v2.2.10...v2.2.11) (2019-07-11)
 
 
