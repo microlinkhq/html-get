@@ -50,7 +50,7 @@
     "time-span": "~3.1.0",
     "tldts": "~5.3.0",
     "top-sites": "~1.1.13",
-    "write-json-file": "~4.1.0"
+    "write-json-file": "~4.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "latest",
