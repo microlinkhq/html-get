@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.13](https://github.com/microlinkhq/html-get/compare/v2.2.12...v2.2.13) (2019-08-12)
+
+
+### Build System
+
+* set html charset ([1ec92ad](https://github.com/microlinkhq/html-get/commit/1ec92ad))
+
+
+
 ### [2.2.12](https://github.com/microlinkhq/html-get/compare/v2.2.11...v2.2.12) (2019-07-31)
 
 
