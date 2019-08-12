@@ -94,7 +94,7 @@ const isHTML = (html, contentType) =>
   html.length > 0
 
 module.exports = ({ html, url, headers }) => {
-  const contentType = headers['content-type'] || 'text/html'
+  const contentType = headers['content-type'] || 'text/html; charset=utf-8'
   const content = isHTML(html, contentType) ? html : htmlTemplate()
 
   const $ = cheerio.load(content, {
