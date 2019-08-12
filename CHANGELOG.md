@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.14](https://github.com/microlinkhq/html-get/compare/v2.2.13...v2.2.14) (2019-08-12)
+
+
+### Build System
+
+* **deps:** update reachable-url requirement from ~1.1.8 to ~1.2… ([#54](https://github.com/microlinkhq/html-get/issues/54)) ([dffcb50](https://github.com/microlinkhq/html-get/commit/dffcb50))
+* **deps:** update reachable-url requirement from ~1.1.8 to ~1.2.0 ([1c6d216](https://github.com/microlinkhq/html-get/commit/1c6d216))
+
+
+
 ### [2.2.13](https://github.com/microlinkhq/html-get/compare/v2.2.12...v2.2.13) (2019-08-12)
 
 
