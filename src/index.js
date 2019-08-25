@@ -19,7 +19,7 @@ const ONE_MIN_MS = 60 * 1000
 const ONE_HOUR_MS = ONE_MIN_MS * 60
 const ONE_DAY_MS = ONE_HOUR_MS * 24
 
-const REQ_TIMEOUT = Number(process.env.REQ_TIMEOUT || 6000)
+const REQ_TIMEOUT = Number(process.env.REQ_TIMEOUT || 8000)
 const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
 
 // Puppeteer doesn't resolve redirection well.
