@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.15](https://github.com/microlinkhq/html-get/compare/v2.2.14...v2.2.15) (2019-08-25)
+
+
+### Build System
+
+* increment default timeout ([9609527](https://github.com/microlinkhq/html-get/commit/9609527))
+
+
+
 ### [2.2.14](https://github.com/microlinkhq/html-get/compare/v2.2.13...v2.2.14) (2019-08-12)
 
 
