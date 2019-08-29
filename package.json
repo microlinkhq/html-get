@@ -37,7 +37,7 @@
   "dependencies": {
     "@metascraper/helpers": "~5.6.6",
     "cheerio": "~1.0.0-rc.3",
-    "debug": "~4.1.1",
+    "debug-logfmt": "~1.0.3",
     "got": "~9.6.0",
     "he": "~1.2.0",
     "html-encode": "~2.1.1",

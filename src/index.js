@@ -2,10 +2,10 @@
 
 const { isMediaUrl } = require('@metascraper/helpers')
 const { getDomainWithoutSuffix } = require('tldts')
+const debug = require('debug-logfmt')('html-get')
 const requireOneOf = require('require-one-of')
 const reachableUrl = require('reachable-url')
 const PCancelable = require('p-cancelable')
-const debug = require('debug')('html-get')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const got = require('got')
@@ -28,7 +28,7 @@ const getUrl = mem(async (targetUrl, opts) => {
     })
     return res
   } catch (err) {
-    debug('getUrl:err', err)
+    debug.error('getUrl', { message: err.message || err })
     return { url: targetUrl, headers: {} }
   }
 })
@@ -56,8 +56,8 @@ const fetch = (url, { toEncode, reflect = false, headers, ...opts }) =>
         mode: 'fetch'
       })
     } catch (err) {
-      debug('fetch:error', err.message)
-      debug('fetch:reflect', reflect)
+      debug.error('fetch', { message: err.message || err })
+      debug('fetch', { reflect })
       if (reflect) return resolve({ isRejected: true, err })
       else resolve({ url, html: '', mode: 'fetch' })
     }
@@ -82,11 +82,11 @@ const prerender = async (
       ...opts
     })
     await fetchReq.cancel()
-    debug('prerender:success')
+    debug('prerender', { state: 'success' })
     return { url, html: getHtml(html), mode: 'prerender' }
   } catch (err) {
     const { isRejected, ...dataProps } = await fetchReq
-    debug('prerender:error isRejected?', isRejected, err.message)
+    debug.error('prerender', { isRejected, message: err.message || err })
     isFetchRejected = isRejected
     fetchDataProps = dataProps
   }
@@ -106,7 +106,7 @@ const determinateMode = (url, { prerender }) => {
 }
 const getContent = async (encodedUrl, mode, opts) => {
   const { url, headers: resHeaders } = await getUrl(encodedUrl, opts)
-  debug(`getUrl ${encodedUrl === url ? url : `${encodedUrl} → ${url}`}`)
+  debug('getUrl', encodedUrl === url ? url : `${encodedUrl} → ${url}`)
   const content = await modes[mode](url, opts)
 
   return {
