@@ -92,14 +92,14 @@ const getContent = async (encodedUrl, mode, opts) => {
   let url = encodedUrl
   let headers = {}
 
-  const { isFulfilled, value } = await pingUrl(encodedUrl, {
+  const { isFulfilled, value: res } = await pingUrl(encodedUrl, {
     ...opts,
     timeout: REQ_TIMEOUT_REACHABLE
   })
 
   if (isFulfilled) {
-    url = value.url
-    headers = value.headers
+    url = res.url
+    headers = res.headers
   }
 
   debug('getUrl', encodedUrl === url ? url : `${encodedUrl} → ${url}`)
