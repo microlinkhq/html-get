@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.16](https://github.com/microlinkhq/html-get/compare/v2.2.15...v2.2.16) (2019-08-29)
+
+
+### Build System
+
+* update dependencies ([cde658b](https://github.com/microlinkhq/html-get/commit/cde658b))
+
+
+
 ### [2.2.15](https://github.com/microlinkhq/html-get/compare/v2.2.14...v2.2.15) (2019-08-25)
 
 
