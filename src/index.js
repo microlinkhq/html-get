@@ -4,34 +4,18 @@ const { isMediaUrl } = require('@metascraper/helpers')
 const { getDomainWithoutSuffix } = require('tldts')
 const debug = require('debug-logfmt')('html-get')
 const requireOneOf = require('require-one-of')
-const reachableUrl = require('reachable-url')
 const PCancelable = require('p-cancelable')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const got = require('got')
-const mem = require('mem')
 const he = require('he')
 
 const autoDomains = require('./auto-domains')
+const pingUrl = require('./ping-url')
 const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
 const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
-
-// Puppeteer doesn't resolve redirection well.
-// We need to ensure we have the right url.
-const getUrl = mem(async (targetUrl, opts) => {
-  try {
-    const res = await reachableUrl(targetUrl, {
-      timeout: REQ_TIMEOUT_REACHABLE,
-      ...opts
-    })
-    return res
-  } catch (err) {
-    debug.error('getUrl', { message: err.message || err })
-    return { url: targetUrl, headers: {} }
-  }
-})
 
 const getHtml = html => he.decode(html)
 
@@ -105,13 +89,25 @@ const determinateMode = (url, { prerender }) => {
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
 const getContent = async (encodedUrl, mode, opts) => {
-  const { url, headers: resHeaders } = await getUrl(encodedUrl, opts)
+  let url = encodedUrl
+  let headers = {}
+
+  const res = await pingUrl(encodedUrl, {
+    ...opts,
+    timeout: REQ_TIMEOUT_REACHABLE
+  })
+
+  if (res.isFulfilled) {
+    url = res.url
+    headers = res.headers
+  }
+
   debug('getUrl', encodedUrl === url ? url : `${encodedUrl} → ${url}`)
   const content = await modes[mode](url, opts)
 
   return {
     ...content,
-    html: addHtml({ ...content, headers: resHeaders })
+    html: addHtml({ ...content, headers })
   }
 }
 
@@ -137,3 +133,5 @@ module.exports = async (
   const { url, html, mode } = await getContent(targetUrl, reqMode, opts)
   return { url, html, stats: { mode, timing: time() } }
 }
+
+module.exports.pingUrl = pingUrl

@@ -45,6 +45,7 @@
     "mem": "~5.1.1",
     "mime-types": "~2.1.24",
     "p-cancelable": "~2.0.0",
+    "p-reflect": "~2.1.0",
     "reachable-url": "~1.2.1",
     "require-one-of": "~1.0.11",
     "time-span": "~3.1.0",
