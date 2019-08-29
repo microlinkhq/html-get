@@ -6,7 +6,7 @@ const { compact, reduce, findIndex } = require('lodash')
 const writeJsonFile = require('write-json-file')
 const topsites = require('top-sites')
 
-const { getDomainWithoutSuffix } = require('../src/tlds')
+const { getDomainWithoutSuffix } = require('tldts')
 
 const domains = [
   'facebook',
@@ -42,13 +42,15 @@ const domains = [
 const { top, rest } = reduce(
   domains,
   (acc, domain) => {
-    const index = findIndex(topsites, ({ rootDomain }) => getDomainWithoutSuffix(rootDomain) === domain)
+    const index = findIndex(
+      topsites,
+      ({ rootDomain }) => getDomainWithoutSuffix(rootDomain) === domain
+    )
     if (index !== -1) acc.top[index] = domain
     else acc.rest.push(domain)
     return acc
   },
   { top: new Array(topsites.length), rest: [] }
-
 )
 
 writeJsonFile('./src/auto-domains.json', compact(top).concat(rest))

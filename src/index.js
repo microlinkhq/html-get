@@ -1,6 +1,7 @@
 'use strict'
 
 const { isMediaUrl } = require('@metascraper/helpers')
+const { getDomainWithoutSuffix } = require('tldts')
 const requireOneOf = require('require-one-of')
 const reachableUrl = require('reachable-url')
 const PCancelable = require('p-cancelable')
@@ -11,7 +12,6 @@ const got = require('got')
 const mem = require('mem')
 const he = require('he')
 
-const { getDomainWithoutSuffix } = require('./tlds')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
@@ -70,7 +70,10 @@ const fetch = (url, { toEncode, reflect = false, headers, ...opts }) =>
     }
   })
 
-const prerender = async (url, { getBrowserless, toEncode, headers, gotOptions, ...opts }) => {
+const prerender = async (
+  url,
+  { getBrowserless, toEncode, headers, gotOptions, ...opts }
+) => {
   let fetchReq
   let fetchDataProps = {}
   let isFetchRejected = false
@@ -141,5 +144,3 @@ module.exports = async (
   const { url, html, mode } = await getContent(targetUrl, reqMode, opts)
   return { url, html, stats: { mode, timing: time() } }
 }
-
-module.exports.getDomainWithoutSuffix = getDomainWithoutSuffix
