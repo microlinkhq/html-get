@@ -15,30 +15,23 @@ const he = require('he')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
-const ONE_MIN_MS = 60 * 1000
-const ONE_HOUR_MS = ONE_MIN_MS * 60
-const ONE_DAY_MS = ONE_HOUR_MS * 24
-
-const REQ_TIMEOUT = Number(process.env.REQ_TIMEOUT || 8000)
+const REQ_TIMEOUT = 8000
 const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
 
 // Puppeteer doesn't resolve redirection well.
 // We need to ensure we have the right url.
-const getUrl = mem(
-  async (targetUrl, opts) => {
-    try {
-      const res = await reachableUrl(targetUrl, {
-        timeout: REQ_TIMEOUT_REACHABLE,
-        ...opts
-      })
-      return res
-    } catch (err) {
-      debug('getUrl:err', err)
-      return { url: targetUrl, headers: {} }
-    }
-  },
-  { maxAge: ONE_DAY_MS }
-)
+const getUrl = mem(async (targetUrl, opts) => {
+  try {
+    const res = await reachableUrl(targetUrl, {
+      timeout: REQ_TIMEOUT_REACHABLE,
+      ...opts
+    })
+    return res
+  } catch (err) {
+    debug('getUrl:err', err)
+    return { url: targetUrl, headers: {} }
+  }
+})
 
 const getHtml = html => he.decode(html)
 
