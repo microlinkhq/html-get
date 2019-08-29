@@ -92,23 +92,20 @@ const getContent = async (encodedUrl, mode, opts) => {
   let url = encodedUrl
   let headers = {}
 
-  const res = await pingUrl(encodedUrl, {
+  const { isFulfilled, value } = await pingUrl(encodedUrl, {
     ...opts,
     timeout: REQ_TIMEOUT_REACHABLE
   })
 
-  if (res.isFulfilled) {
-    url = res.url
-    headers = res.headers
+  if (isFulfilled) {
+    url = value.url
+    headers = value.headers
   }
 
   debug('getUrl', encodedUrl === url ? url : `${encodedUrl} → ${url}`)
   const content = await modes[mode](url, opts)
 
-  return {
-    ...content,
-    html: addHtml({ ...content, headers })
-  }
+  return { ...content, html: addHtml({ ...content, headers }) }
 }
 
 module.exports = async (
