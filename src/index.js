@@ -15,7 +15,7 @@ const pingUrl = require('./ping-url')
 const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
-const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * 0.25
+const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * (1 / 3)
 
 const getHtml = html => he.decode(html)
 
@@ -132,3 +132,5 @@ module.exports = async (
 }
 
 module.exports.pingUrl = pingUrl
+module.exports.REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT_REACHABLE
+module.exports.REQ_TIMEOUT = REQ_TIMEOUT
