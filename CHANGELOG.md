@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.20](https://github.com/microlinkhq/html-get/compare/v2.2.19...v2.2.20) (2019-09-02)
+
+
+### Build System
+
+* tweak timeout timing ([657aecc](https://github.com/microlinkhq/html-get/commit/657aecc))
+
+
+
 ### [2.2.19](https://github.com/microlinkhq/html-get/compare/v2.2.18...v2.2.19) (2019-08-29)
 
 
