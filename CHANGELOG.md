@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.21](https://github.com/microlinkhq/html-get/compare/v2.2.20...v2.2.21) (2019-09-13)
+
+
+### Build System
+
+* **deps:** update @metascraper/helpers requirement ([15a4f36](https://github.com/microlinkhq/html-get/commit/15a4f36))
+* **deps:** update @metascraper/helpers requirement from ~5.6.6… ([#56](https://github.com/microlinkhq/html-get/issues/56)) ([d84a9f7](https://github.com/microlinkhq/html-get/commit/d84a9f7))
+
+
+
 ### [2.2.20](https://github.com/microlinkhq/html-get/compare/v2.2.19...v2.2.20) (2019-09-02)
 
 
