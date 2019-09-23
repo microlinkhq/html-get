@@ -61,8 +61,8 @@ const prerender = async (
     const browserless = await getBrowserless()
 
     html = await browserless.html(url, {
-      headers: headers,
       timeout: REQ_TIMEOUT,
+      headers,
       ...opts
     })
     await fetchReq.cancel()
