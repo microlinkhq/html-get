@@ -11,6 +11,7 @@ const { getDomainWithoutSuffix } = require('tldts')
 const domains = [
   'facebook',
   'twitter',
+  'wikipedia',
   'instagram',
   'pinterest',
   'apple',
