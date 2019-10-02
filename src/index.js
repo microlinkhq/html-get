@@ -128,7 +128,7 @@ module.exports = async (
       : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
   const time = timeSpan()
   const { url, html, mode } = await getContent(targetUrl, reqMode, opts)
-  return { url, html, stats: { mode, timing: time() } }
+  return { url, html, stats: { mode, timing: time.rounded() } }
 }
 
 module.exports.pingUrl = pingUrl
