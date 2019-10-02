@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.25](https://github.com/microlinkhq/html-get/compare/v2.2.24...v2.2.25) (2019-10-02)
+
+
+### Build System
+
+* round ms ([af68289](https://github.com/microlinkhq/html-get/commit/af68289))
+
+
+
 ### [2.2.24](https://github.com/microlinkhq/html-get/compare/v2.2.23...v2.2.24) (2019-09-30)
 
 
