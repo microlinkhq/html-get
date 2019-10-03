@@ -35,7 +35,7 @@
     "request"
   ],
   "dependencies": {
-    "@metascraper/helpers": "~5.7.4",
+    "@metascraper/helpers": "~5.7.6",
     "cheerio": "~1.0.0-rc.3",
     "debug-logfmt": "~1.0.3",
     "got": "~9.6.0",
@@ -47,7 +47,7 @@
     "p-cancelable": "~2.0.0",
     "p-reflect": "~2.1.0",
     "reachable-url": "~1.2.1",
-    "require-one-of": "~1.0.12",
+    "require-one-of": "~1.0.13",
     "time-span": "~3.1.0",
     "tldts": "~5.5.0",
     "top-sites": "~1.1.13",
