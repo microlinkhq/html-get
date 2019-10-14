@@ -49,7 +49,7 @@
     "reachable-url": "~1.2.1",
     "require-one-of": "~1.0.13",
     "time-span": "~3.1.0",
-    "tldts": "~5.5.0",
+    "tldts": "~5.6.0",
     "top-sites": "~1.1.13",
     "write-json-file": "~4.2.0"
   },
