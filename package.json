@@ -35,9 +35,9 @@
     "request"
   ],
   "dependencies": {
-    "@metascraper/helpers": "~5.7.6",
+    "@metascraper/helpers": "~5.7.17",
     "cheerio": "~1.0.0-rc.3",
-    "debug-logfmt": "~1.0.3",
+    "debug-logfmt": "~1.0.4",
     "got": "~9.6.0",
     "he": "~1.2.0",
     "html-encode": "~2.1.1",
@@ -49,7 +49,7 @@
     "reachable-url": "~1.2.1",
     "require-one-of": "~1.0.13",
     "time-span": "~3.1.0",
-    "tldts": "~5.6.0",
+    "tldts": "~5.6.1",
     "top-sites": "~1.1.13",
     "write-json-file": "~4.2.0"
   },
