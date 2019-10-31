@@ -92,12 +92,12 @@
     "postrelease": "npm run release:tags && npm run release:github && ci-publish",
     "prerelease": "npm run update:check && npm run contributors",
     "pretest": "npm run lint",
+    "release": "standard-version -a",
     "release:github": "conventional-github-releaser -p angular",
     "release:tags": "git push --follow-tags origin HEAD:master",
-    "release": "standard-version -a",
     "test": "nyc ava --verbose --serial test/html.js test/index.js",
-    "update:check": "ncu -- --error-level 2",
-    "update": "ncu -u"
+    "update": "ncu -u",
+    "update:check": "ncu -- --error-level 2"
   },
   "license": "MIT",
   "commitlint": {
