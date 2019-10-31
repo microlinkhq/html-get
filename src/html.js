@@ -40,7 +40,7 @@ const addHead = ({ $, url, headers }) => {
 
   const locale = $('meta[property="og:locale"]')
   if (!locale.length) {
-    tags.push(`<meta property="og:locale" content="en">`)
+    tags.push('<meta property="og:locale" content="en">')
   }
 
   tags.push(`<meta property="og:url" content="${url}">`)
@@ -93,7 +93,7 @@ const isHTML = (html, contentType) =>
   typeof html === 'string' &&
   html.length > 0
 
-module.exports = ({ html, url, headers }) => {
+module.exports = ({ html, url, headers = {} }) => {
   const contentType = headers['content-type'] || 'text/html; charset=utf-8'
   const content = isHTML(html, contentType) ? html : htmlTemplate()
 

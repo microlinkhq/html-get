@@ -11,21 +11,20 @@ const got = require('got')
 const he = require('he')
 
 const autoDomains = require('./auto-domains')
-const pingUrl = require('./ping-url')
 const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
+// TODO: move out of the library
 const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * (1 / 3)
 
 const getHtml = html => he.decode(html)
 
-const fetch = (url, { toEncode, reflect = false, headers, ...opts }) =>
+const fetch = (url, { reflect = false, toEncode, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
       encoding: null,
       retry: 0,
       timeout: reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
-      headers,
       ...opts
     })
 
@@ -35,9 +34,10 @@ const fetch = (url, { toEncode, reflect = false, headers, ...opts }) =>
     try {
       const res = await req
       return resolve({
-        url: res.url,
+        headers: res.headers,
         html: getHtml(await toEncode(res.body, res.headers['content-type'])),
-        mode: 'fetch'
+        mode: 'fetch',
+        url: res.url
       })
     } catch (err) {
       debug.error('fetch', { message: err.message || err })
@@ -49,33 +49,48 @@ const fetch = (url, { toEncode, reflect = false, headers, ...opts }) =>
 
 const prerender = async (
   url,
-  { getBrowserless, toEncode, headers, gotOptions, ...opts }
+  { getBrowserless, toEncode, headers, gotOpts, ...opts }
 ) => {
-  let fetchReq
+  let fetchRes
   let fetchDataProps = {}
-  let isFetchRejected = false
-  let html = ''
+  let isFetchResRejected = false
 
   try {
-    fetchReq = fetch(url, { reflect: true, toEncode, ...gotOptions })
+    fetchRes = fetch(url, { reflect: true, toEncode, headers, ...gotOpts })
     const browserless = await getBrowserless()
 
-    html = await browserless.html(url, {
+    const getPayload = browserless.evaluate(async (page, response) => ({
+      headers: response.headers(),
+      html: getHtml(await page.content()),
+      mode: 'prerender',
+      url: response.url()
+    }))
+
+    const payload = await getPayload(url, {
       timeout: REQ_TIMEOUT,
       headers,
       ...opts
     })
-    await fetchReq.cancel()
+
+    await fetchRes.cancel()
     debug('prerender', { state: 'success' })
-    return { url, html: getHtml(html), mode: 'prerender' }
+    return payload
   } catch (err) {
-    const { isRejected, ...dataProps } = await fetchReq
-    debug.error('prerender', { isRejected, message: err.message || err })
-    isFetchRejected = isRejected
+    const { isRejected, ...dataProps } = await fetchRes
+    const message = err.message || err
+    debug.error('prerender', { isRejected, message })
+    isFetchResRejected = isRejected
     fetchDataProps = dataProps
   }
 
-  return isFetchRejected ? { url, html, mode: 'prerender' } : fetchDataProps
+  return isFetchResRejected
+    ? {
+      headers: fetchDataProps.headers || {},
+      html: '',
+      url,
+      mode: 'prerender'
+    }
+    : fetchDataProps
 }
 
 const modes = { fetch, prerender }
@@ -88,24 +103,21 @@ const determinateMode = (url, { prerender }) => {
   if (isMediaUrl(url)) return 'fetch'
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
-const getContent = async (encodedUrl, mode, opts) => {
-  let url = encodedUrl
-  let headers = {}
 
-  const { isFulfilled, value: res } = await pingUrl(encodedUrl, {
-    ...opts,
-    timeout: REQ_TIMEOUT_REACHABLE
-  })
+const getContent = async (
+  url,
+  mode,
+  { puppeteerOpts, getBrowserless, gotOpts, toEncode, headers }
+) => {
+  const fetchOpts =
+    mode === 'fetch'
+      ? { headers, toEncode, ...gotOpts }
+      : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
 
-  if (isFulfilled) {
-    url = res.url
-    headers = res.headers
-  }
+  const content = await modes[mode](url, fetchOpts)
 
-  debug('getUrl', encodedUrl === url ? url : `${encodedUrl} → ${url}`)
-  const content = await modes[mode](url, opts)
-
-  return { ...content, html: addHtml({ ...content, headers }) }
+  const html = addHtml({ ...fetchOpts, ...content })
+  return { ...content, html }
 }
 
 module.exports = async (
@@ -114,23 +126,27 @@ module.exports = async (
     getBrowserless = requireOneOf(['@browserless/pool', 'browserless']),
     encoding = 'utf-8',
     getMode = determinateMode,
-    gotOptions,
+    gotOpts,
     prerender = 'auto',
-    puppeteerOpts
+    puppeteerOpts,
+    headers
   } = {}
 ) => {
   const toEncode = htmlEncode(encoding)
   const reqMode = getMode(targetUrl, { prerender })
 
-  const opts =
-    reqMode === 'fetch'
-      ? { toEncode, ...gotOptions }
-      : { toEncode, getBrowserless, gotOptions, ...puppeteerOpts }
   const time = timeSpan()
-  const { url, html, mode } = await getContent(targetUrl, reqMode, opts)
+
+  const { url, html, mode } = await getContent(targetUrl, reqMode, {
+    puppeteerOpts,
+    getBrowserless,
+    gotOpts,
+    toEncode,
+    headers
+  })
+
   return { url, html, stats: { mode, timing: time.rounded() } }
 }
 
-module.exports.pingUrl = pingUrl
 module.exports.REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT_REACHABLE
 module.exports.REQ_TIMEOUT = REQ_TIMEOUT
