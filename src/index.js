@@ -14,8 +14,6 @@ const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
-// TODO: move out of the library
-const REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT * (1 / 3)
 
 const getHtml = html => he.decode(html)
 
@@ -148,5 +146,4 @@ module.exports = async (
   return { url, html, stats: { mode, timing: time.rounded() } }
 }
 
-module.exports.REQ_TIMEOUT_REACHABLE = REQ_TIMEOUT_REACHABLE
 module.exports.REQ_TIMEOUT = REQ_TIMEOUT
