@@ -30,6 +30,7 @@ const domains = [
   'reddit',
   'slideshare',
   'sourceforge',
+  'spotify',
   'techcrunch',
   'telegraph',
   'theverge',
