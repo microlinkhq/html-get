@@ -21,7 +21,6 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
       responseType: 'buffer',
-      retry: 0,
       timeout: reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
       ...opts
     })
@@ -83,11 +82,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: fetchDataProps.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: fetchDataProps.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : fetchDataProps
 }
 
