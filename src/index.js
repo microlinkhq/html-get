@@ -82,11 +82,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-        headers: fetchDataProps.headers || {},
-        html: '',
-        url,
-        mode: 'prerender'
-      }
+      headers: fetchDataProps.headers || {},
+      html: '',
+      url,
+      mode: 'prerender'
+    }
     : fetchDataProps
 }
 
