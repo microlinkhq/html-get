@@ -20,7 +20,7 @@ const getHtml = html => he.decode(html)
 const fetch = (url, { reflect = false, toEncode, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
-      encoding: null,
+      responseType: 'buffer',
       retry: 0,
       timeout: reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
       ...opts

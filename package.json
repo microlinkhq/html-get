@@ -35,21 +35,21 @@
     "request"
   ],
   "dependencies": {
-    "@metascraper/helpers": "~5.10.3",
+    "@metascraper/helpers": "~5.10.7",
     "cheerio": "~1.0.0-rc.3",
     "debug-logfmt": "~1.0.4",
-    "got": "~9.6.0",
+    "got": "~10.4.0",
     "he": "~1.2.0",
     "html-encode": "~2.1.1",
     "lodash": "~4.17.15",
-    "mime-types": "~2.1.24",
+    "mime-types": "~2.1.26",
     "p-cancelable": "~2.0.0",
     "p-reflect": "~2.1.0",
     "require-one-of": "~1.0.13",
     "time-span": "~3.1.0",
-    "tldts": "~5.6.1",
-    "top-sites": "~1.1.13",
-    "write-json-file": "~4.2.0"
+    "tldts": "~5.6.3",
+    "top-sites": "~1.1.15",
+    "write-json-file": "~4.2.1"
   },
   "devDependencies": {
     "@commitlint/cli": "latest",
@@ -74,7 +74,7 @@
     "standard-version": "latest"
   },
   "engines": {
-    "node": ">= 8"
+    "node": ">= 10"
   },
   "files": [
     "bin",
@@ -98,6 +98,12 @@
     "update:check": "ncu -- --error-level 2"
   },
   "license": "MIT",
+  "ava": {
+    "files": [
+      "!test/util.js",
+      "test/**/*.js"
+    ]
+  },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
@@ -111,16 +117,13 @@
   },
   "lint-staged": {
     "package.json": [
-      "finepack",
-      "git add"
+      "finepack"
     ],
     "*.js": [
-      "prettier-standard",
-      "git add"
+      "prettier-standard"
     ],
     "*.md": [
-      "standard-markdown",
-      "git add"
+      "standard-markdown"
     ]
   }
 }
