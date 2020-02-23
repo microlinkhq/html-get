@@ -3,10 +3,12 @@
 const { isMediaUrl } = require('@metascraper/helpers')
 const { getDomainWithoutSuffix } = require('tldts')
 const debug = require('debug-logfmt')('html-get')
+
 const requireOneOf = require('require-one-of')
 const PCancelable = require('p-cancelable')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
+const whoops = require('whoops')
 const got = require('got')
 const he = require('he')
 
@@ -14,6 +16,8 @@ const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
+
+const abortError = whoops('AbortError')
 
 const getHtml = html => he.decode(html)
 
@@ -56,12 +60,16 @@ const prerender = async (
     fetchRes = fetch(url, { reflect: true, toEncode, headers, ...gotOpts })
     const browserless = await getBrowserless()
 
-    const getPayload = browserless.evaluate(async (page, response) => ({
-      headers: response.headers(),
-      html: getHtml(await page.content()),
-      mode: 'prerender',
-      url: response.url()
-    }))
+    const getPayload = browserless.evaluate(async (page, response) => {
+      if (!response) throw abortError()
+
+      return {
+        headers: response.headers(),
+        html: getHtml(await page.content()),
+        mode: 'prerender',
+        url: response.url()
+      }
+    })
 
     const payload = await getPayload(url, {
       timeout: REQ_TIMEOUT,
@@ -82,11 +90,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: fetchDataProps.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: fetchDataProps.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : fetchDataProps
 }
 
