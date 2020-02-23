@@ -103,7 +103,8 @@
     "files": [
       "!test/util.js",
       "test/**/*.js"
-    ]
+    ],
+    "timeout": "2m"
   },
   "commitlint": {
     "extends": [
