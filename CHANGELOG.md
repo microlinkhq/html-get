@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.8](https://github.com/microlinkhq/html-get/compare/v2.3.7...v2.3.8) (2020-02-23)
+
+
+### Bug Fixes
+
+* linter ([7aa80e5](https://github.com/microlinkhq/html-get/commit/7aa80e5de99effa89da00bdb824f73e62055744a))
+* setup shell ([25695a6](https://github.com/microlinkhq/html-get/commit/25695a68fc913b5872c85434ec1d93f5da5bae9f))
+* throw an abort error if response is not present ([78fd15f](https://github.com/microlinkhq/html-get/commit/78fd15fa0a0ba3974b65829a6974e97e413bd6db))
+
 ### [2.3.7](https://github.com/microlinkhq/html-get/compare/v2.3.6...v2.3.7) (2020-02-21)
 
 ### [2.3.6](https://github.com/microlinkhq/html-get/compare/v2.3.5...v2.3.6) (2020-02-19)
