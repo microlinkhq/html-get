@@ -43,14 +43,17 @@ $ npm install puppeteer html-get --save
 
 const getHTML = require('html-get')
 
-getHTML('https://example.com')
-  .then(({ url, html, stats, headers, statusCode }) => `
+getHTML('https://example.com').then(
+  ({ url, html, stats, headers, statusCode }) =>
+    console.log(`
        url: ${url}
-      html: ${Buffer.from(html).byteLength} bytes.
-      time: ${stats.timing} (${stats.mode}).
-   headers: ${headers}
-statusCode: ${statusCode}
-`)
+      html: ${Buffer.from(html).byteLength} bytes (HTTP ${statusCode})
+      time: ${stats.timing} (${stats.mode})
+   headers: ${Object.keys(headers).reduce(
+     (acc, key) => `${acc}${key}=${headers[key]} `,
+     ''
+   )}
+`))
 ```
 
 ### Command Line
