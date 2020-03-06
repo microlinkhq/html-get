@@ -148,3 +148,9 @@ test('get html from video url', async t => {
   t.is(stats.mode, 'fetch')
   t.is(url, urlDetected)
 })
+
+test('get status code', async t => {
+  const url = 'https://example.com'
+  t.is(await wait(getHTML(url, { prerender: false }), 'statusCode'), 200)
+  t.is(await wait(getHTML(url, { prerender: true }), 'statusCode'), 200)
+})

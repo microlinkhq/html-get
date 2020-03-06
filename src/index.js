@@ -38,7 +38,8 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
         headers: res.headers,
         html: getHtml(await toEncode(res.body, res.headers['content-type'])),
         mode: 'fetch',
-        url: res.url
+        url: res.url,
+        statusCode: res.statusCode
       })
     } catch (err) {
       debug.error('fetch', { message: err.message || err })
@@ -67,7 +68,8 @@ const prerender = async (
         headers: response.headers(),
         html: getHtml(await page.content()),
         mode: 'prerender',
-        url: response.url()
+        url: response.url(),
+        statusCode: response.status()
       }
     })
 
@@ -90,11 +92,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: fetchDataProps.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: fetchDataProps.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : fetchDataProps
 }
 
@@ -120,7 +122,6 @@ const getContent = async (
       : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
 
   const content = await modes[mode](url, fetchOpts)
-
   const html = addHtml({ ...fetchOpts, ...content })
   return { ...content, html }
 }
@@ -142,7 +143,7 @@ module.exports = async (
 
   const time = timeSpan()
 
-  const { url, html, mode } = await getContent(targetUrl, reqMode, {
+  const { mode, ...payload } = await getContent(targetUrl, reqMode, {
     puppeteerOpts,
     getBrowserless,
     gotOpts,
@@ -150,7 +151,7 @@ module.exports = async (
     headers
   })
 
-  return { url, html, stats: { mode, timing: time.rounded() } }
+  return { ...payload, stats: { mode, timing: time.rounded() } }
 }
 
 module.exports.REQ_TIMEOUT = REQ_TIMEOUT
