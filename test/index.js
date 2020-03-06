@@ -154,3 +154,15 @@ test('get status code', async t => {
   t.is(await wait(getHTML(url, { prerender: false }), 'statusCode'), 200)
   t.is(await wait(getHTML(url, { prerender: true }), 'statusCode'), 200)
 })
+
+test('get headers', async t => {
+  const url = 'https://example.com'
+  t.true(
+    typeof (await wait(getHTML(url, { prerender: false }), 'headers')) ===
+      'object'
+  )
+  t.true(
+    typeof (await wait(getHTML(url, { prerender: true }), 'headers')) ===
+      'object'
+  )
+})

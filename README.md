@@ -30,7 +30,6 @@ Generally this approach better than a simple GET request from the target URL, bu
 - If it needs prerendering, perform the action using Headless technology, blocking ads trackers requests for speed up the process, trying to resolve the main request in the minimum amount of time.
 - If it does not need prerendering or prerendering fails for any reason (for example, timeout), the request will be resolved doing a GET request.
 
-
 ## Install
 
 ```bash
@@ -43,16 +42,21 @@ $ npm install puppeteer html-get --save
 'use strict'
 
 const getHTML = require('html-get')
-;(async () => {
-  const { url, html, stats } = await getHTML('https://kikobeats.com')
-  console.log(url, stats, html.length)
-})()
+
+getHTML('https://example.com')
+  .then(({ url, html, stats, headers, statusCode }) => `
+       url: ${url}
+      html: ${Buffer.from(html).byteLength} bytes.
+      time: ${stats.timing} (${stats.mode}).
+   headers: ${headers}
+statusCode: ${statusCode}
+`)
 ```
 
 ### Command Line
 
 ```
-$ npx html-get https://kikobeats.com
+$ npx html-get https://example.com
 ```
 
 ## API
