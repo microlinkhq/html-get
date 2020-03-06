@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/microlinkhq/html-get/compare/v2.3.10...v2.4.0) (2020-03-06)
+
+
+### Features
+
+* expose status code ([b66c1e0](https://github.com/microlinkhq/html-get/commit/b66c1e0365690f0526540f1e612c5f9b97f6b430))
+
+
+### Bug Fixes
+
+* linter ([b70ae44](https://github.com/microlinkhq/html-get/commit/b70ae44a17e45994b3f1324f2c69aa87a4c56072))
+
 ### [2.3.10](https://github.com/microlinkhq/html-get/compare/v2.3.9...v2.3.10) (2020-02-25)
 
 ### [2.3.9](https://github.com/microlinkhq/html-get/compare/v2.3.8...v2.3.9) (2020-02-23)
