@@ -38,7 +38,7 @@
     "@metascraper/helpers": "~5.11.9",
     "cheerio": "~1.0.0-rc.3",
     "debug-logfmt": "~1.0.4",
-    "got": "~11.0.2",
+    "got": "~11.1.0",
     "he": "~1.2.0",
     "html-encode": "~2.1.1",
     "lodash": "~4.17.15",
