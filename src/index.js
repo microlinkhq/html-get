@@ -30,7 +30,7 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
     })
 
     onCancel.shouldReject = false
-    onCancel(req.cancel)
+    onCancel(req.cancel.bind(req))
 
     try {
       const res = await req
@@ -92,11 +92,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: fetchDataProps.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: fetchDataProps.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : fetchDataProps
 }
 
