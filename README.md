@@ -103,6 +103,12 @@ Encoding the HTML markup properly from the body response.
 
 It determines the encode to use A Node.js library for converting HTML documents of arbitrary encoding into a target encoding (utf8, utf16, etc).
 
+##### headers
+
+Type: `object`<br>
+
+Request headers that will be passed to fetch/prerender process.
+
 ##### getMode
 
 Type: `function`<br>
