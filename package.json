@@ -12,12 +12,6 @@
     "name": "Kiko Beats",
     "url": "https://kikobeats.com"
   },
-  "contributors": [
-    {
-      "name": "Travis CI",
-      "email": "travis@travis-ci.org"
-    }
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microlinkhq/html-get.git"
