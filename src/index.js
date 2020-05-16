@@ -3,12 +3,12 @@
 const { isMediaUrl } = require('@metascraper/helpers')
 const { getDomainWithoutSuffix } = require('tldts')
 const debug = require('debug-logfmt')('html-get')
+const { AbortError } = require('p-retry')
 
 const requireOneOf = require('require-one-of')
 const PCancelable = require('p-cancelable')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
-const whoops = require('whoops')
 const got = require('got')
 const he = require('he')
 
@@ -16,8 +16,6 @@ const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
-
-const abortError = whoops('AbortError')
 
 const getHtml = html => he.decode(html)
 
@@ -62,7 +60,7 @@ const prerender = async (
     const browserless = await getBrowserless()
 
     const getPayload = browserless.evaluate(async (page, response) => {
-      if (!response) throw abortError()
+      if (!response) throw AbortError()
 
       return {
         headers: response.headers(),
