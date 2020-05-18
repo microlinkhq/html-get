@@ -5,7 +5,8 @@ const test = require('ava')
 const html = require('../src/html')
 const { prettyHtml } = require('./util')
 
-const is = (t, html1, html2) => t.deepEqual(prettyHtml(html1), prettyHtml(html2))
+const is = (t, html1, html2) =>
+  t.deepEqual(prettyHtml(html1), prettyHtml(html2))
 
 test('add base html if not present', t => {
   const output = html({
@@ -125,7 +126,8 @@ test('add audio markup', t => {
 
 test('add video markup', t => {
   const output = html({
-    url: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
+    url:
+      'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
     html: '<html lang="en"><body></body></html>',
     headers: {
       'content-type': 'video/mp4'

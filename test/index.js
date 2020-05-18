@@ -10,33 +10,25 @@ const wait = async (promise, prop) => {
   return prop ? res[prop] : res
 }
 
-test('prerender by default', async t => {
+test('get headers', async t => {
   const url = 'https://example.com'
-  const { stats } = await getHTML(url)
-  t.is(stats.mode, 'prerender')
+  t.true(
+    typeof (await wait(getHTML(url, { prerender: false }), 'headers')) ===
+      'object'
+  )
+  t.true(
+    typeof (await wait(getHTML(url, { prerender: true }), 'headers')) ===
+      'object'
+  )
 })
 
-test('disable prerender explicitly', async t => {
+test('get status code', async t => {
   const url = 'https://example.com'
-  const { stats } = await getHTML(url, { prerender: false })
-  t.is(stats.mode, 'fetch')
+  t.is(await wait(getHTML(url, { prerender: false }), 'statusCode'), 200)
+  t.is(await wait(getHTML(url, { prerender: true }), 'statusCode'), 200)
 })
 
-test('prerender auto detection', async t => {
-  const url = 'https://facebook.com'
-  const { stats } = await getHTML(url)
-  t.is(stats.mode, 'fetch')
-})
-
-test.skip('prerender error fallback into fetch mode', async t => {
-  const url =
-    'https://www.sportsnet.ca/hockey/nhl/leafs-john-tavares-return-new-york-hope-positive/'
-  const { stats, html } = await getHTML(url, { prerender: true })
-  t.true(!!html)
-  t.is(stats.mode, 'fetch')
-})
-
-test('unreachable urls', async t => {
+test('handle unrecheable urls', async t => {
   const url = 'https://notexisturl.dev'
   const html = `
   <!DOCTYPE html>
@@ -66,7 +58,7 @@ test('unreachable urls', async t => {
   )
 })
 
-test('decode base64 entities', async t => {
+test('decode base64 entities properly', async t => {
   const url =
     'https://gist.githubusercontent.com/Kikobeats/912a6c2158de3f3c30d0d7c7697af393/raw/d47d9df77696d9a42df192b7aedbf6cfd2ad393e/index.html'
 
@@ -149,20 +141,16 @@ test('get html from video url', async t => {
   t.is(url, urlDetected)
 })
 
-test('get status code', async t => {
-  const url = 'https://example.com'
-  t.is(await wait(getHTML(url, { prerender: false }), 'statusCode'), 200)
-  t.is(await wait(getHTML(url, { prerender: true }), 'statusCode'), 200)
-})
+test.only('get html from bad SSL urls', async t => {
+  const url = 'https://self-signed.badssl.com/'
+  const { url: urlDetected, stats, html } = await getHTML(url, {
+    prerender: false,
+    gotOpts: {
+      rejectUnauthorized: false
+    }
+  })
 
-test('get headers', async t => {
-  const url = 'https://example.com'
-  t.true(
-    typeof (await wait(getHTML(url, { prerender: false }), 'headers')) ===
-      'object'
-  )
-  t.true(
-    typeof (await wait(getHTML(url, { prerender: true }), 'headers')) ===
-      'object'
-  )
+  t.true(html.includes('background: red'))
+  t.is(stats.mode, 'fetch')
+  t.is(url, urlDetected)
 })
