@@ -141,7 +141,7 @@ test('get html from video url', async t => {
   t.is(url, urlDetected)
 })
 
-test.only('get html from bad SSL urls', async t => {
+test('get html from bad SSL urls', async t => {
   const url = 'https://self-signed.badssl.com/'
   const { url: urlDetected, stats, html } = await getHTML(url, {
     prerender: false,
