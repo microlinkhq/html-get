@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.12](https://github.com/microlinkhq/html-get/compare/v2.4.11...v2.4.12) (2020-05-19)
+
+
+### Bug Fixes
+
+* remove .only ([ef498da](https://github.com/microlinkhq/html-get/commit/ef498da1ab94bd63ced63cb109b79559370a39a5))
+
 ### [2.4.11](https://github.com/microlinkhq/html-get/compare/v2.4.10...v2.4.11) (2020-05-18)
 
 ### [2.4.10](https://github.com/microlinkhq/html-get/compare/v2.4.9...v2.4.10) (2020-05-16)
