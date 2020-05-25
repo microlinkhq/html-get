@@ -22,7 +22,6 @@ const domains = [
   'github',
   'huffingtonpost',
   'imdb',
-  'instagram',
   'medium',
   'meetup',
   'microsoft',
