@@ -38,6 +38,7 @@ const domains = [
   'vimeo',
   'washingtonpost',
   'wikipedia',
+  'ycombinator',
   'yelp'
 ]
 
