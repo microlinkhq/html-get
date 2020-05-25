@@ -27,6 +27,7 @@ const domains = [
   'microsoft',
   'nytimes',
   'pinterest',
+  'producthunt',
   'reddit',
   'slideshare',
   'sourceforge',
