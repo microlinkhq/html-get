@@ -109,41 +109,42 @@ test('decode base64 entities properly', async t => {
 })
 
 test('get html from audio url', async t => {
-  const url = 'https://audiodemos.github.io/vctk_set0/embedadapt_100sample.wav'
-  const { url: urlDetected, stats, html } = await getHTML(url, {
+  const targetUrl =
+    'https://audiodemos.github.io/vctk_set0/embedadapt_100sample.wav'
+  const { url, stats, html } = await getHTML(targetUrl, {
     prerender: false
   })
 
   t.true(html.includes('<audio src'))
   t.is(stats.mode, 'fetch')
-  t.is(url, urlDetected)
+  t.is(url, targetUrl)
 })
 
 test('get html from image url', async t => {
-  const url = 'https://kikobeats.com/images/avatar.jpg'
-  const { url: urlDetected, stats, html } = await getHTML(url, {
+  const targetUrl = 'https://kikobeats.com/images/avatar.jpg'
+  const { url, stats, html } = await getHTML(targetUrl, {
     prerender: false
   })
 
   t.true(html.includes('<img src'))
   t.is(stats.mode, 'fetch')
-  t.is(url, urlDetected)
+  t.is(url, targetUrl)
 })
 
 test('get html from video url', async t => {
-  const url = 'http://techslides.com/demos/sample-videos/small.mp4'
-  const { url: urlDetected, stats, html } = await getHTML(url, {
+  const targetUrl = 'http://techslides.com/demos/sample-videos/small.mp4'
+  const { url, stats, html } = await getHTML(targetUrl, {
     prerender: false
   })
 
   t.true(html.includes('<video src'))
   t.is(stats.mode, 'fetch')
-  t.is(url, urlDetected)
+  t.is(url, targetUrl)
 })
 
 test('get html from bad SSL urls', async t => {
-  const url = 'https://self-signed.badssl.com/'
-  const { url: urlDetected, stats, html } = await getHTML(url, {
+  const targetUrl = 'https://self-signed.badssl.com/'
+  const { url, stats, html } = await getHTML(targetUrl, {
     prerender: false,
     gotOpts: {
       rejectUnauthorized: false
@@ -152,5 +153,5 @@ test('get html from bad SSL urls', async t => {
 
   t.true(html.includes('background: red'))
   t.is(stats.mode, 'fetch')
-  t.is(url, urlDetected)
+  t.is(url, targetUrl)
 })
