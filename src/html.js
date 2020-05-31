@@ -97,11 +97,7 @@ module.exports = ({ html, url, headers = {} }) => {
   const contentType = headers['content-type'] || 'text/html; charset=utf-8'
   const content = isHTML(html, contentType) ? html : htmlTemplate()
 
-  const $ = cheerio.load(content, {
-    decodeEntities: false,
-    lowerCaseTags: true,
-    lowerCaseAttributeNames: true
-  })
+  const $ = cheerio.load(content)
 
   addHead({ $, url, headers })
 
