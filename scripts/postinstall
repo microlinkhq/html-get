@@ -23,6 +23,7 @@ const domains = [
   'ghost',
   'giphy',
   'github',
+  'google',
   'huffingtonpost',
   'imdb',
   'imgur',
