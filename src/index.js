@@ -10,14 +10,11 @@ const PCancelable = require('p-cancelable')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const got = require('got')
-const he = require('he')
 
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
-
-const getHtml = html => he.decode(html)
 
 const fetch = (url, { reflect = false, toEncode, ...opts }) =>
   new PCancelable(async (resolve, reject, onCancel) => {
@@ -34,7 +31,7 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
       const res = await req
       return resolve({
         headers: res.headers,
-        html: getHtml(await toEncode(res.body, res.headers['content-type'])),
+        html: await toEncode(res.body, res.headers['content-type']),
         mode: 'fetch',
         url: res.url,
         statusCode: res.statusCode
@@ -64,7 +61,7 @@ const prerender = async (
 
       return {
         headers: response.headers(),
-        html: getHtml(await page.content()),
+        html: await page.content(),
         mode: 'prerender',
         url: response.url(),
         statusCode: response.status()
@@ -90,11 +87,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: fetchDataProps.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: fetchDataProps.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : fetchDataProps
 }
 
