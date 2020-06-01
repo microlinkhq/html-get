@@ -147,7 +147,7 @@ test('get html from bad SSL urls', async t => {
   const { url, stats, html } = await getHTML(targetUrl, {
     prerender: false,
     gotOpts: {
-      rejectUnauthorized: false
+      https: { rejectUnauthorized: false }
     }
   })
 
