@@ -1,7 +1,6 @@
 'use strict'
 
-const { isMime } = require('@metascraper/helpers')
-const isRelativeUrl = require('is-relative-url')
+const { isUrl, isMime } = require('@metascraper/helpers')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
 const { forEach, isString } = require('lodash')
@@ -105,7 +104,7 @@ const rewriteHtmlUrls = ({ $, url }) => {
 
       if (isCdnUrl(attr)) {
         newAttr = `https:${attr}`
-      } else if (isRelativeUrl(attr)) {
+      } else if (isUrl(attr, { relative: true })) {
         newAttr = new URL(attr, url).toString()
       }
 
@@ -127,7 +126,7 @@ const rewriteCssUrls = ({ html, url }) => {
 
     if (isCdnUrl(cssUrl)) {
       replacement = `https:${cssUrl}`
-    } else if (isRelativeUrl(cssUrl)) {
+    } else if (isUrl(cssUrl, { relative: true })) {
       replacement = new URL(cssUrl, url).toString()
     }
 
