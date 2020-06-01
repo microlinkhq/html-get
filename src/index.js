@@ -87,11 +87,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: fetchDataProps.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: fetchDataProps.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : fetchDataProps
 }
 
@@ -111,13 +111,16 @@ const getContent = async (
   mode,
   { puppeteerOpts, getBrowserless, gotOpts, toEncode, headers }
 ) => {
-  const fetchOpts =
-    mode === 'fetch'
-      ? { headers, toEncode, ...gotOpts }
-      : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
+  const isFetchMode = mode === 'fetch'
+  const fetchOpts = isFetchMode
+    ? { headers, toEncode, ...gotOpts }
+    : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
 
   const content = await modes[mode](url, fetchOpts)
-  const html = addHtml({ ...content, ...puppeteerOpts })
+  const html = addHtml({
+    ...content,
+    ...(isFetchMode ? puppeteerOpts : undefined)
+  })
   return { ...content, html }
 }
 
