@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/microlinkhq/html-get/compare/v2.5.0...v2.6.0) (2020-06-01)
+
+
+### Features
+
+* rewrite urls inside css ([52ff754](https://github.com/microlinkhq/html-get/commit/52ff75443be91c6b0b2b8277465511d7337ddefa))
+
 ## [2.5.0](https://github.com/microlinkhq/html-get/compare/v2.4.18...v2.5.0) (2020-06-01)
 
 
