@@ -1,9 +1,9 @@
 'use strict'
 
+const { castArray, forEach, isString } = require('lodash')
 const { isUrl, isMime } = require('@metascraper/helpers')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
-const { forEach, isString } = require('lodash')
 const mimeTypes = require('mime-types')
 const cssUrl = require('css-url-regex')
 const isCdnUrl = require('is-cdn-url')
@@ -138,12 +138,39 @@ const rewriteCssUrls = ({ html, url }) => {
   return html
 }
 
+const injectStyle = ({ $, styles }) =>
+  castArray(styles).forEach(style =>
+    $('head').append(
+      isUrl(style)
+        ? `<link rel="stylesheet" type="text/css" href="${style}">`
+        : `<style type="text/css">${style}</style>`
+    )
+  )
+
+const injectScripts = ({ $, scripts, type }) =>
+  castArray(scripts).forEach(script =>
+    $('head').append(
+      isUrl(script)
+        ? `<script src="${script}" type="${type}"></script>`
+        : `<script type="${type}">${script}</script>`
+    )
+  )
+
 const isHTML = (html, contentType) =>
   HTML_MIME_EXT.includes(mimeTypes.extension(contentType)) &&
   typeof html === 'string' &&
   html.length > 0
 
-module.exports = ({ html, url, headers = {} }) => {
+module.exports = ({
+  html,
+  url,
+  headers = {},
+  styles,
+  hide,
+  remove,
+  scripts,
+  modules
+}) => {
   const contentType = headers['content-type'] || 'text/html; charset=utf-8'
   const content = isHTML(html, contentType) ? html : htmlTemplate()
 
@@ -170,6 +197,25 @@ module.exports = ({ html, url, headers = {} }) => {
       body: url => `<audio src="${url}"></audio>`
     })
   }
+
+  if (styles) injectStyle({ $, styles })
+
+  if (hide) {
+    injectStyle({
+      $,
+      styles: `${castArray(hide).join(', ')} { visibility: hidden !important; }`
+    })
+  }
+
+  if (remove) {
+    injectStyle({
+      $,
+      styles: `${castArray(remove).join(', ')} { display: none !important; }`
+    })
+  }
+
+  if (scripts) injectScripts({ $, scripts, type: 'text/javascript' })
+  if (modules) injectScripts({ $, modules, type: 'module' })
 
   return rewriteCssUrls({ html: $.html(), url })
 }

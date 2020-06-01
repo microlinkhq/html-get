@@ -215,3 +215,129 @@ test('rewrite all matches of URLs inside CSS', t => {
 
   t.is(results.length, 2)
 })
+
+test('styles injection', t => {
+  const output = html({
+    url: 'https://kikobeats.com',
+    html: `<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <meta property="og:site_name" content="kikobeats.com">
+        <meta property="og:locale" content="en">
+        <meta property="og:url" content="https://kikobeats.com">
+        <link rel="canonical" href="https://kikobeats.com">
+      </head>
+      <body>
+      </body>
+    </html>`,
+    styles: [
+      'https://necolas.github.io/normalize.css/8.0.1/normalize.css',
+      'body { background: black; }'
+    ]
+  })
+
+  t.true(
+    output.includes(
+      '<link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">'
+    )
+  )
+
+  t.true(output.includes('background: black'))
+})
+
+test('scripts injection', t => {
+  const output = html({
+    url: 'https://kikobeats.com',
+    html: `<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <meta property="og:site_name" content="kikobeats.com">
+        <meta property="og:locale" content="en">
+        <meta property="og:url" content="https://kikobeats.com">
+        <link rel="canonical" href="https://kikobeats.com">
+      </head>
+      <body>
+      </body>
+    </html>`,
+    scripts: [
+      `
+      ;(function mutateWindow () {
+        const iframe = document.createElement('iframe')
+        iframe.style.display = 'none'
+        document.body.appendChild(iframe)
+
+        const a = Object.getOwnPropertyNames(iframe.contentWindow)
+        const b = Object.getOwnPropertyNames(window)
+
+        const diffKeys = b.filter(c => !a.includes(c))
+        const diffObj = {}
+        diffKeys.forEach(key => (diffObj[key] = window[key]))
+
+        console.log('Found', diffKeys.length, 'keys mutates on window')
+        copy(diffObj)
+        console.log('Copied to clipboard!')
+      })()`,
+      'https://code.jquery.com/jquery-3.5.1.min.js'
+    ]
+  })
+
+  t.true(output.includes('mutateWindow'))
+
+  t.true(
+    output.includes(
+      '<script src="https://code.jquery.com/jquery-3.5.1.min.js" type="text/javascript"></script>'
+    )
+  )
+})
+
+test('hide elements', t => {
+  const output = html({
+    url: 'https://kikobeats.com',
+    html: `<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <meta property="og:site_name" content="kikobeats.com">
+        <meta property="og:locale" content="en">
+        <meta property="og:url" content="https://kikobeats.com">
+        <link rel="canonical" href="https://kikobeats.com">
+      </head>
+      <body>
+      </body>
+    </html>`,
+    hide: '#banner'
+  })
+
+  t.true(output.includes('#banner { visibility: hidden !important; }'))
+})
+
+test('remove elements', t => {
+  const output = html({
+    url: 'https://kikobeats.com',
+    html: `<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <meta property="og:site_name" content="kikobeats.com">
+        <meta property="og:locale" content="en">
+        <meta property="og:url" content="https://kikobeats.com">
+        <link rel="canonical" href="https://kikobeats.com">
+      </head>
+      <body>
+      </body>
+    </html>`,
+    remove: '#banner'
+  })
+
+  t.true(output.includes('#banner { display: none !important; }'))
+})
