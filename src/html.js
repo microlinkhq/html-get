@@ -1,7 +1,11 @@
 'use strict'
 
 const { isMime } = require('@metascraper/helpers')
+const isRelativeUrl = require('is-relative-url')
+const { TAGS: URL_TAGS } = require('html-urls')
+const { forEach, isString } = require('lodash')
 const mimeTypes = require('mime-types')
+const isCdnUrl = require('is-cdn-url')
 const { getDomain } = require('tldts')
 const cheerio = require('cheerio')
 const { URL } = require('url')
@@ -88,6 +92,24 @@ const htmlTemplate = () => `
   </html>
 `
 
+const rewriteUrls = ({ $, url }) =>
+  forEach(URL_TAGS, (tagName, urlAttr) => {
+    $(tagName.join(',')).each(function () {
+      const el = $(this)
+      const attr = el.attr(urlAttr)
+      if (!isString(attr)) return
+      let newAttr
+
+      if (isCdnUrl(attr)) {
+        newAttr = `https:${attr}`
+      } else if (isRelativeUrl(attr)) {
+        newAttr = new URL(attr, url).toString()
+      }
+
+      if (newAttr !== undefined) el.attr(urlAttr, newAttr)
+    })
+  })
+
 const isHTML = (html, contentType) =>
   HTML_MIME_EXT.includes(mimeTypes.extension(contentType)) &&
   typeof html === 'string' &&
@@ -99,6 +121,7 @@ module.exports = ({ html, url, headers = {} }) => {
 
   const $ = cheerio.load(content)
 
+  rewriteUrls({ $, url, headers })
   addHead({ $, url, headers })
 
   if (isMime(contentType, 'image')) {

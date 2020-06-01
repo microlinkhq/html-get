@@ -1,6 +1,8 @@
 'use strict'
 
 const test = require('ava')
+const path = require('path')
+const fs = require('fs')
 
 const html = require('../src/html')
 const { prettyHtml } = require('./util')
@@ -155,4 +157,20 @@ test('add video markup', t => {
 `
 
   is(t, output, expected)
+})
+
+test('rewrite urls into absolute', t => {
+  const output = html({
+    url: 'https://browserless.js.org',
+    html: fs.readFileSync(
+      path.resolve(__dirname, 'fixtures/browserless.html'),
+      'utf8'
+    ),
+    headers: {
+      'content-type': 'text/html; charset=utf-8'
+    }
+  })
+
+  t.true(output.includes('https://browserless.js.org/static/main.min.js'))
+  t.true(output.includes('https://unpkg.com/docsify/lib/docsify.min.js'))
 })
