@@ -3,10 +3,13 @@
 const { isMime } = require('@metascraper/helpers')
 const isRelativeUrl = require('is-relative-url')
 const { TAGS: URL_TAGS } = require('html-urls')
+const replaceString = require('replace-string')
 const { forEach, isString } = require('lodash')
 const mimeTypes = require('mime-types')
+const cssUrl = require('css-url-regex')
 const isCdnUrl = require('is-cdn-url')
 const { getDomain } = require('tldts')
+const execall = require('execall')
 const cheerio = require('cheerio')
 const { URL } = require('url')
 const path = require('path')
@@ -92,7 +95,7 @@ const htmlTemplate = () => `
   </html>
 `
 
-const rewriteUrls = ({ $, url }) =>
+const rewriteHtmlUrls = ({ $, url }) => {
   forEach(URL_TAGS, (tagName, urlAttr) => {
     $(tagName.join(',')).each(function () {
       const el = $(this)
@@ -109,6 +112,32 @@ const rewriteUrls = ({ $, url }) =>
       if (newAttr !== undefined) el.attr(urlAttr, newAttr)
     })
   })
+}
+
+const rewriteCssUrls = ({ html, url }) => {
+  const cssUrls = Array.from(
+    execall(cssUrl(), html).reduce((acc, match) => {
+      match.subMatches.forEach(match => acc.add(match))
+      return acc
+    }, new Set())
+  )
+
+  cssUrls.forEach(cssUrl => {
+    let replacement
+
+    if (isCdnUrl(cssUrl)) {
+      replacement = `https:${cssUrl}`
+    } else if (isRelativeUrl(cssUrl)) {
+      replacement = new URL(cssUrl, url).toString()
+    }
+
+    if (replacement !== undefined) {
+      html = replaceString(html, cssUrl, replacement)
+    }
+  })
+
+  return html
+}
 
 const isHTML = (html, contentType) =>
   HTML_MIME_EXT.includes(mimeTypes.extension(contentType)) &&
@@ -121,7 +150,8 @@ module.exports = ({ html, url, headers = {} }) => {
 
   const $ = cheerio.load(content)
 
-  rewriteUrls({ $, url, headers })
+  rewriteHtmlUrls({ $, url, headers })
+
   addHead({ $, url, headers })
 
   if (isMime(contentType, 'image')) {
@@ -142,7 +172,7 @@ module.exports = ({ html, url, headers = {} }) => {
     })
   }
 
-  return $.html()
+  return rewriteCssUrls({ html: $.html(), url })
 }
 
 module.exports.isHTML = isHTML

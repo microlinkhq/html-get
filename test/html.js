@@ -1,7 +1,8 @@
 'use strict'
 
-const test = require('ava')
+const execall = require('execall')
 const path = require('path')
+const test = require('ava')
 const fs = require('fs')
 
 const html = require('../src/html')
@@ -159,7 +160,7 @@ test('add video markup', t => {
   is(t, output, expected)
 })
 
-test('rewrite urls into absolute', t => {
+test('rewrite relative & CDN URLs into absolutes', t => {
   const output = html({
     url: 'https://browserless.js.org',
     html: fs.readFileSync(
@@ -173,4 +174,44 @@ test('rewrite urls into absolute', t => {
 
   t.true(output.includes('https://browserless.js.org/static/main.min.js'))
   t.true(output.includes('https://unpkg.com/docsify/lib/docsify.min.js'))
+})
+
+test('rewrite URLs inside CSS', t => {
+  const output = html({
+    url: 'https://browserless.js.org',
+    html: fs.readFileSync(
+      path.resolve(__dirname, 'fixtures/browserless.html'),
+      'utf8'
+    ),
+    headers: {
+      'content-type': 'text/html; charset=utf-8'
+    }
+  })
+
+  t.true(output.includes('https://browserless.js.org/static/main.min.js'))
+  t.true(output.includes('https://unpkg.com/docsify/lib/docsify.min.js'))
+})
+
+test('rewrite all matches of URLs inside CSS', t => {
+  const output = html({
+    url: 'https://kikobeats.com',
+    html: `
+    <html lang="en">
+      <body>
+        <div style="background-image: url(/images/microlink.jpg)"></div>
+        <div style="background-image: url(/images/microlink.jpg)"></div>
+      </body>
+    </html>
+    `,
+    headers: {
+      'content-type': 'text/html; charset=utf-8'
+    }
+  })
+
+  const results = execall(
+    new RegExp('https://kikobeats.com/images/microlink.jpg', 'g'),
+    output
+  )
+
+  t.is(results.length, 2)
 })
