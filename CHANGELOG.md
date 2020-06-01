@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.6.3](https://github.com/microlinkhq/html-get/compare/v2.6.2...v2.6.3) (2020-06-01)
+
+
+### Bug Fixes
+
+* linter ([028bc8e](https://github.com/microlinkhq/html-get/commit/028bc8ea29f4aae3c9744b13997c269831950b61))
+* prevent inject twice ([ec9720a](https://github.com/microlinkhq/html-get/commit/ec9720a7e27b11b2008cbe25a53ca0c8c3d2d165))
+
 ### [2.6.2](https://github.com/microlinkhq/html-get/compare/v2.6.1...v2.6.2) (2020-06-01)
 
 
