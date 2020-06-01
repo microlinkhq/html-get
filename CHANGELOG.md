@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/microlinkhq/html-get/compare/v2.4.18...v2.5.0) (2020-06-01)
+
+
+### Features
+
+* remove non necessary he dependency ([d2a33ae](https://github.com/microlinkhq/html-get/commit/d2a33ae9723be5fcae22218d570b1dc5a4f088f0))
+* rewrite urls into absolute ([29efdb9](https://github.com/microlinkhq/html-get/commit/29efdb98e868b6e7b79b8f4438f0799322f29efc))
+
+
+### Bug Fixes
+
+* linter ([820e019](https://github.com/microlinkhq/html-get/commit/820e01936fa8c23c568fec9a0d78b6b71901b0bc))
+
 ### [2.4.18](https://github.com/microlinkhq/html-get/compare/v2.4.16...v2.4.18) (2020-05-31)
 
 ### [2.4.17](https://github.com/microlinkhq/html-get/compare/v2.4.16...v2.4.17) (2020-05-31)
