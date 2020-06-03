@@ -1,7 +1,7 @@
 'use strict'
 
 const { get, split, nth, castArray, forEach, isString } = require('lodash')
-const { isUrl, isMime } = require('@metascraper/helpers')
+const { date: toDate, isUrl, isMime } = require('@metascraper/helpers')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
 const isHTML = require('is-html-content')
@@ -22,6 +22,7 @@ const addHead = ({ $, url, headers }) => {
   const contentType = get(headers, 'content-type')
   const charset = nth(split(contentType, 'charset='), 1)
   const timestamp = get(headers, 'last-modified') || get(headers, 'date')
+  const date = timestamp && toDate(timestamp)
 
   const head = $('head')
 
@@ -33,11 +34,11 @@ const addHead = ({ $, url, headers }) => {
     `<meta property="og:site_name" content="${getDomain(url)}">`
   )
 
-  if (timestamp) {
+  if (date) {
     upsert(
       head.find('meta[property="article:published_time"]'),
       tags,
-      `<meta name="date" content="${new Date(timestamp).toISOString()}" />`
+      `<meta name="date" content="${date}" />`
     )
   }
 
