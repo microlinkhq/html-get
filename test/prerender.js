@@ -18,14 +18,19 @@ test('`{ prerender: false }`', async t => {
 
 test("`{ prerender: 'auto' }`", async t => {
   const url = 'https://facebook.com'
-  const { stats } = await getHTML(url)
+  const { stats } = await getHTML(url, {
+    puppeteerOpts: { adblock: false }
+  })
   t.is(stats.mode, 'fetch')
 })
 
 test.skip('prerender error fallback into fetch mode', async t => {
   const url =
     'https://www.sportsnet.ca/hockey/nhl/leafs-john-tavares-return-new-york-hope-positive/'
-  const { stats, html } = await getHTML(url, { prerender: true })
+  const { stats, html } = await getHTML(url, {
+    prerender: true,
+    puppeteerOpts: { adblock: false }
+  })
   t.true(!!html)
   t.is(stats.mode, 'fetch')
 })
