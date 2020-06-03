@@ -5,159 +5,76 @@ const path = require('path')
 const test = require('ava')
 const fs = require('fs')
 
-const html = require('../src/html')
 const { prettyHtml } = require('./util')
 
-const is = (t, html1, html2) =>
-  t.deepEqual(prettyHtml(html1), prettyHtml(html2))
+const html = require('../src/html')
 
-test('add base html if not present', t => {
+test('add minimal html markup', t => {
   const output = html({
     url: 'https://kikobeats.com',
     html: '',
     headers: {}
   })
 
-  const expected = `
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-     <meta charset="utf-8">
-     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
-     <title>kikobeats.com</title>
-     <meta property="og:site_name" content="kikobeats.com">
-     <meta property="og:locale" content="en">
-     <meta property="og:url" content="https://kikobeats.com">
-     <link rel="canonical" href="https://kikobeats.com">
-    </head>
-    <body>
-    </body>
-  </html>
-`
-
-  is(t, output, expected)
+  t.snapshot(prettyHtml(output))
 })
 
-test('append head at html if not present', t => {
+test('add meta charset', t => {
   const output = html({
     url: 'https://kikobeats.com',
-    html: '<html lang="en"><body></body></html>',
-    headers: {}
+    html: '',
+    headers: { 'content-type': 'text/html; charset=utf-8' }
   })
 
-  const expected = `
-  <html lang="en">
-    <head>
-      <title>kikobeats.com</title>
-      <meta property="og:site_name" content="kikobeats.com">
-      <meta property="og:locale" content="en">
-      <meta property="og:url" content="https://kikobeats.com">
-      <link rel="canonical" href="https://kikobeats.com">
-    </head>
-    <body></body>
-  </html>
-`
+  t.snapshot(prettyHtml(output))
+})
 
-  is(t, output, expected)
+test('add doctype', t => {
+  const output = html({
+    url: 'https://kikobeats.com',
+    html: `
+    <html lang="en">
+      <head>
+       <title>kikobeats.com</title>
+       <meta property="og:site_name" content="kikobeats.com">
+       <link rel="canonical" href="https://kikobeats.com/">
+       <meta charset="utf-8">
+      </head>
+      <body></body>
+    </html>`,
+    headers: { 'content-type': 'text/html; charset=utf-8' }
+  })
+
+  t.snapshot(prettyHtml(output))
 })
 
 test('add image markup', t => {
   const output = html({
     url: 'https://media.giphy.com/media/LqTSLCsIIkCTvQ8X9g/giphy.gif',
-    html: '<html lang="en"><body></body></html>',
-    headers: {
-      'content-type': 'image/gif'
-    }
+    headers: { 'content-type': 'image/gif' }
   })
 
-  const expected = `
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
-      <title>giphy.gif</title>
-      <meta property="og:site_name" content="giphy.com">
-      <meta property="og:locale" content="en">
-      <meta property="og:url" content="https://media.giphy.com/media/LqTSLCsIIkCTvQ8X9g/giphy.gif">
-      <link rel="canonical" href="https://media.giphy.com/media/LqTSLCsIIkCTvQ8X9g/giphy.gif">
-      <meta property="og:image:secure_url" content="https://media.giphy.com/media/LqTSLCsIIkCTvQ8X9g/giphy.gif">
-      <meta property="og:image:type" content="image/gif">
-    </head>
-    <body>
-      <img src="https://media.giphy.com/media/LqTSLCsIIkCTvQ8X9g/giphy.gif"></body>
-  </html>
-`
-
-  is(t, output, expected)
+  t.snapshot(prettyHtml(output))
 })
 
 test('add audio markup', t => {
   const output = html({
     url:
       'http://websrvr90va.audiovideoweb.com/va90web25003/companions/Foundations%20of%20Rock/13.01.mp3',
-    html: '<html lang="en"><body></body></html>',
-    headers: {
-      'content-type': 'audio/mp3'
-    }
+    headers: { 'content-type': 'audio/mp3' }
   })
 
-  const expected = `
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
-      <title>13.01.mp3</title>
-      <meta property="og:site_name" content="audiovideoweb.com">
-      <meta property="og:locale" content="en">
-      <meta property="og:url" content="http://websrvr90va.audiovideoweb.com/va90web25003/companions/Foundations%20of%20Rock/13.01.mp3">
-      <link rel="canonical" href="http://websrvr90va.audiovideoweb.com/va90web25003/companions/Foundations%20of%20Rock/13.01.mp3">
-      <meta property="og:audio" content="http://websrvr90va.audiovideoweb.com/va90web25003/companions/Foundations%20of%20Rock/13.01.mp3">
-      <meta property="og:audio:type" content="audio/mp3">
-    </head>
-    <body>
-    <audio src="http://websrvr90va.audiovideoweb.com/va90web25003/companions/Foundations%20of%20Rock/13.01.mp3"></audio></body>
-  </html>
-`
-
-  is(t, output, expected)
+  t.snapshot(prettyHtml(output))
 })
 
 test('add video markup', t => {
   const output = html({
     url:
       'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
-    html: '<html lang="en"><body></body></html>',
-    headers: {
-      'content-type': 'video/mp4'
-    }
+    headers: { 'content-type': 'video/mp4' }
   })
 
-  const expected = `
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
-      <title>big_buck_bunny_720p_1mb.mp4</title>
-      <meta property="og:site_name" content="sample-videos.com">
-      <meta property="og:locale" content="en">
-      <meta property="og:url" content="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4">
-      <link rel="canonical" href="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4">
-      <meta property="og:video:secure_url" content="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4">
-      <meta property="og:video:type" content="video/mp4">
-    </head>
-    <body>
-    <video src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"></video></body>
-  </html>
-`
-
-  is(t, output, expected)
+  t.snapshot(prettyHtml(output))
 })
 
 test('rewrite relative & CDN URLs into absolutes', t => {
@@ -174,6 +91,7 @@ test('rewrite relative & CDN URLs into absolutes', t => {
 
   t.true(output.includes('https://browserless.js.org/static/main.min.js'))
   t.true(output.includes('https://unpkg.com/docsify/lib/docsify.min.js'))
+  t.snapshot(prettyHtml(output))
 })
 
 test('rewrite URLs inside CSS', t => {
@@ -190,6 +108,7 @@ test('rewrite URLs inside CSS', t => {
 
   t.true(output.includes('https://browserless.js.org/static/main.min.js'))
   t.true(output.includes('https://unpkg.com/docsify/lib/docsify.min.js'))
+  t.snapshot(prettyHtml(output))
 })
 
 test('rewrite all matches of URLs inside CSS', t => {
@@ -214,6 +133,7 @@ test('rewrite all matches of URLs inside CSS', t => {
   )
 
   t.is(results.length, 2)
+  t.snapshot(prettyHtml(output))
 })
 
 test('styles injection', t => {
@@ -246,6 +166,7 @@ test('styles injection', t => {
   )
 
   t.true(output.includes('background: black'))
+  t.snapshot(prettyHtml(output))
 })
 
 test('scripts injection', t => {
@@ -294,6 +215,7 @@ test('scripts injection', t => {
       '<script src="https://code.jquery.com/jquery-3.5.1.min.js" type="text/javascript"></script>'
     )
   )
+  t.snapshot(prettyHtml(output))
 })
 
 test('hide elements', t => {
@@ -317,6 +239,7 @@ test('hide elements', t => {
   })
 
   t.true(output.includes('#banner { visibility: hidden !important; }'))
+  t.snapshot(prettyHtml(output))
 })
 
 test('remove elements', t => {
@@ -340,4 +263,5 @@ test('remove elements', t => {
   })
 
   t.true(output.includes('#banner { display: none !important; }'))
+  t.snapshot(prettyHtml(output))
 })

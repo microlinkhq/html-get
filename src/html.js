@@ -1,6 +1,6 @@
 'use strict'
 
-const { castArray, forEach, isString } = require('lodash')
+const { get, split, nth, castArray, forEach, isString } = require('lodash')
 const { isUrl, isMime } = require('@metascraper/helpers')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
@@ -13,84 +13,71 @@ const cheerio = require('cheerio')
 const { URL } = require('url')
 const path = require('path')
 
+const has = el => el.length !== 0
+
+const upsert = (el, collection, item) => !has(el) && collection.push(item)
+
 const addHead = ({ $, url, headers }) => {
   const tags = []
 
   const { date, expires } = headers
-
-  const title = $('title')
-  if (!title.length) {
-    tags.push(`<title>${path.basename(url)}</title>`)
-  }
-
-  const siteName = $('meta[property="og:site_name"]')
-  if (!siteName.length) {
-    tags.push(`<meta property="og:site_name" content="${getDomain(url)}">`)
-  }
-
-  if (date) {
-    const publishedTime = $('meta[property="article:published_time"]')
-    if (!publishedTime.length) {
-      tags.push(`<meta property="article:published_time" content="${date}">`)
-    }
-  }
-
-  if (expires) {
-    const expirationTime = $('meta[property="article:expiration_time"]')
-    if (!expirationTime.length) {
-      tags.push(`<meta property="article:expiration_time" content="${date}">`)
-    }
-  }
-
-  const locale = $('meta[property="og:locale"]')
-  if (!locale.length) {
-    tags.push('<meta property="og:locale" content="en">')
-  }
-
-  tags.push(`<meta property="og:url" content="${url}">`)
-  tags.push(`<link rel="canonical" href="${url}">`)
+  const contentType = get(headers, 'content-type')
+  const charset = nth(split(contentType, 'charset='), 1)
 
   const head = $('head')
-  tags.forEach(tag => head.append(tag))
-}
 
-const addMedia = (media, { $, url, headers, body }) => {
-  const tags = []
+  upsert(head.find('title'), tags, `<title>${path.basename(url)}</title>`)
 
-  const ogMedia = $(`meta[property="og:${media}"]`)
+  upsert(
+    head.find('meta[property="og:site_name"]'),
+    tags,
+    `<meta property="og:site_name" content="${getDomain(url)}">`
+  )
 
-  if (!ogMedia.length) {
-    const { protocol } = new URL(url)
-    const isHttps = protocol === 'https:'
-    const imageProperty = `og:${media}${isHttps ? ':secure_url' : ''}`
-    tags.push(`<meta property="${imageProperty}" content="${url}">`)
-  }
-
-  const ogMediaType = $(`meta[property="og:${media}:type"]`)
-  if (!ogMediaType.length) {
-    tags.push(
-      `<meta property="og:${media}:type" content="${headers['content-type']}">`
+  if (date) {
+    upsert(
+      head.find('meta[property="article:published_time"]'),
+      tags,
+      `<meta property="article:published_time" content="${date}">`
     )
   }
 
-  const head = $('head')
-  tags.forEach(tag => head.append(tag))
+  if (expires) {
+    upsert(
+      head.find('meta[property="article:expiration_time"]'),
+      tags,
+      `<meta property="article:expiration_time" content="${date}">`
+    )
+  }
 
-  const bodyTag = $('body')
-  if (!bodyTag.children().length) bodyTag.append(body(url))
+  upsert(
+    head.find('link[rel="canonical"]'),
+    tags,
+    `<link rel="canonical" href="${url}">`
+  )
+
+  if (charset) {
+    upsert(head.find('meta[charset]'), tags, `<meta charset="${charset}">`)
+  }
+
+  tags.forEach(tag => head.append(tag))
 }
 
-const htmlTemplate = () => `
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" shrink-to-fit="no">
-    </head>
-    <body></body>
-  </html>
-`
+const addBody = ({ url, headers }) => {
+  const contentType = get(headers, 'content-type')
+
+  let element = ''
+
+  if (isMime(contentType, 'image')) {
+    element = `<img src="${url}"></img>`
+  } else if (isMime(contentType, 'video')) {
+    element = `<video src="${url}"></video>`
+  } else if (isMime(contentType, 'audio')) {
+    element = `<audio src="${url}"></audio>`
+  }
+
+  return `<!DOCTYPE html><html lang="en"><head></head><body>${element}</body></html>`
+}
 
 const rewriteHtmlUrls = ({ $, url }) => {
   forEach(URL_TAGS, (tagName, urlAttr) => {
@@ -154,6 +141,9 @@ const injectScripts = ({ $, scripts, type }) =>
     )
   )
 
+const addDocType = html =>
+  html.startsWith('<!') ? html : `<!DOCTYPE html>${html}`
+
 module.exports = ({
   html,
   url,
@@ -165,31 +155,15 @@ module.exports = ({
   modules
 }) => {
   const contentType = headers['content-type'] || 'text/html; charset=utf-8'
-  const content = isHTML(html, contentType) ? html : htmlTemplate()
+  let content = isHTML(html, contentType) ? html : addBody({ url, headers })
+
+  content = addDocType(content)
 
   const $ = cheerio.load(content)
 
   rewriteHtmlUrls({ $, url, headers })
 
   addHead({ $, url, headers })
-
-  if (isMime(contentType, 'image')) {
-    addMedia('image', { $, url, headers, body: url => `<img src="${url}">` })
-  } else if (isMime(contentType, 'video')) {
-    addMedia('video', {
-      $,
-      url,
-      headers,
-      body: url => `<video src="${url}"></video>`
-    })
-  } else if (isMime(contentType, 'audio')) {
-    addMedia('audio', {
-      $,
-      url,
-      headers,
-      body: url => `<audio src="${url}"></audio>`
-    })
-  }
 
   if (styles) injectStyle({ $, styles })
 
