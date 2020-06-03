@@ -154,10 +154,7 @@ module.exports = ({
   scripts,
   modules
 }) => {
-  const contentType = headers['content-type'] || 'text/html; charset=utf-8'
-  let content = isHTML(html, contentType) ? html : addBody({ url, headers })
-
-  content = addDocType(content)
+  const content = addDocType(isHTML(html) ? html : addBody({ url, headers }))
 
   const $ = cheerio.load(content)
 
