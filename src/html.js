@@ -76,7 +76,7 @@ const addBody = ({ url, headers }) => {
     element = `<audio src="${url}"></audio>`
   }
 
-  return `<!DOCTYPE html><html lang="en"><head></head><body>${element}</body></html>`
+  return `<!DOCTYPE html><html><head></head><body>${element}</body></html>`
 }
 
 const rewriteHtmlUrls = ({ $, url }) => {
