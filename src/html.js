@@ -19,10 +19,9 @@ const upsert = (el, collection, item) => !has(el) && collection.push(item)
 
 const addHead = ({ $, url, headers }) => {
   const tags = []
-
-  const { date, expires } = headers
   const contentType = get(headers, 'content-type')
   const charset = nth(split(contentType, 'charset='), 1)
+  const timestamp = get(headers, 'last-modified') || get(headers, 'date')
 
   const head = $('head')
 
@@ -34,19 +33,11 @@ const addHead = ({ $, url, headers }) => {
     `<meta property="og:site_name" content="${getDomain(url)}">`
   )
 
-  if (date) {
+  if (timestamp) {
     upsert(
       head.find('meta[property="article:published_time"]'),
       tags,
-      `<meta property="article:published_time" content="${date}">`
-    )
-  }
-
-  if (expires) {
-    upsert(
-      head.find('meta[property="article:expiration_time"]'),
-      tags,
-      `<meta property="article:expiration_time" content="${date}">`
+      `<meta name="date" content="${new Date(timestamp).toISOString()}" />`
     )
   }
 
