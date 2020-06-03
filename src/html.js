@@ -4,7 +4,7 @@ const { castArray, forEach, isString } = require('lodash')
 const { isUrl, isMime } = require('@metascraper/helpers')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
-const mimeTypes = require('mime-types')
+const isHTML = require('is-html-content')
 const cssUrl = require('css-url-regex')
 const isCdnUrl = require('is-cdn-url')
 const { getDomain } = require('tldts')
@@ -12,8 +12,6 @@ const execall = require('execall')
 const cheerio = require('cheerio')
 const { URL } = require('url')
 const path = require('path')
-
-const HTML_MIME_EXT = ['html', 'xml', 'txt']
 
 const addHead = ({ $, url, headers }) => {
   const tags = []
@@ -155,11 +153,6 @@ const injectScripts = ({ $, scripts, type }) =>
         : `<script type="${type}">${script}</script>`
     )
   )
-
-const isHTML = (html, contentType) =>
-  HTML_MIME_EXT.includes(mimeTypes.extension(contentType)) &&
-  typeof html === 'string' &&
-  html.length > 0
 
 module.exports = ({
   html,
