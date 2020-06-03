@@ -100,9 +100,8 @@ const modes = { fetch, prerender }
 const isFetchMode = url => autoDomains.includes(getDomainWithoutSuffix(url))
 
 const determinateMode = (url, { prerender }) => {
-  if (prerender === false) return 'fetch'
+  if (prerender === false || isMediaUrl(url)) return 'fetch'
   if (prerender !== 'auto') return 'prerender'
-  if (isMediaUrl(url)) return 'fetch'
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
 

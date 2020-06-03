@@ -69,9 +69,7 @@ test('get html from an audio URL', async t => {
 
 test('get html from an image URL', async t => {
   const targetUrl = 'https://kikobeats.com/images/avatar.jpg'
-  const { url, stats, html } = await getHTML(targetUrl, {
-    prerender: false
-  })
+  const { url, stats, html } = await getHTML(targetUrl)
 
   t.is(stats.mode, 'fetch')
   t.is(url, targetUrl)
