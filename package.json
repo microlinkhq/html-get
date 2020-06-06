@@ -37,7 +37,6 @@
     "got": "~11.2.0",
     "html-encode": "~2.1.1",
     "html-urls": "~2.4.11",
-    "is-cdn-url": "~1.0.0",
     "is-html-content": "~1.0.0",
     "lodash": "~4.17.15",
     "p-cancelable": "~2.0.0",

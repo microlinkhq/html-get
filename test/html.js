@@ -77,7 +77,7 @@ test('add video markup', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test('rewrite relative & CDN URLs into absolutes', t => {
+test('rewrite relative URLs inside html markup', t => {
   const output = html({
     url: 'https://browserless.js.org',
     html: fs.readFileSync(
@@ -94,24 +94,7 @@ test('rewrite relative & CDN URLs into absolutes', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test('rewrite URLs inside CSS', t => {
-  const output = html({
-    url: 'https://browserless.js.org',
-    html: fs.readFileSync(
-      path.resolve(__dirname, 'fixtures/browserless.html'),
-      'utf8'
-    ),
-    headers: {
-      'content-type': 'text/html; charset=utf-8'
-    }
-  })
-
-  t.true(output.includes('https://browserless.js.org/static/main.min.js'))
-  t.true(output.includes('https://unpkg.com/docsify/lib/docsify.min.js'))
-  t.snapshot(prettyHtml(output))
-})
-
-test('rewrite all matches of URLs inside CSS', t => {
+test('rewrite relative URLs inside stylesheet', t => {
   const output = html({
     url: 'https://kikobeats.com',
     html: `
@@ -133,6 +116,27 @@ test('rewrite all matches of URLs inside CSS', t => {
   )
 
   t.is(results.length, 2)
+  t.snapshot(prettyHtml(output))
+})
+
+test("don't rewrite data URIs or HTML selectors as URLs", t => {
+  const output = html({
+    url:
+      'https://www.theguardian.com/education/2020/jun/05/tell-us-about-your-young-childs-experiences-of-going-back-to-school',
+    html: fs.readFileSync(
+      path.resolve(__dirname, 'fixtures/theguardian.html'),
+      'utf8'
+    ),
+    headers: {
+      'content-type': 'text/html; charset=utf-8'
+    }
+  })
+
+  t.true(
+    output.includes(
+      '<meta property="og:title" content="Tell us about your young child&apos;s experiences of going back to school">'
+    )
+  )
   t.snapshot(prettyHtml(output))
 })
 

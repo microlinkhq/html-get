@@ -1,12 +1,12 @@
 'use strict'
 
-const { get, split, nth, castArray, forEach, isString } = require('lodash')
+const { startsWith, get, split, nth, castArray, forEach } = require('lodash')
 const { date: toDate, isUrl, isMime } = require('@metascraper/helpers')
+const debug = require('debug-logfmt')('html-get:html')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
 const isHTML = require('is-html-content')
 const cssUrl = require('css-url-regex')
-const isCdnUrl = require('is-cdn-url')
 const { getDomain } = require('tldts')
 const execall = require('execall')
 const cheerio = require('cheerio')
@@ -76,16 +76,9 @@ const rewriteHtmlUrls = ({ $, url }) => {
     $(tagName.join(',')).each(function () {
       const el = $(this)
       const attr = el.attr(urlAttr)
-      if (!isString(attr)) return
-      let newAttr
-
-      if (isCdnUrl(attr)) {
-        newAttr = `https:${attr}`
-      } else if (isUrl(attr, { relative: true })) {
-        newAttr = new URL(attr, url).toString()
+      if (startsWith(attr, '/')) {
+        el.attr(urlAttr, new URL(attr, url).toString())
       }
-
-      if (newAttr !== undefined) el.attr(urlAttr, newAttr)
     })
   })
 }
@@ -99,16 +92,8 @@ const rewriteCssUrls = ({ html, url }) => {
   )
 
   cssUrls.forEach(cssUrl => {
-    let replacement
-
-    if (isCdnUrl(cssUrl)) {
-      replacement = `https:${cssUrl}`
-    } else if (isUrl(cssUrl, { relative: true })) {
-      replacement = new URL(cssUrl, url).toString()
-    }
-
-    if (replacement !== undefined) {
-      html = replaceString(html, cssUrl, replacement)
+    if (cssUrl.startsWith('/')) {
+      html = replaceString(html, cssUrl, new URL(cssUrl, url).toString())
     }
   })
 
