@@ -2,7 +2,6 @@
 
 const { startsWith, get, split, nth, castArray, forEach } = require('lodash')
 const { date: toDate, isUrl, isMime } = require('@metascraper/helpers')
-const debug = require('debug-logfmt')('html-get:html')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
 const isHTML = require('is-html-content')
