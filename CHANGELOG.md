@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.4](https://github.com/microlinkhq/html-get/compare/v2.7.3...v2.7.4) (2020-06-06)
+
+
+### Bug Fixes
+
+* ensure to don't rewrite selectors into urls ([a9aecd6](https://github.com/microlinkhq/html-get/commit/a9aecd6d5ef7e204b2fd19821dd25b20ff1a20a7))
+* linter ([89d3777](https://github.com/microlinkhq/html-get/commit/89d3777e82dc8b38cf9e34d050eb58d51634d27b))
+
 ### [2.7.3](https://github.com/microlinkhq/html-get/compare/v2.7.2...v2.7.3) (2020-06-03)
 
 
