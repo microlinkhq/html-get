@@ -60,7 +60,7 @@ const prerender = async (
     const browserless = await getBrowserless()
 
     const getPayload = browserless.evaluate(async (page, response) => {
-      if (!response) throw AbortError()
+      if (!response) throw new AbortError()
 
       return {
         headers: response.headers(),
