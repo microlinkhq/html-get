@@ -59,7 +59,7 @@ const prerender = async (
   { getBrowserless, toEncode, headers, gotOpts, ...opts }
 ) => {
   let fetchRes
-  let fetchDataProps = {}
+  let data = {}
   let isFetchResRejected = false
 
   try {
@@ -67,7 +67,7 @@ const prerender = async (
     const browserless = await getBrowserless()
 
     const getPayload = browserless.evaluate(async (page, response) => {
-      if (!response) throw new AbortError()
+      if (!response) throw new AbortError('empty response')
 
       return {
         headers: response.headers(),
@@ -89,20 +89,25 @@ const prerender = async (
     return payload
   } catch (err) {
     const { isRejected, ...dataProps } = await fetchRes
-    const error = isRejected ? dataProps.error : err
-    debug('prerender:error', { url, isRejected, error: error.message || error })
+
+    debug('prerender:error', {
+      url,
+      isRejected,
+      error: (isRejected ? dataProps.error : err).message
+    })
+
     isFetchResRejected = isRejected
-    fetchDataProps = dataProps
+    data = dataProps
   }
 
   return isFetchResRejected
     ? {
-      headers: fetchDataProps.headers || {},
+      headers: data.headers || {},
       html: '',
       url,
       mode: 'prerender'
     }
-    : fetchDataProps
+    : data
 }
 
 const modes = { fetch, prerender }
