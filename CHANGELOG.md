@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.10](https://github.com/microlinkhq/html-get/compare/v2.7.9...v2.7.10) (2020-06-07)
+
+
+### Bug Fixes
+
+* avoid rewrite inline javascript ([b6baa7c](https://github.com/microlinkhq/html-get/commit/b6baa7c4793be75b9e70547876ba0f289110070e))
+
 ### [2.7.9](https://github.com/microlinkhq/html-get/compare/v2.7.8...v2.7.9) (2020-06-07)
 
 
