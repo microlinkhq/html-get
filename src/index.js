@@ -41,8 +41,7 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
         statusCode: res.statusCode
       })
     } catch (err) {
-      debug.error('fetch', { message: err.message || err })
-      debug('fetch', { reflect })
+      debug('fetch:error', { message: err.message || err, reflect })
       if (reflect) return resolve({ isRejected: true, err })
       else resolve({ url, html: '', mode: 'fetch' })
     }
@@ -84,7 +83,7 @@ const prerender = async (
   } catch (err) {
     const { isRejected, ...dataProps } = await fetchRes
     const message = err.message || err
-    debug.error('prerender', { isRejected, message })
+    debug('prerender:error', { isRejected, message })
     isFetchResRejected = isRejected
     fetchDataProps = dataProps
   }
