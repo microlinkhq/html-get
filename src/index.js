@@ -27,7 +27,7 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
     onCancel.shouldReject = false
 
     onCancel(() => {
-      debug('fetch:cancel', { reflect })
+      debug('fetch:cancel', { url, reflect })
       req.cancel()
     })
 
@@ -41,7 +41,7 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
         statusCode: res.statusCode
       })
     } catch (err) {
-      debug('fetch:error', { message: err.message || err, reflect })
+      debug('fetch:error', { url, message: err.message || err, reflect })
       if (reflect) return resolve({ isRejected: true, err })
       else resolve({ url, html: '', mode: 'fetch' })
     }
@@ -78,12 +78,12 @@ const prerender = async (
     })
 
     await fetchRes.cancel()
-    debug('prerender', { state: 'success' })
+    debug('prerender', { url, state: 'success' })
     return payload
   } catch (err) {
     const { isRejected, ...dataProps } = await fetchRes
     const message = err.message || err
-    debug('prerender:error', { isRejected, message })
+    debug('prerender:error', { url, isRejected, message })
     isFetchResRejected = isRejected
     fetchDataProps = dataProps
   }
