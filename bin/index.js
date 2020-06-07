@@ -15,10 +15,14 @@ getHTML(url)
        url: ${url}
       html: ${Buffer.from(html).byteLength} bytes (HTTP ${statusCode})
       time: ${stats.timing} (${stats.mode})
-   headers: ${Object.keys(headers).reduce(
-     (acc, key) => `${acc}${key}=${headers[key]} `,
-     ''
-   )}
+   headers: ${
+     headers
+       ? Object.keys(headers).reduce(
+           (acc, key) => `${acc}${key}=${headers[key]} `,
+           ''
+         )
+       : '-'
+   }
 `)
     } else {
       console.log(html)
