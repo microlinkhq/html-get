@@ -42,8 +42,15 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
       })
     } catch (error) {
       debug('fetch:error', { url, message: error.message || error, reflect })
-      if (reflect) return resolve({ isRejected: true, error })
-      else resolve({ isRejected: false, url, html: '', mode: 'fetch' })
+      return reflect
+        ? resolve({ isRejected: true, error })
+        : resolve({
+          url,
+          html: '',
+          mode: 'fetch',
+          headers: error.response ? error.response.headers : {},
+          statusCode: error.response ? error.response.statusCode : undefined
+        })
     }
   })
 
@@ -117,7 +124,6 @@ const getContent = async (
   const fetchOpts = isFetchMode
     ? { headers, toEncode, ...gotOpts }
     : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
-
   const content = await modes[mode](url, fetchOpts)
   if (canonicalUrl) content.url = canonicalUrl
 

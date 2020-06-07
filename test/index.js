@@ -11,22 +11,13 @@ const wait = async (promise, prop) => {
   return prop ? res[prop] : res
 }
 
-test('get headers', async t => {
+test('reachable URL', async t => {
   const url = 'https://example.com'
-  t.true(
-    typeof (await wait(getHTML(url, { prerender: false }), 'headers')) ===
-      'object'
-  )
-  t.true(
-    typeof (await wait(
-      getHTML(url, { prerender: true, puppeteerOpts: { adblock: false } }),
-      'headers'
-    )) === 'object'
-  )
-})
+  const [prerenderDisabled, prerenderEnabled] = await Promise.all([
+    getHTML(url, { prerender: false }),
+    getHTML(url, { prerender: true, puppeteerOpts: { adblock: false } })
+  ])
 
-test('get status code', async t => {
-  const url = 'https://example.com'
   t.is(await wait(getHTML(url, { prerender: false }), 'statusCode'), 200)
   t.is(
     await wait(
@@ -35,27 +26,34 @@ test('get status code', async t => {
     ),
     200
   )
+
+  t.is(prerenderDisabled.statusCode, prerenderEnabled.statusCode)
+  t.is(prerenderDisabled.statusCode, 200)
+
+  t.true(Object.keys(prerenderDisabled.headers).length > 0)
+  t.true(Object.keys(prerenderEnabled.headers).length > 0)
+  t.is(typeof prerenderDisabled.headers, typeof prerenderEnabled.headers)
+
+  t.true(prerenderDisabled.html.length > 0)
+  t.true(prerenderEnabled.html.length > 0)
+  t.is(typeof prerenderDisabled.html, typeof prerenderEnabled.html)
 })
 
-test('handle unrecheable urls', async t => {
+test('unreachable URL', async t => {
   const url = 'https://notexisturl.dev'
 
-  const prerenderDisabled = prettyHtml(
-    await wait(getHTML(url, { prerender: false }), 'html')
-  )
+  const [prerenderDisabled, prerenderEnabled] = await Promise.all([
+    getHTML(url, { prerender: false }),
+    getHTML(url, { prerender: true, puppeteerOpts: { adblock: false } })
+  ])
 
-  const prerenderEnabled = prettyHtml(
-    await wait(
-      getHTML(url, { prerender: true, puppeteerOpts: { adblock: false } }),
-      'html'
-    )
-  )
-
-  t.deepEqual(prerenderDisabled, prerenderEnabled)
-  t.snapshot(prerenderEnabled)
+  t.is(prerenderDisabled.url, prerenderEnabled.url)
+  t.is(prerenderDisabled.html, prerenderEnabled.html)
+  t.is(prerenderDisabled.statusCode, prerenderEnabled.statusCode)
+  t.deepEqual(prerenderDisabled.headers, prerenderEnabled.headers)
 })
 
-test('get html from an audio URL', async t => {
+test('from audio URL', async t => {
   const targetUrl =
     'https://audiodemos.github.io/vctk_set0/embedadapt_100sample.wav'
   const { url, stats, html } = await getHTML(targetUrl, {
@@ -67,7 +65,7 @@ test('get html from an audio URL', async t => {
   t.snapshot(prettyHtml(html))
 })
 
-test('get html from an image URL', async t => {
+test('from image URL', async t => {
   const targetUrl = 'https://kikobeats.com/images/avatar.jpg'
   const { url, stats, html } = await getHTML(targetUrl)
 
@@ -80,7 +78,7 @@ test('get html from an image URL', async t => {
   t.snapshot(prettyHtml($.html()))
 })
 
-test('get html from a video URL', async t => {
+test('from video URL', async t => {
   const targetUrl = 'http://techslides.com/demos/sample-videos/small.mp4'
   const { url, stats, html } = await getHTML(targetUrl, {
     prerender: false
@@ -91,7 +89,7 @@ test('get html from a video URL', async t => {
   t.snapshot(prettyHtml(html))
 })
 
-test('get html from bad SSL urls', async t => {
+test('from bad SSL URL', async t => {
   const targetUrl = 'https://self-signed.badssl.com/'
   const { url, stats, html } = await getHTML(targetUrl, {
     prerender: false,
