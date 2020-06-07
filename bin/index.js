@@ -6,11 +6,11 @@ const { URL } = require('url')
 const getHTML = require('..')
 
 const url = new URL(process.argv[2]).toString()
-const isVerbose = !!process.argv[3]
+const isDebug = !!process.argv[3]
 
 getHTML(url)
   .then(({ html, stats, headers, statusCode }) => {
-    if (isVerbose) {
+    if (isDebug) {
       console.log(`
        url: ${url}
       html: ${Buffer.from(html).byteLength} bytes (HTTP ${statusCode})

@@ -76,7 +76,10 @@ const rewriteHtmlUrls = ({ $, url }) => {
       const el = $(this)
       const attr = el.attr(urlAttr)
       if (startsWith(attr, '/')) {
-        el.attr(urlAttr, new URL(attr, url).toString())
+        try {
+          const newAttr = new URL(attr, url).toString()
+          el.attr(urlAttr, newAttr)
+        } catch (_) {}
       }
     })
   })

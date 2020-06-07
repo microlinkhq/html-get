@@ -140,6 +140,34 @@ test("don't rewrite data URIs or HTML selectors as URLs", t => {
   t.snapshot(prettyHtml(output))
 })
 
+test("don't rewrite inline javascript", t => {
+  const output = html({
+    url:
+      'https://www.latimes.com/opinion/story/2020-06-07/column-muralist-honors-african-americans-killed-by-police',
+    html: `
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<a class="ActionLink" data-social-service="print" href="javascript:window.print()"><svg><use xlink:href="#mono-icon-print"></use></svg><span>Print</span></a>
+</body>
+</html>`,
+    headers: {
+      'content-type': 'text/html;charset=UTF-8'
+    }
+  })
+
+  t.true(
+    output.includes(
+      '<a class="ActionLink" data-social-service="print" href="javascript:window.print()"><svg><use href="#mono-icon-print"/></svg><span>Print</span></a>'
+    )
+  )
+  t.snapshot(prettyHtml(output))
+})
+
 test('styles injection', t => {
   const output = html({
     url: 'https://kikobeats.com',
