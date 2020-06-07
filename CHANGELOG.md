@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.9](https://github.com/microlinkhq/html-get/compare/v2.7.8...v2.7.9) (2020-06-07)
+
+
+### Bug Fixes
+
+* use new keyword ([8c7d28f](https://github.com/microlinkhq/html-get/commit/8c7d28fb50f6c6de9e23a08c9ecb698300eaebac))
+
 ### [2.7.8](https://github.com/microlinkhq/html-get/compare/v2.7.7...v2.7.8) (2020-06-07)
 
 ### [2.7.7](https://github.com/microlinkhq/html-get/compare/v2.7.6...v2.7.7) (2020-06-07)
