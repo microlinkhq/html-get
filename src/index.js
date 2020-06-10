@@ -45,12 +45,12 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
       return reflect
         ? resolve({ isRejected: true, error })
         : resolve({
-          url,
-          html: '',
-          mode: 'fetch',
-          headers: error.response ? error.response.headers : {},
-          statusCode: error.response ? error.response.statusCode : undefined
-        })
+            url,
+            html: '',
+            mode: 'fetch',
+            headers: error.response ? error.response.headers : {},
+            statusCode: error.response ? error.response.statusCode : undefined
+          })
     }
   })
 
@@ -102,11 +102,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: data.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: data.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : data
 }
 
@@ -116,7 +116,7 @@ const isFetchMode = url => autoDomains.includes(getDomainWithoutSuffix(url))
 
 const determinateMode = (url, { prerender }) => {
   if (prerender === false || isMediaUrl(url)) return 'fetch'
-  if (prerender !== 'auto') return 'prerender'
+  if (prerender === true) return 'prerender'
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
 
