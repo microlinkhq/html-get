@@ -45,12 +45,12 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
       return reflect
         ? resolve({ isRejected: true, error })
         : resolve({
-          url,
-          html: '',
-          mode: 'fetch',
-          headers: error.response ? error.response.headers : {},
-          statusCode: error.response ? error.response.statusCode : undefined
-        })
+            url,
+            html: '',
+            mode: 'fetch',
+            headers: error.response ? error.response.headers : {},
+            statusCode: error.response ? error.response.statusCode : undefined
+          })
     }
   })
 
@@ -102,11 +102,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: data.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: data.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : data
 }
 
@@ -123,14 +123,13 @@ const determinateMode = (url, { prerender }) => {
 const getContent = async (
   url,
   mode,
-  { canonicalUrl, puppeteerOpts, getBrowserless, gotOpts, toEncode, headers }
+  { puppeteerOpts, getBrowserless, gotOpts, toEncode, headers }
 ) => {
   const isFetchMode = mode === 'fetch'
   const fetchOpts = isFetchMode
     ? { headers, toEncode, ...gotOpts }
     : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
   const content = await modes[mode](url, fetchOpts)
-  if (canonicalUrl) content.url = canonicalUrl
 
   const html = addHtml({
     ...content,
@@ -142,7 +141,6 @@ const getContent = async (
 module.exports = async (
   targetUrl,
   {
-    canonicalUrl,
     encoding = 'utf-8',
     getBrowserless = requireOneOf(['@browserless/pool', 'browserless']),
     getMode = determinateMode,
@@ -158,7 +156,6 @@ module.exports = async (
   const time = timeSpan()
 
   const { mode, ...payload } = await getContent(targetUrl, reqMode, {
-    canonicalUrl,
     puppeteerOpts,
     getBrowserless,
     gotOpts,
