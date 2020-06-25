@@ -47,6 +47,7 @@ const domains = [
   'tumblr',
   'twitter',
   'vimeo',
+  'washingtonpost',
   'wikipedia',
   'wordpress',
   'ycombinator',
