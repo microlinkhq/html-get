@@ -16,11 +16,19 @@ const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
 
-const fetch = (url, { reflect = false, toEncode, ...opts }) =>
+const fetch = (
+  url,
+  {
+    reflect = false,
+    toEncode,
+    timeout = reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
+    ...opts
+  }
+) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
       responseType: 'buffer',
-      timeout: reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
+      timeout,
       ...opts
     })
 
@@ -45,12 +53,12 @@ const fetch = (url, { reflect = false, toEncode, ...opts }) =>
       return reflect
         ? resolve({ isRejected: true, error })
         : resolve({
-          url,
-          html: '',
-          mode: 'fetch',
-          headers: error.response ? error.response.headers : {},
-          statusCode: error.response ? error.response.statusCode : undefined
-        })
+            url,
+            html: '',
+            mode: 'fetch',
+            headers: error.response ? error.response.headers : {},
+            statusCode: error.response ? error.response.statusCode : undefined
+          })
     }
   })
 
@@ -102,11 +110,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: data.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: data.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : data
 }
 
@@ -130,7 +138,6 @@ const getContent = async (
     ? { headers, toEncode, ...gotOpts }
     : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
   const content = await modes[mode](url, fetchOpts)
-
   const html = addHtml({
     ...content,
     ...(isFetchMode ? puppeteerOpts : undefined)
