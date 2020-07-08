@@ -34,7 +34,7 @@
     "css-url-regex": "~3.3.1",
     "debug-logfmt": "~1.0.4",
     "execall": "~2.0.0",
-    "got": "~11.4.0",
+    "got": "~11.5.0",
     "html-encode": "~2.1.4",
     "html-urls": "~2.4.11",
     "is-html-content": "~1.0.0",
