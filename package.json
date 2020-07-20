@@ -34,7 +34,7 @@
     "css-url-regex": "~3.3.1",
     "debug-logfmt": "~1.0.4",
     "execall": "~2.0.0",
-    "got": "~11.5.0",
+    "got": "~11.5.1",
     "html-encode": "~2.1.4",
     "html-urls": "~2.4.12",
     "is-html-content": "~1.0.0",
@@ -44,7 +44,7 @@
     "replace-string": "~3.1.0",
     "require-one-of": "~1.0.13",
     "time-span": "~4.0.0",
-    "tldts": "~5.6.40",
+    "tldts": "~5.6.42",
     "top-sites": "~1.1.28",
     "write-json-file": "~4.3.0"
   },
