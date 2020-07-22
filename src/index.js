@@ -87,9 +87,9 @@ const prerender = async (
     })
 
     const payload = await getPayload(url, {
-      timeout: REQ_TIMEOUT,
+      ...opts,
       headers,
-      ...opts
+      timeout: REQ_TIMEOUT
     })
 
     await fetchRes.cancel()
