@@ -95,7 +95,10 @@ const rewriteCssUrls = ({ html, url }) => {
 
   cssUrls.forEach(cssUrl => {
     if (cssUrl.startsWith('/')) {
-      html = replaceString(html, cssUrl, new URL(cssUrl, url).toString())
+      try {
+        const absoluteUrl = new URL(cssUrl, url).toString()
+        html = replaceString(html, cssUrl, absoluteUrl)
+      } catch (_) {}
     }
   })
 
