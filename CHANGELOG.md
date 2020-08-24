@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/microlinkhq/html-get/compare/v2.7.32...v2.8.0) (2020-08-24)
+
+
+### Features
+
+* add rewriteUrls parameter ([9cd5095](https://github.com/microlinkhq/html-get/commit/9cd5095fa0729078703c4f356175767ab6fb0ab7)), closes [#92](https://github.com/microlinkhq/html-get/issues/92)
+
+
+### Bug Fixes
+
+* linter ([f5e620c](https://github.com/microlinkhq/html-get/commit/f5e620ce553827789dd486b97716a978483be44e))
+
 ### [2.7.32](https://github.com/microlinkhq/html-get/compare/v2.7.31...v2.7.32) (2020-08-23)
 
 
