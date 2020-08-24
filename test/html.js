@@ -77,8 +77,9 @@ test('add video markup', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test('rewrite relative URLs inside html markup', t => {
+test('`rewriteUrls` for rewriting relative URLs inside html markup', t => {
   const output = html({
+    rewriteUrls: true,
     url: 'https://browserless.js.org',
     html: fs.readFileSync(
       path.resolve(__dirname, 'fixtures/browserless.html'),
@@ -94,8 +95,9 @@ test('rewrite relative URLs inside html markup', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test('rewrite relative URLs inside stylesheet', t => {
+test('`rewriteUrls` for rewriting relative URLs inside stylesheet', t => {
   const output = html({
+    rewriteUrls: true,
     url: 'https://kikobeats.com',
     html: `
     <html lang="en">
@@ -119,8 +121,9 @@ test('rewrite relative URLs inside stylesheet', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test("don't rewrite data URIs or HTML selectors as URLs", t => {
+test("`rewriteUrls` for don't rewrite data URIs or HTML selectors as URLs", t => {
   const output = html({
+    rewriteUrls: true,
     url:
       'https://www.theguardian.com/education/2020/jun/05/tell-us-about-your-young-childs-experiences-of-going-back-to-school',
     html: fs.readFileSync(
@@ -140,8 +143,9 @@ test("don't rewrite data URIs or HTML selectors as URLs", t => {
   t.snapshot(prettyHtml(output))
 })
 
-test("don't rewrite inline javascript", t => {
+test("`rewriteUrls` don't rewrite inline javascript", t => {
   const output = html({
+    rewriteUrls: true,
     url:
       'https://www.latimes.com/opinion/story/2020-06-07/column-muralist-honors-african-americans-killed-by-police',
     html: `

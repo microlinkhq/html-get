@@ -137,6 +137,13 @@ Type: `object`
 
 Under non `mode=fetch`, pass configuration object to [puppeteer](https://www.npmjs.com/package/puppeteer).
 
+##### rewriteUrls
+
+Type: `boolean`<br>
+Default: `false`
+
+When is `true`, it will be rewritten CSS/HTML relatives URLs present in the HTML markup into absolutes.
+
 ## License
 
 **html-get** © [Microlink](https://microlink.io), Released under the [MIT](https://github.com/microlinkhq/html-get/blob/master/LICENSE.md) License.<br>

@@ -53,12 +53,12 @@ const fetch = (
       return reflect
         ? resolve({ isRejected: true, error })
         : resolve({
-          url,
-          html: '',
-          mode: 'fetch',
-          headers: error.response ? error.response.headers : {},
-          statusCode: error.response ? error.response.statusCode : undefined
-        })
+            url,
+            html: '',
+            mode: 'fetch',
+            headers: error.response ? error.response.headers : {},
+            statusCode: error.response ? error.response.statusCode : undefined
+          })
     }
   })
 
@@ -110,11 +110,11 @@ const prerender = async (
 
   return isFetchResRejected
     ? {
-      headers: data.headers || {},
-      html: '',
-      url,
-      mode: 'prerender'
-    }
+        headers: data.headers || {},
+        html: '',
+        url,
+        mode: 'prerender'
+      }
     : data
 }
 
@@ -131,7 +131,7 @@ const determinateMode = (url, { prerender }) => {
 const getContent = async (
   url,
   mode,
-  { puppeteerOpts, getBrowserless, gotOpts, toEncode, headers }
+  { getBrowserless, gotOpts, headers, puppeteerOpts, rewriteUrls, toEncode }
 ) => {
   const isFetchMode = mode === 'fetch'
   const fetchOpts = isFetchMode
@@ -140,7 +140,8 @@ const getContent = async (
   const content = await modes[mode](url, fetchOpts)
   const html = addHtml({
     ...content,
-    ...(isFetchMode ? puppeteerOpts : undefined)
+    ...(isFetchMode ? puppeteerOpts : undefined),
+    rewriteUrls
   })
   return { ...content, html }
 }
@@ -154,7 +155,8 @@ module.exports = async (
     gotOpts,
     headers,
     prerender = 'auto',
-    puppeteerOpts
+    puppeteerOpts,
+    rewriteUrls = false
   } = {}
 ) => {
   const toEncode = htmlEncode(encoding)
@@ -163,11 +165,12 @@ module.exports = async (
   const time = timeSpan()
 
   const { mode, ...payload } = await getContent(targetUrl, reqMode, {
-    puppeteerOpts,
     getBrowserless,
     gotOpts,
-    toEncode,
-    headers
+    headers,
+    puppeteerOpts,
+    rewriteUrls,
+    toEncode
   })
 
   return { ...payload, stats: { mode, timing: time.rounded() } }

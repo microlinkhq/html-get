@@ -133,6 +133,7 @@ module.exports = ({
   styles,
   hide,
   remove,
+  rewriteUrls,
   scripts,
   modules
 }) => {
@@ -140,7 +141,7 @@ module.exports = ({
 
   const $ = cheerio.load(content)
 
-  rewriteHtmlUrls({ $, url, headers })
+  if (rewriteUrls) rewriteHtmlUrls({ $, url, headers })
 
   addHead({ $, url, headers })
 
