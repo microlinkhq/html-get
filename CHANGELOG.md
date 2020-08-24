@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.1](https://github.com/microlinkhq/html-get/compare/v2.8.0...v2.8.1) (2020-08-24)
+
 ## [2.8.0](https://github.com/microlinkhq/html-get/compare/v2.7.32...v2.8.0) (2020-08-24)
 
 
