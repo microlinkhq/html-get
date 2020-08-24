@@ -43,7 +43,6 @@ const domains = [
   'theguardian',
   'theverge',
   'tumblr',
-  'twitter',
   'vimeo',
   'wikipedia',
   'wordpress',
