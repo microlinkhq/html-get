@@ -169,7 +169,6 @@ test("`rewriteUrls` don't rewrite inline javascript", t => {
       '<a class="ActionLink" data-social-service="print" href="javascript:window.print()"><svg><use href="#mono-icon-print"/></svg><span>Print</span></a>'
     )
   )
-  t.snapshot(prettyHtml(output))
 })
 
 test('styles injection', t => {
