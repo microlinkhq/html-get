@@ -17,7 +17,6 @@ const domains = [
   'engadget',
   'etsy',
   'eventbrite',
-  'facebook',
   'flickr',
   'ghost',
   'giphy',
