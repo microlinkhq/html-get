@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.9](https://github.com/microlinkhq/html-get/compare/v2.8.8...v2.8.9) (2020-11-04)
+
+
+### Bug Fixes
+
+* linter ([987af59](https://github.com/microlinkhq/html-get/commit/987af59d4022c020d82a2bdeaa4f80a837c8f906))
+
 ### [2.8.8](https://github.com/microlinkhq/html-get/compare/v2.8.7...v2.8.8) (2020-10-21)
 
 ### [2.8.7](https://github.com/microlinkhq/html-get/compare/v2.8.6...v2.8.7) (2020-10-12)
