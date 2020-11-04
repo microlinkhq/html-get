@@ -29,14 +29,14 @@
     "request"
   ],
   "dependencies": {
-    "@metascraper/helpers": "~5.14.15",
+    "@metascraper/helpers": "~5.14.20",
     "cheerio": "~1.0.0-rc.3",
-    "css-url-regex": "~3.3.1",
+    "css-url-regex": "~3.5.0",
     "debug-logfmt": "~1.0.4",
     "execall": "~2.0.0",
     "got": "~11.8.0",
     "html-encode": "~2.1.4",
-    "html-urls": "~2.4.14",
+    "html-urls": "~2.4.15",
     "is-html-content": "~1.0.0",
     "lodash": "~4.17.20",
     "p-cancelable": "~2.0.0",
@@ -44,8 +44,8 @@
     "replace-string": "~3.1.0",
     "require-one-of": "~1.0.14",
     "time-span": "~4.0.0",
-    "tldts": "~5.6.58",
-    "top-sites": "~1.1.31",
+    "tldts": "~5.6.65",
+    "top-sites": "~1.1.33",
     "write-json-file": "~4.3.0"
   },
   "devDependencies": {

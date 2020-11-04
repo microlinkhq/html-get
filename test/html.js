@@ -1,3 +1,5 @@
+/* eslint-disable prefer-regex-literals */
+
 'use strict'
 
 const execall = require('execall')
