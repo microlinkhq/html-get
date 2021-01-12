@@ -18,17 +18,12 @@ const REQ_TIMEOUT = 8000
 
 const fetch = (
   url,
-  {
-    reflect = false,
-    toEncode,
-    timeout = reflect ? REQ_TIMEOUT / 2 : REQ_TIMEOUT,
-    ...opts
-  }
+  { reflect = false, toEncode, timeout = REQ_TIMEOUT, ...opts }
 ) =>
   new PCancelable(async (resolve, reject, onCancel) => {
     const req = got(url, {
       responseType: 'buffer',
-      timeout,
+      timeout: reflect ? timeout / 2 : timeout,
       ...opts
     })
 
@@ -53,12 +48,12 @@ const fetch = (
       return reflect
         ? resolve({ isRejected: true, error })
         : resolve({
-          url,
-          html: '',
-          mode: 'fetch',
-          headers: error.response ? error.response.headers : {},
-          statusCode: error.response ? error.response.statusCode : undefined
-        })
+            url,
+            html: '',
+            mode: 'fetch',
+            headers: error.response ? error.response.headers : {},
+            statusCode: error.response ? error.response.statusCode : undefined
+          })
     }
   })
 
