@@ -48,12 +48,12 @@ const fetch = (
       return reflect
         ? resolve({ isRejected: true, error })
         : resolve({
-            url,
-            html: '',
-            mode: 'fetch',
-            headers: error.response ? error.response.headers : {},
-            statusCode: error.response ? error.response.statusCode : undefined
-          })
+          url,
+          html: '',
+          mode: 'fetch',
+          headers: error.response ? error.response.headers : {},
+          statusCode: error.response ? error.response.statusCode : undefined
+        })
     }
   })
 
@@ -66,22 +66,31 @@ const prerender = async (
   let isFetchResRejected = false
 
   try {
-    fetchRes = fetch(url, { reflect: true, toEncode, headers, ...gotOpts })
+    fetchRes = fetch(url, {
+      reflect: true,
+      toEncode,
+      headers,
+      ...gotOpts,
+      timeout
+    })
     const browserless = await getBrowserless()
 
-    const getPayload = browserless.evaluate(async (page, response) => {
-      if (!response) throw new AbortError('empty response')
+    const getPayload = browserless.evaluate(
+      async (page, response) => {
+        if (!response) throw new AbortError('empty response')
 
-      return {
-        headers: response.headers(),
-        html: await page.content(),
-        mode: 'prerender',
-        url: response.url(),
-        statusCode: response.status()
-      }
-    })
+        return {
+          headers: response.headers(),
+          html: await page.content(),
+          mode: 'prerender',
+          url: response.url(),
+          statusCode: response.status()
+        }
+      },
+      { timeout, headers }
+    )
 
-    const payload = await getPayload(url, { ...opts, headers, timeout })
+    const payload = await getPayload(url, opts)
 
     await fetchRes.cancel()
     debug('prerender', { url, state: 'success' })
