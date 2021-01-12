@@ -123,28 +123,6 @@ test('`rewriteUrls` for rewriting relative URLs inside stylesheet', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test("`rewriteUrls` for don't rewrite data URIs or HTML selectors as URLs", t => {
-  const output = html({
-    rewriteUrls: true,
-    url:
-      'https://www.theguardian.com/education/2020/jun/05/tell-us-about-your-young-childs-experiences-of-going-back-to-school',
-    html: fs.readFileSync(
-      path.resolve(__dirname, 'fixtures/theguardian.html'),
-      'utf8'
-    ),
-    headers: {
-      'content-type': 'text/html; charset=utf-8'
-    }
-  })
-
-  t.true(
-    output.includes(
-      '<meta property="og:title" content="Tell us about your young child&apos;s experiences of going back to school">'
-    )
-  )
-  t.snapshot(prettyHtml(output))
-})
-
 test("`rewriteUrls` don't rewrite inline javascript", t => {
   const output = html({
     rewriteUrls: true,
@@ -168,7 +146,34 @@ test("`rewriteUrls` don't rewrite inline javascript", t => {
 
   t.true(
     output.includes(
-      '<a class="ActionLink" data-social-service="print" href="javascript:window.print()"><svg><use href="#mono-icon-print"/></svg><span>Print</span></a>'
+      '<a class="ActionLink" data-social-service="print" href="javascript:window.print()"><svg><use xlink:href="#mono-icon-print"></use></svg><span>Print</span></a>'
+    )
+  )
+})
+
+test("`rewriteUrls` don't data URIs", t => {
+  const output = html({
+    rewriteUrls: true,
+    url: 'https://example.com',
+    html: `
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<img src="data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7" alt="star" width="16" height="16">
+</body>
+</html>`,
+    headers: {
+      'content-type': 'text/html;charset=UTF-8'
+    }
+  })
+
+  t.true(
+    output.includes(
+      '<img src="data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7" alt="star" width="16" height="16">'
     )
   )
 })
