@@ -64,7 +64,7 @@ const fetch = (
 
 const prerender = async (
   url,
-  { getBrowserless, toEncode, headers, gotOpts, ...opts }
+  { getBrowserless, toEncode, headers, gotOpts, timeout = REQ_TIMEOUT, ...opts }
 ) => {
   let fetchRes
   let data = {}
@@ -86,11 +86,7 @@ const prerender = async (
       }
     })
 
-    const payload = await getPayload(url, {
-      ...opts,
-      headers,
-      timeout: REQ_TIMEOUT
-    })
+    const payload = await getPayload(url, { ...opts, headers, timeout })
 
     await fetchRes.cancel()
     debug('prerender', { url, state: 'success' })
