@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.13](https://github.com/microlinkhq/html-get/compare/v2.8.12...v2.8.13) (2021-01-12)
+
+
+### Bug Fixes
+
+* ensure reflected timeout is half timeout ([f6ae775](https://github.com/microlinkhq/html-get/commit/f6ae7758f499c869e8b6b5e3a076df4ac37b4166))
+* setup browserless.evaluate timeout properly ([aa24bb5](https://github.com/microlinkhq/html-get/commit/aa24bb53bffb084ddcbadb53e42a9a73017741eb))
+* setup default timeout when is necessary ([9d8b033](https://github.com/microlinkhq/html-get/commit/9d8b033714323261402101475298772b05e41244))
+
 ### [2.8.12](https://github.com/microlinkhq/html-get/compare/v2.8.11...v2.8.12) (2020-12-23)
 
 ### [2.8.11](https://github.com/microlinkhq/html-get/compare/v2.8.10...v2.8.11) (2020-12-17)
