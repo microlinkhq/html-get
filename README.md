@@ -3,7 +3,6 @@
 </div>
 
 ![Last version](https://img.shields.io/github/tag/microlinkhq/html-get.svg?style=flat-square)
-[![Build Status](https://img.shields.io/travis/microlinkhq/html-get/master.svg?style=flat-square)](https://travis-ci.com/microlinkhq/html-get)
 [![Coverage Status](https://img.shields.io/coveralls/microlinkhq/html-get.svg?style=flat-square)](https://coveralls.io/github/microlinkhq/html-get)
 [![Dependency status](https://img.shields.io/david/microlinkhq/html-get.svg?style=flat-square)](https://david-dm.org/microlinkhq/html-get)
 [![Dev Dependencies Status](https://img.shields.io/david/dev/microlinkhq/html-get.svg?style=flat-square)](https://david-dm.org/microlinkhq/html-get#info=devDependencies)
