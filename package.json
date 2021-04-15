@@ -43,7 +43,7 @@
     "p-retry": "~4.5.0",
     "replace-string": "~3.1.0",
     "require-one-of": "~1.0.15",
-    "time-span": "~4.0.0",
+    "time-span": "~5.0.0",
     "tldts": "~5.7.19",
     "top-sites": "~1.1.35",
     "write-json-file": "~4.3.0"
