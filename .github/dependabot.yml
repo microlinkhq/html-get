@@ -1,0 +1,17 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 99
+  ignore:
+  - dependency-name: execall
+    versions:
+    - 3.0.0
+  - dependency-name: "@metascraper/helpers"
+    versions:
+    - 5.20.0
+  - dependency-name: p-retry
+    versions:
+    - 4.4.0
