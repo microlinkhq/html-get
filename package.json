@@ -33,7 +33,7 @@
     "cheerio": "~1.0.0-rc.5",
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.0.4",
-    "execall": "~2.0.0",
+    "execall": "~3.0.0",
     "got": "~11.8.2",
     "html-encode": "~2.1.5",
     "html-urls": "~2.4.22",
