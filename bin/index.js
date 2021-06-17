@@ -2,13 +2,17 @@
 
 'use strict'
 
+const minimist = require('minimist')
 const { URL } = require('url')
+
 const getHTML = require('..')
 
-const url = new URL(process.argv[2]).toString()
-const isDebug = !!process.argv[3]
+const [input, ...argv] = process.argv.slice(2)
+const url = new URL(input).toString()
 
-getHTML(url)
+const { debug: isDebug, ...args } = minimist(argv)
+
+getHTML(url, args)
   .then(({ html, stats, headers, statusCode }) => {
     if (isDebug) {
       console.log(`

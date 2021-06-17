@@ -39,6 +39,7 @@
     "html-urls": "~2.4.22",
     "is-html-content": "~1.0.0",
     "lodash": "~4.17.21",
+    "minimist": "~1.2.5",
     "p-cancelable": "~2.1.0",
     "p-retry": "~4.5.0",
     "replace-string": "~3.1.0",
