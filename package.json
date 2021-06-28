@@ -43,7 +43,6 @@
     "p-cancelable": "~2.1.0",
     "p-retry": "~4.6.0",
     "replace-string": "~3.1.0",
-    "require-one-of": "~1.0.15",
     "time-span": "~4.0.0",
     "tldts": "~5.7.38",
     "top-sites": "~1.1.40",
@@ -91,7 +90,7 @@
     "release": "standard-version -a",
     "release:github": "conventional-github-releaser -p angular",
     "release:tags": "git push --follow-tags origin HEAD:master",
-    "test": "nyc ava --verbose --serial test/html.js test/index.js",
+    "test": "nyc --no-clean ava",
     "update": "ncu -u",
     "update:check": "ncu -- --error-level 2"
   },

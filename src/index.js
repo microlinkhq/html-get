@@ -3,10 +3,8 @@
 const { isMediaUrl } = require('@metascraper/helpers')
 const { getDomainWithoutSuffix } = require('tldts')
 const debug = require('debug-logfmt')('html-get')
-const { AbortError } = require('p-retry')
-
-const requireOneOf = require('require-one-of')
 const PCancelable = require('p-cancelable')
+const { AbortError } = require('p-retry')
 const htmlEncode = require('html-encode')
 const timeSpan = require('time-span')
 const got = require('got')
@@ -48,12 +46,12 @@ const fetch = (
       return reflect
         ? resolve({ isRejected: true, error })
         : resolve({
-          url,
-          html: '',
-          mode: 'fetch',
-          headers: error.response ? error.response.headers : {},
-          statusCode: error.response ? error.response.statusCode : undefined
-        })
+            url,
+            html: '',
+            mode: 'fetch',
+            headers: error.response ? error.response.headers : {},
+            statusCode: error.response ? error.response.statusCode : undefined
+          })
     }
   })
 
@@ -150,7 +148,7 @@ module.exports = async (
   targetUrl,
   {
     encoding = 'utf-8',
-    getBrowserless = requireOneOf(['@browserless/pool', 'browserless']),
+    getBrowserless,
     getMode = determinateMode,
     gotOpts,
     headers,
@@ -159,6 +157,10 @@ module.exports = async (
     rewriteUrls = false
   } = {}
 ) => {
+  if (!getBrowserless) {
+    throw TypeError('Need to provide a `getBrowserless` function.')
+  }
+
   const toEncode = htmlEncode(encoding)
   const reqMode = getMode(targetUrl, { prerender })
 

@@ -3,7 +3,7 @@
 const cheerio = require('cheerio')
 const test = require('ava')
 
-const { prettyHtml } = require('./util')
+const { getBrowserless, prettyHtml } = require('./util')
 const getHTML = require('..')
 
 const wait = async (promise, prop) => {
@@ -14,14 +14,28 @@ const wait = async (promise, prop) => {
 test('reachable URL', async t => {
   const url = 'https://example.com'
   const [prerenderDisabled, prerenderEnabled] = await Promise.all([
-    getHTML(url, { prerender: false }),
-    getHTML(url, { prerender: true, puppeteerOpts: { adblock: false } })
+    getHTML(url, { prerender: false, getBrowserless }),
+    getHTML(url, {
+      prerender: true,
+      getBrowserless,
+      puppeteerOpts: { adblock: false }
+    })
   ])
 
-  t.is(await wait(getHTML(url, { prerender: false }), 'statusCode'), 200)
   t.is(
     await wait(
-      getHTML(url, { prerender: true, puppeteerOpts: { adblock: false } }),
+      getHTML(url, { prerender: false, getBrowserless }),
+      'statusCode'
+    ),
+    200
+  )
+  t.is(
+    await wait(
+      getHTML(url, {
+        prerender: true,
+        getBrowserless,
+        puppeteerOpts: { adblock: false }
+      }),
       'statusCode'
     ),
     200
@@ -43,8 +57,12 @@ test('unreachable URL', async t => {
   const url = 'https://notexisturl.dev'
 
   const [prerenderDisabled, prerenderEnabled] = await Promise.all([
-    getHTML(url, { prerender: false }),
-    getHTML(url, { prerender: true, puppeteerOpts: { adblock: false } })
+    getHTML(url, { prerender: false, getBrowserless }),
+    getHTML(url, {
+      prerender: true,
+      getBrowserless,
+      puppeteerOpts: { adblock: false }
+    })
   ])
 
   t.is(prerenderDisabled.url, prerenderEnabled.url)
@@ -57,6 +75,7 @@ test('from audio URL', async t => {
   const targetUrl =
     'https://audiodemos.github.io/vctk_set0/embedadapt_100sample.wav'
   const { url, stats, html } = await getHTML(targetUrl, {
+    getBrowserless,
     prerender: false
   })
 
@@ -67,7 +86,7 @@ test('from audio URL', async t => {
 
 test('from image URL', async t => {
   const targetUrl = 'https://kikobeats.com/images/avatar.jpg'
-  const { url, stats, html } = await getHTML(targetUrl)
+  const { url, stats, html } = await getHTML(targetUrl, { getBrowserless })
 
   t.is(stats.mode, 'fetch')
   t.is(url, targetUrl)
@@ -81,7 +100,8 @@ test('from image URL', async t => {
 test('from video URL', async t => {
   const targetUrl = 'http://techslides.com/demos/sample-videos/small.mp4'
   const { url, stats, html } = await getHTML(targetUrl, {
-    prerender: false
+    prerender: false,
+    getBrowserless
   })
 
   t.is(stats.mode, 'fetch')
@@ -93,6 +113,7 @@ test('from bad SSL URL', async t => {
   const targetUrl = 'https://self-signed.badssl.com/'
   const { url, stats, html } = await getHTML(targetUrl, {
     prerender: false,
+    getBrowserless,
     gotOpts: {
       https: { rejectUnauthorized: false }
     }

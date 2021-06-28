@@ -72,6 +72,15 @@ Type: `string`
 
 The target URL for getting the HTML markup.
 
+##### getBrowserless
+
+*Required*<br>
+Type: `function`<br>
+
+A function that should return a [browserless](https://browserless.js.org/) instance to be used for interact with puppeteer.
+
+If you don't provide a value, then the library try to load [`@browserless/pool`](https://www.npmjs.com/package/@browserless/pool) or [`browserless`](https://www.npmjs.com/package/browserless) from your dependencies.
+
 #### options
 
 ##### prerender
@@ -84,14 +93,6 @@ Enable or disable prerendering as mechanism for getting the HTML markup explicit
 The value `auto` means that that internally use a list of whitelist website that don't need to use prerendering by default. This list is used for speedup the process, using `fetch` mode for these websites.
 
 See [getMode parameter](#getMode) for know more.
-
-##### getBrowserless
-
-Type: `function`<br>
-
-A function that should return a [browserless](https://browserless.js.org/) instance to be used for interact with puppeteer.
-
-If you don't provide a value, then the library try to load [`@browserless/pool`](https://www.npmjs.com/package/@browserless/pool) or [`browserless`](https://www.npmjs.com/package/browserless) from your dependencies.
 
 ##### encoding
 
