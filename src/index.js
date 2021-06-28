@@ -46,12 +46,12 @@ const fetch = (
       return reflect
         ? resolve({ isRejected: true, error })
         : resolve({
-            url,
-            html: '',
-            mode: 'fetch',
-            headers: error.response ? error.response.headers : {},
-            statusCode: error.response ? error.response.statusCode : undefined
-          })
+          url,
+          html: '',
+          mode: 'fetch',
+          headers: error.response ? error.response.headers : {},
+          statusCode: error.response ? error.response.statusCode : undefined
+        })
     }
   })
 
