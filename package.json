@@ -91,7 +91,7 @@
     "release": "standard-version -a",
     "release:github": "conventional-github-releaser -p angular",
     "release:tags": "git push --follow-tags origin HEAD:master",
-    "test": "nyc --no-clean ava",
+    "test": "nyc ava",
     "update": "ncu -u",
     "update:check": "ncu -- --error-level 2"
   },
