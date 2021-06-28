@@ -22,7 +22,10 @@ jobs:
           node-version: '16'
       - name: Install
         run: npm install --no-package-lock
-      - name: Test
-        run: npm test
+      - name: Report
+        run: mkdir -p coverage && npx nyc report --reporter=text-lcov > coverage/lcov.info
       - name: Coverage
-        run: npm run coverage
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
