@@ -1,6 +1,7 @@
 'use strict'
 
 const createBrowserless = require('browserless')
+const dateRegex = require('regex-iso-date')
 const onExit = require('signal-exit')
 const pretty = require('pretty')
 
@@ -14,6 +15,7 @@ const getBrowserless = async () => {
 }
 
 module.exports = {
-  prettyHtml: html => pretty(html, { ocd: true }),
+  prettyHtml: html =>
+    pretty(html, { ocd: true }).replace(dateRegex(), '{DATE}'),
   getBrowserless
 }
