@@ -98,8 +98,8 @@
   "license": "MIT",
   "ava": {
     "files": [
-      "!test/util.js",
-      "test/**/*.js"
+      "test/**/*.js",
+      "!test/util.js"
     ],
     "timeout": "2m"
   },
@@ -110,7 +110,7 @@
   },
   "lint-staged": {
     "package.json": [
-      "finepack"
+      "finepack --sort-ignore-object-at ava"
     ],
     "*.js": [
       "prettier-standard"
