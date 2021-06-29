@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://github.com/microlinkhq/html-get/compare/v2.8.25...v2.9.0) (2021-06-29)
+
+
+### Features
+
+* provide getBrowserless is mandatory ([28bed9a](https://github.com/microlinkhq/html-get/commit/28bed9a7563db6e91961a75e4e4826d607be5ed9))
+
+
+### Bug Fixes
+
+* linter ([cac07e3](https://github.com/microlinkhq/html-get/commit/cac07e30ac312ca3a20508e5a221510e974ddfeb))
+
 ### [2.8.25](https://github.com/microlinkhq/html-get/compare/v2.8.24...v2.8.25) (2021-06-25)
 
 ### [2.8.24](https://github.com/microlinkhq/html-get/compare/v2.8.23...v2.8.24) (2021-06-17)
