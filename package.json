@@ -42,7 +42,7 @@
     "minimist": "~1.2.5",
     "p-cancelable": "~2.1.0",
     "p-retry": "~4.6.0",
-    "replace-string": "~3.1.0",
+    "replace-string": "~4.0.0",
     "time-span": "~4.0.0",
     "tldts": "~5.7.38",
     "top-sites": "~1.1.40",
