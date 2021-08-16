@@ -83,7 +83,7 @@ A function that should return a [browserless](https://browserless.js.org/) insta
 
 ##### prerender
 
-Type: `boolean|string`<br>
+Type: `boolean`|`string`<br>
 Default: `'auto'`
 
 Enable or disable prerendering as mechanism for getting the HTML markup explicitly.
