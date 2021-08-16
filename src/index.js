@@ -158,7 +158,7 @@ module.exports = async (
   } = {}
 ) => {
   if (!getBrowserless) {
-    throw TypeError('Need to provide a `getBrowserless` function.')
+    throw TypeError('Need to provide a `getBrowserless` function. Try to pass `getBrowserless: require(\'browserless\')`')
   }
 
   const toEncode = htmlEncode(encoding)
