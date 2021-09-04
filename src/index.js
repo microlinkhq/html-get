@@ -85,7 +85,11 @@ const prerender = async (
           statusCode: response.status()
         }
       },
-      { timeout, headers }
+      {
+        timeout,
+        headers,
+        abortTypes: ['stylesheet', 'fonts', 'image', 'media']
+      }
     )
 
     const payload = await getPayload(url, opts)
@@ -158,7 +162,9 @@ module.exports = async (
   } = {}
 ) => {
   if (!getBrowserless) {
-    throw TypeError('Need to provide a `getBrowserless` function. Try to pass `getBrowserless: require(\'browserless\')`')
+    throw TypeError(
+      "Need to provide a `getBrowserless` function. Try to pass `getBrowserless: require('browserless')`"
+    )
   }
 
   const toEncode = htmlEncode(encoding)
