@@ -46,12 +46,12 @@ const fetch = (
       return reflect
         ? resolve({ isRejected: true, error })
         : resolve({
-          url,
-          html: '',
-          mode: 'fetch',
-          headers: error.response ? error.response.headers : {},
-          statusCode: error.response ? error.response.statusCode : undefined
-        })
+            url,
+            html: '',
+            mode: 'fetch',
+            headers: error.response ? error.response.headers : {},
+            statusCode: error.response ? error.response.statusCode : undefined
+          })
     }
   })
 
@@ -67,8 +67,8 @@ const prerender = async (
     fetchRes = fetch(url, {
       reflect: true,
       toEncode,
-      headers,
       ...gotOpts,
+      headers,
       timeout
     })
     const browserless = await getBrowserless()
