@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.9.5](https://github.com/microlinkhq/html-get/compare/v2.9.4...v2.9.5) (2021-09-08)
+
+
+### Bug Fixes
+
+* ensure reponse is a buffer ([842ed98](https://github.com/microlinkhq/html-get/commit/842ed98f713be107ee7a4b945d89e60376df6209))
+
 ### [2.9.4](https://github.com/microlinkhq/html-get/compare/v2.9.3...v2.9.4) (2021-09-08)
 
 ### 2.9.3 (2021-09-04)
