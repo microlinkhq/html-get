@@ -29,7 +29,7 @@
     "request"
   ],
   "dependencies": {
-    "@metascraper/helpers": "~5.24.2",
+    "@metascraper/helpers": "~5.25.0",
     "cheerio": "~1.0.0-rc.10",
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.0.4",
@@ -95,8 +95,8 @@
   "license": "MIT",
   "ava": {
     "files": [
-      "!test/util.js",
-      "test/**/*.js"
+      "test/**/*.js",
+      "!test/util.js"
     ],
     "timeout": "2m"
   },
