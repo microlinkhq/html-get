@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.9.7 (2021-12-01)
+
+
+### Bug Fixes
+
+* sort ([7bf5c81](https://github.com/microlinkhq/html-get/commit/7bf5c81380c7f7a4f1d5b7c688da3f9368a25e6d))
+
 ### 2.9.6 (2021-10-25)
 
 ### [2.9.5](https://github.com/microlinkhq/html-get/compare/v2.9.4...v2.9.5) (2021-09-08)
