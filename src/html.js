@@ -97,7 +97,7 @@ const rewriteCssUrls = ({ html, url }) => {
     if (cssUrl.startsWith('/')) {
       try {
         const absoluteUrl = new URL(cssUrl, url).toString()
-        html = replaceString(html, cssUrl, absoluteUrl)
+        html = replaceString(html, `url(${cssUrl})`, `url(${absoluteUrl})`)
       } catch (_) {}
     }
   })
@@ -164,7 +164,11 @@ module.exports = ({
   if (scripts) injectScripts({ $, scripts, type: 'text/javascript' })
   if (modules) injectScripts({ $, modules, type: 'module' })
 
-  return rewriteCssUrls({ html: $.html(), url })
+  let sanetizedHtml = $.html()
+
+  if (rewriteUrls) sanetizedHtml = rewriteCssUrls({ html: sanetizedHtml, url })
+
+  return sanetizedHtml
 }
 
 module.exports.isHTML = isHTML

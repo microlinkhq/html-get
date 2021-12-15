@@ -79,6 +79,39 @@ test('add video markup', t => {
   t.snapshot(prettyHtml(output))
 })
 
+test("'`rewriteCssUrls` don't modify html markup", t => {
+  const output = html({
+    rewriteUrls: true,
+    url:
+      'https://www.rubiomonocoatusa.com/blogs/blog/how-to-apply-oil-plus-2c-to-furniture',
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <style>body { background: url(//cdn.shopify.com/s/files/1/0260/4810/2497/articles/Applying-Oil-Plus-2C-to-a-table_600x.jpg?v=1616464305) }</style>
+  <meta property="og:image" content="http://cdn.shopify.com/s/files/1/0260/4810/2497/articles/Applying-Oil-Plus-2C-to-a-table_600x.jpg?v=1616464305">
+</head>
+<body></body>
+</html>`,
+    headers: {
+      'content-type': 'text/html; charset=utf-8'
+    }
+  })
+
+  t.true(
+    output.includes(
+      'content="http://cdn.shopify.com/s/files/1/0260/4810/2497/articles/Applying-Oil-Plus-2C-to-a-table_600x.jpg?v=1616464305"'
+    )
+  )
+
+  t.true(
+    output.includes(
+      'url(https://cdn.shopify.com/s/files/1/0260/4810/2497/articles/Applying-Oil-Plus-2C-to-a-table_600x.jpg?v=1616464305)'
+    )
+  )
+
+  t.snapshot(prettyHtml(output))
+})
+
 test('`rewriteUrls` for rewriting relative URLs inside html markup', t => {
   const output = html({
     rewriteUrls: true,
