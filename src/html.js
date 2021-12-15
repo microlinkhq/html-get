@@ -97,7 +97,7 @@ const rewriteCssUrls = ({ html, url }) => {
     if (cssUrl.startsWith('/')) {
       try {
         const absoluteUrl = new URL(cssUrl, url).toString()
-        html = replaceString(html, cssUrl, absoluteUrl)
+        html = replaceString(html, `url(${cssUrl})`, `url(${absoluteUrl})`)
       } catch (_) {}
     }
   })
@@ -141,7 +141,7 @@ module.exports = ({
 
   const $ = cheerio.load(content)
 
-  if (rewriteUrls) rewriteHtmlUrls({ $, url, headers })
+  if (rewriteUrls) rewriteHtmlUrls({ $, url })
 
   addHead({ $, url, headers })
 
@@ -164,7 +164,7 @@ module.exports = ({
   if (scripts) injectScripts({ $, scripts, type: 'text/javascript' })
   if (modules) injectScripts({ $, modules, type: 'module' })
 
-  return rewriteCssUrls({ html: $.html(), url })
+  return rewriteUrls ? rewriteCssUrls({ html: $.html(), url }) : $.html()
 }
 
 module.exports.isHTML = isHTML
