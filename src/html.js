@@ -141,7 +141,7 @@ module.exports = ({
 
   const $ = cheerio.load(content)
 
-  if (rewriteUrls) rewriteHtmlUrls({ $, url, headers })
+  if (rewriteUrls) rewriteHtmlUrls({ $, url })
 
   addHead({ $, url, headers })
 
@@ -164,11 +164,7 @@ module.exports = ({
   if (scripts) injectScripts({ $, scripts, type: 'text/javascript' })
   if (modules) injectScripts({ $, modules, type: 'module' })
 
-  let sanetizedHtml = $.html()
-
-  if (rewriteUrls) sanetizedHtml = rewriteCssUrls({ html: sanetizedHtml, url })
-
-  return sanetizedHtml
+  return rewriteUrls ? rewriteCssUrls({ html: $.html(), url }) : $.html()
 }
 
 module.exports.isHTML = isHTML
