@@ -88,7 +88,7 @@ const prerender = async (
       {
         timeout,
         headers,
-        abortTypes: ['stylesheet', 'fonts', 'image', 'media']
+        abortTypes: ['stylesheet', 'fonts']
       }
     )
 
