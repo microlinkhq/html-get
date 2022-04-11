@@ -38,21 +38,37 @@ $ npm install puppeteer html-get --save
 ## Usage
 
 ```js
-'use strict'
-
+const createBrowserless = require('browserless')
 const getHTML = require('html-get')
 
-getHTML('https://example.com').then(
-  ({ url, html, stats, headers, statusCode }) =>
-    console.log(`
-       url: ${url}
-      html: ${Buffer.from(html).byteLength} bytes (HTTP ${statusCode})
-      time: ${stats.timing} (${stats.mode})
-   headers: ${Object.keys(headers).reduce(
-     (acc, key) => `${acc}${key}=${headers[key]} `,
-     ''
-   )}
-`))
+// Spawn Chromium process once
+const browserlessFactory = createBrowserless()
+
+// Kill the process when Node.js exit
+process.on('exit', () => {
+  console.log('closing resources!')
+  browserlessFactory.close()
+})
+
+const getContent = async url => {
+  // create a browser context inside Chromium process
+  const browserContext = browserlessFactory.createContext()
+  const getBrowserless = () => browserContext
+  const result = await getHTML(url, { getBrowserless })
+  // close the browser context after it's used
+  await getBrowserless((browser) => browser.destroyContext())
+  return result
+}
+
+getContent('https://example.com')
+  .then(content => {
+    console.log(content)
+    process.exit()
+  })
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+  })
 ```
 
 ### Command Line
