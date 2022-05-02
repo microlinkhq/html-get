@@ -112,7 +112,7 @@ test("'`rewriteCssUrls` don't modify html markup", t => {
   t.snapshot(prettyHtml(output))
 })
 
-test('`rewriteUrls` for rewriting relative URLs inside html markup', t => {
+test('`rewriteUrls` rewrites relative root URLs inside html markup', t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://browserless.js.org',
@@ -127,10 +127,32 @@ test('`rewriteUrls` for rewriting relative URLs inside html markup', t => {
 
   t.true(output.includes('https://browserless.js.org/static/main.min.js'))
   t.true(output.includes('https://unpkg.com/docsify/lib/docsify.min.js'))
+
   t.snapshot(prettyHtml(output))
 })
 
-test('`rewriteUrls` for rewriting relative URLs inside stylesheet', t => {
+test('`rewriteUrls` rewrites relative URLs inside html markup', t => {
+  const output = html({
+    rewriteUrls: true,
+    url: 'https://moovility.me/',
+    html: `<!DOCTYPE html>
+    <html>
+    <head>
+      <link rel="apple-touch-icon" href="img/icons/MOV/icon2-76.png" sizes="76x76">
+    </head>
+    <body></body>
+    </html>`,
+    headers: {
+      'content-type': 'text/html; charset=utf-8'
+    }
+  })
+
+  t.true(output.includes('https://moovility.me/img/icons/MOV/icon2-76.png'))
+
+  t.snapshot(prettyHtml(output))
+})
+
+test('`rewriteUrls` rewrites relative URLs inside stylesheet', t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://kikobeats.com',
@@ -156,7 +178,7 @@ test('`rewriteUrls` for rewriting relative URLs inside stylesheet', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test("`rewriteUrls` don't rewrite inline javascript", t => {
+test("`rewriteUrls` don't modify inline javascript", t => {
   const output = html({
     rewriteUrls: true,
     url:
@@ -182,9 +204,47 @@ test("`rewriteUrls` don't rewrite inline javascript", t => {
       '<a class="ActionLink" data-social-service="print" href="javascript:window.print()"><svg><use xlink:href="#mono-icon-print"></use></svg><span>Print</span></a>'
     )
   )
+
+  t.snapshot(prettyHtml(output))
 })
 
-test("`rewriteUrls` don't data URIs", t => {
+test("`rewriteUrls` don't modify non http protocols", t => {
+  const output = html({
+    rewriteUrls: true,
+    url:
+      'https://www.latimes.com/opinion/story/2020-06-07/column-muralist-honors-african-americans-killed-by-police',
+    html: `
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<a href="mailto:jen@oreilly.com"></a>
+<a href="ftp://user:password@server/pathname"></a>
+<a href="file://server/path"></a>
+<a href="nntp://server:port/newsgroup/article"></a>
+<a href="telnet://user:password@server:port/"/></a>
+<a href="gopher://docstore.mik.ua/orelly.htm"></a>
+</body>
+</html>`,
+    headers: {
+      'content-type': 'text/html;charset=UTF-8'
+    }
+  })
+
+  t.true(output.includes('<a href="mailto:jen@oreilly.com"></a>'))
+  t.true(output.includes('<a href="ftp://user:password@server/pathname"></a>'))
+  t.true(output.includes('<a href="file://server/path'))
+  t.true(output.includes('<a href="nntp://server:port/newsgroup/article"></a>'))
+  t.true(output.includes('<a href="telnet://user:password@server:port/"></a>'))
+  t.true(output.includes('<a href="gopher://docstore.mik.ua/orelly.htm"></a>'))
+
+  t.snapshot(prettyHtml(output))
+})
+
+test("`rewriteUrls` don't modify data URIs", t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://example.com',
@@ -209,6 +269,8 @@ test("`rewriteUrls` don't data URIs", t => {
       '<img src="data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7" alt="star" width="16" height="16">'
     )
   )
+
+  t.snapshot(prettyHtml(output))
 })
 
 test("`rewriteUrls` don't modify udnefined attributes", t => {
@@ -231,6 +293,8 @@ test("`rewriteUrls` don't modify udnefined attributes", t => {
   })
 
   t.true(output.includes("<script>console.log('greetings')</script>"))
+
+  t.snapshot(prettyHtml(output))
 })
 
 test('styles injection', t => {
@@ -263,6 +327,7 @@ test('styles injection', t => {
   )
 
   t.true(output.includes('background: black'))
+
   t.snapshot(prettyHtml(output))
 })
 
@@ -312,6 +377,7 @@ test('scripts injection', t => {
       '<script src="https://code.jquery.com/jquery-3.5.1.min.js" type="text/javascript"></script>'
     )
   )
+
   t.snapshot(prettyHtml(output))
 })
 

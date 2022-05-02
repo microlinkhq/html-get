@@ -1,7 +1,7 @@
 'use strict'
 
-const { startsWith, get, split, nth, castArray, forEach } = require('lodash')
 const { date: toDate, isUrl, isMime } = require('@metascraper/helpers')
+const { get, split, nth, castArray, forEach } = require('lodash')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
 const isHTML = require('is-html-content')
@@ -75,7 +75,8 @@ const rewriteHtmlUrls = ({ $, url }) => {
     $(tagName.join(',')).each(function () {
       const el = $(this)
       const attr = el.attr(urlAttr)
-      if (startsWith(attr, '/')) {
+
+      if (typeof attr === 'string' && !attr.startsWith('http')) {
         try {
           const newAttr = new URL(attr, url).toString()
           el.attr(urlAttr, newAttr)
