@@ -79,7 +79,7 @@
   ],
   "scripts": {
     "clean": "rm -rf node_modules",
-    "contributors": "(git-authors-cli && finepack && git add package.json && git commit -m 'build: contributors' --no-verify) || true",
+    "contributors": "(git-authors-cli && finepack --sort-ignore-object-at ava && git add package.json && git commit -m 'build: contributors' --no-verify) || true",
     "lint": "standard-markdown README.md && standard",
     "postinstall": "node scripts/postinstall",
     "postrelease": "npm run release:tags && npm run release:github && (ci-publish || npm publish --access=public)",
@@ -96,8 +96,8 @@
   "ava": {
     "workerThreads": false,
     "files": [
-      "!test/util.js",
-      "test/**/*.js"
+      "test/**/*.js",
+      "!test/util.js"
     ],
     "timeout": "2m"
   },
