@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.9.15 (2022-05-02)
+
+
+### Bug Fixes
+
+* linter ([1f32f3b](https://github.com/microlinkhq/html-get/commit/1f32f3b5cfa06a8d0225bf0a7789ca16fe901591))
+
 ### 2.9.14 (2022-04-04)
 
 ### 2.9.13 (2022-03-28)
