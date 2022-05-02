@@ -161,7 +161,7 @@ module.exports = async (
     rewriteUrls = false
   } = {}
 ) => {
-  if (!getBrowserless) {
+  if (!getBrowserless && prerender !== false) {
     throw TypeError(
       "Need to provide a `getBrowserless` function. Try to pass `getBrowserless: require('browserless')`"
     )

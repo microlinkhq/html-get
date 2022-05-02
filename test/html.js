@@ -112,7 +112,7 @@ test("'`rewriteCssUrls` don't modify html markup", t => {
   t.snapshot(prettyHtml(output))
 })
 
-test('`rewriteUrls` rewrites relative root URLs inside html markup', t => {
+test('`rewriteHtmlUrls` rewrites relative root URLs inside html markup', t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://browserless.js.org',
@@ -131,7 +131,7 @@ test('`rewriteUrls` rewrites relative root URLs inside html markup', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test('`rewriteUrls` rewrites relative URLs inside html markup', t => {
+test('`rewriteHtmlUrls` rewrites relative URLs inside html markup', t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://moovility.me/',
@@ -152,7 +152,7 @@ test('`rewriteUrls` rewrites relative URLs inside html markup', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test('`rewriteUrls` rewrites relative URLs inside stylesheet', t => {
+test('`rewriteHtmlUrls` rewrites relative URLs inside stylesheet', t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://kikobeats.com',
@@ -178,7 +178,7 @@ test('`rewriteUrls` rewrites relative URLs inside stylesheet', t => {
   t.snapshot(prettyHtml(output))
 })
 
-test("`rewriteUrls` don't modify inline javascript", t => {
+test("`rewriteHtmlUrls` don't modify inline javascript", t => {
   const output = html({
     rewriteUrls: true,
     url:
@@ -208,7 +208,7 @@ test("`rewriteUrls` don't modify inline javascript", t => {
   t.snapshot(prettyHtml(output))
 })
 
-test("`rewriteUrls` don't modify non http protocols", t => {
+test("`rewriteHtmlUrls` don't modify non http protocols", t => {
   const output = html({
     rewriteUrls: true,
     url:
@@ -244,7 +244,7 @@ test("`rewriteUrls` don't modify non http protocols", t => {
   t.snapshot(prettyHtml(output))
 })
 
-test("`rewriteUrls` don't modify data URIs", t => {
+test("`rewriteHtmlUrls` don't modify data URIs", t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://example.com',
@@ -273,7 +273,7 @@ test("`rewriteUrls` don't modify data URIs", t => {
   t.snapshot(prettyHtml(output))
 })
 
-test("`rewriteUrls` don't modify udnefined attributes", t => {
+test("`rewriteHtmlUrls` don't modify udnefined attributes", t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://moovility.me',
