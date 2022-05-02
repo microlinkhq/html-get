@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.9.16-0](https://github.com/microlinkhq/html-get/compare/v2.9.15...v2.9.16-0) (2022-05-02)
+
+
+### Bug Fixes
+
+* ensure to rewrite relative non root URLs ([d8d3996](https://github.com/microlinkhq/html-get/commit/d8d399604a21e6f4b9e647ef87ab5967d23c5684))
+
 ### 2.9.15 (2022-05-02)
 
 
