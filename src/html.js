@@ -167,5 +167,3 @@ module.exports = ({
 
   return rewriteUrls ? rewriteCssUrls({ html: $.html(), url }) : $.html()
 }
-
-module.exports.isHTML = isHTML
