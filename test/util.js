@@ -14,9 +14,6 @@ const getBrowserless = async () => {
   return browserless
 }
 
-const result = await getHTML('https://example.com', { getBrowserless })
-await browserlessFactory.close()
-
 module.exports = {
   prettyHtml: html =>
     pretty(html, { ocd: true }).replace(dateRegex(), '{DATE}'),
