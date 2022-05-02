@@ -211,6 +211,28 @@ test("`rewriteUrls` don't data URIs", t => {
   )
 })
 
+test("`rewriteUrls` don't modify udnefined attributes", t => {
+  const output = html({
+    rewriteUrls: true,
+    url: 'https://moovility.me',
+    html: `
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Document</title>
+</head>
+<body>
+  <script>console.log('greetings')</script>
+</body>
+</html>`,
+    headers: {
+      'content-type': 'text/html;charset=UTF-8'
+    }
+  })
+
+  t.true(output.includes("<script>console.log('greetings')</script>"))
+})
+
 test('styles injection', t => {
   const output = html({
     url: 'https://kikobeats.com',

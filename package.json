@@ -94,6 +94,7 @@
   },
   "license": "MIT",
   "ava": {
+    "workerThreads": false,
     "files": [
       "!test/util.js",
       "test/**/*.js"
