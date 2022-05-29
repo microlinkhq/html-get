@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "@metascraper/helpers": "~5.29.0",
-    "cheerio": "~1.0.0-rc.10",
+    "cheerio": "~1.0.0-rc.11",
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.0.4",
     "execall": "~2.0.0",
