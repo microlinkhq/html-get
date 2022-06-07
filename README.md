@@ -32,7 +32,7 @@ Generally this approach better than a simple GET request from the target URL, bu
 ## Install
 
 ```bash
-$ npm install puppeteer html-get --save
+$ npm install browserless puppeteer html-get --save
 ```
 
 ## Usage
