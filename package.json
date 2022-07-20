@@ -40,7 +40,7 @@
     "is-html-content": "~1.0.0",
     "lodash": "~4.17.21",
     "minimist": "~1.2.6",
-    "p-cancelable": "~2.1.0",
+    "p-cancelable": "~4.0.1",
     "p-retry": "~4.6.0",
     "replace-string": "~3.1.0",
     "time-span": "~4.0.0",
