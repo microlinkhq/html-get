@@ -50,6 +50,17 @@ test('add doctype', t => {
   t.snapshot(prettyHtml(output))
 })
 
+test('add json markup', t => {
+  const output = html({
+    html:
+      '{"origin":"83.46.149.83","city":"Madrid","alpha2":"ES","alpha3":"ESP","callingCodes":["+34"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"eeaMember":true,"euMember":true,"flag":"🇪🇸","languages":{"spa":"Spanish"},"numeric":724,"tld":[".es"],"region":"MD","latitude":"40.4163","longitude":"-3.6934","timezone":"Europe/Madrid","headers":{"accept":"*/*","accept-encoding":"gzip","cdn-loop":"cloudflare","cf-connecting-ip":"83.46.149.83","cf-ipcountry":"ES","cf-ray":"73a29be38cdf37c7-MAD","cf-visitor":"{"scheme":"https"}","connection":"Keep-Alive","host":"geolocation.microlink.io","user-agent":"curl/7.79.1","x-forwarded-for":"172.70.57.171","x-forwarded-host":"geolocation.microlink.io","x-forwarded-proto":"https","x-real-ip":"172.70.57.171","x-vercel-edge-region":"dev","x-vercel-id":"cdg1::x96k9-1660405852783-a0083d276cde","x-vercel-ip-city":"Madrid","x-vercel-ip-country":"ES","x-vercel-ip-country-region":"MD","x-vercel-ip-latitude":"40.4163","x-vercel-ip-longitude":"-3.6934","x-vercel-ip-timezone":"Europe/Madrid","x-vercel-proxied-for":"172.70.57.171"}}',
+    url: 'https://geolocation.microlink.io/',
+    headers: { 'content-type': 'application/json' }
+  })
+
+  t.snapshot(prettyHtml(output))
+})
+
 test('add image markup', t => {
   const output = html({
     url: 'https://media.giphy.com/media/LqTSLCsIIkCTvQ8X9g/giphy.gif',
