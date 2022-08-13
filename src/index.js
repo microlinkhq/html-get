@@ -140,6 +140,7 @@ const getContent = async (
     ? { headers, toEncode, ...gotOpts }
     : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
   const content = await modes[mode](url, fetchOpts)
+
   const html = addHtml({
     ...content,
     ...(isFetchMode ? puppeteerOpts : undefined),

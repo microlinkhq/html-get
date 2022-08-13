@@ -29,7 +29,7 @@
     "request"
   ],
   "dependencies": {
-    "@metascraper/helpers": "~5.29.11",
+    "@metascraper/helpers": "~5.30.2",
     "cheerio": "~1.0.0-rc.12",
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.0.4",
@@ -44,8 +44,8 @@
     "p-retry": "~4.6.0",
     "replace-string": "~3.1.0",
     "time-span": "~4.0.0",
-    "tldts": "~5.7.82",
-    "top-sites": "~1.1.110",
+    "tldts": "~5.7.89",
+    "top-sites": "~1.1.117",
     "write-json-file": "~4.3.0"
   },
   "devDependencies": {

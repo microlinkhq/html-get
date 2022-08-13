@@ -1,6 +1,5 @@
 'use strict'
 
-const { date: toDate, isUrl, isMime } = require('@metascraper/helpers')
 const { get, split, nth, castArray, forEach } = require('lodash')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
@@ -11,6 +10,13 @@ const execall = require('execall')
 const cheerio = require('cheerio')
 const { URL } = require('url')
 const path = require('path')
+
+const {
+  date: toDate,
+  mimeExtension,
+  isMime,
+  isUrl
+} = require('@metascraper/helpers')
 
 const has = el => el.length !== 0
 
@@ -54,7 +60,7 @@ const addHead = ({ $, url, headers }) => {
   tags.forEach(tag => head.append(tag))
 }
 
-const addBody = ({ url, headers }) => {
+const addBody = ({ url, headers, html }) => {
   const contentType = get(headers, 'content-type')
 
   let element = ''
@@ -65,6 +71,8 @@ const addBody = ({ url, headers }) => {
     element = `<video src="${url}"></video>`
   } else if (isMime(contentType, 'audio')) {
     element = `<audio src="${url}"></audio>`
+  } else if (mimeExtension(contentType) === 'json') {
+    element = `<pre>${html}</pre>`
   }
 
   return `<!DOCTYPE html><html><head></head><body>${element}</body></html>`
@@ -138,7 +146,9 @@ module.exports = ({
   scripts,
   modules
 }) => {
-  const content = addDocType(isHTML(html) ? html : addBody({ url, headers }))
+  const content = addDocType(
+    isHTML(html) ? html : addBody({ url, headers, html })
+  )
 
   const $ = cheerio.load(content)
 
