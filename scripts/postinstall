@@ -3,10 +3,9 @@
 'use strict'
 
 const { compact, reduce, findIndex } = require('lodash')
+const { parseUrl } = require('@metascraper/helpers')
 const writeJsonFile = require('write-json-file')
 const topsites = require('top-sites')
-
-const { getDomainWithoutSuffix } = require('tldts')
 
 const domains = [
   'apple',
@@ -55,7 +54,7 @@ const { top, rest } = reduce(
   (acc, domain) => {
     const index = findIndex(
       topsites,
-      ({ rootDomain }) => getDomainWithoutSuffix(rootDomain) === domain
+      ({ rootDomain }) => parseUrl(rootDomain).domainWithoutSuffix === domain
     )
     if (index !== -1) acc.top[index] = domain
     else acc.rest.push(domain)
