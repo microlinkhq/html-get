@@ -1,7 +1,6 @@
 'use strict'
 
-const { isMediaUrl } = require('@metascraper/helpers')
-const { getDomainWithoutSuffix } = require('tldts')
+const { parseUrl, isMediaUrl } = require('@metascraper/helpers')
 const debug = require('debug-logfmt')('html-get')
 const PCancelable = require('p-cancelable')
 const { AbortError } = require('p-retry')
@@ -122,7 +121,8 @@ const prerender = async (
 
 const modes = { fetch, prerender }
 
-const isFetchMode = url => autoDomains.includes(getDomainWithoutSuffix(url))
+const isFetchMode = url =>
+  autoDomains.includes(parseUrl(url).domainWithoutSuffix)
 
 const determinateMode = (url, { prerender }) => {
   if (prerender === false || isMediaUrl(url)) return 'fetch'

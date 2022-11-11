@@ -1,11 +1,11 @@
 'use strict'
 
 const { get, split, nth, castArray, forEach } = require('lodash')
+const { parseUrl } = require('@metascraper/helpers')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
 const isHTML = require('is-html-content')
 const cssUrl = require('css-url-regex')
-const { getDomain } = require('tldts')
 const execall = require('execall')
 const cheerio = require('cheerio')
 const { URL } = require('url')
@@ -36,7 +36,7 @@ const addHead = ({ $, url, headers }) => {
   upsert(
     head.find('meta[property="og:site_name"]'),
     tags,
-    `<meta property="og:site_name" content="${getDomain(url)}">`
+    `<meta property="og:site_name" content="${parseUrl(url).domain}">`
   )
 
   if (date) {
