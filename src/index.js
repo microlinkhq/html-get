@@ -18,12 +18,15 @@ const fetch = (
   { reflect = false, toEncode, timeout = REQ_TIMEOUT, ...opts }
 ) =>
   new PCancelable(async (resolve, reject, onCancel) => {
+    const reqTimeout = reflect ? timeout / 2 : timeout
+
     const req = got(url, {
-      timeout: reflect ? timeout / 2 : timeout,
       ...opts,
+      timeout: reqTimeout,
       responseType: 'buffer'
     })
 
+    setTimeout(req.cancel, reqTimeout).unref()
     onCancel.shouldReject = false
 
     onCancel(() => {

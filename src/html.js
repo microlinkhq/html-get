@@ -1,7 +1,6 @@
 'use strict'
 
 const { get, split, nth, castArray, forEach } = require('lodash')
-const { parseUrl } = require('@metascraper/helpers')
 const { TAGS: URL_TAGS } = require('html-urls')
 const replaceString = require('replace-string')
 const isHTML = require('is-html-content')
@@ -13,9 +12,10 @@ const path = require('path')
 
 const {
   date: toDate,
-  mimeExtension,
   isMime,
-  isUrl
+  isUrl,
+  mimeExtension,
+  parseUrl
 } = require('@metascraper/helpers')
 
 const has = el => el.length !== 0
