@@ -53,6 +53,28 @@ test('reachable URL', async t => {
   t.is(typeof prerenderDisabled.html, typeof prerenderEnabled.html)
 })
 
+test('timeout URL', async t => {
+  const url = 'https://test-timeout.vercel.app'
+
+  const [prerenderDisabled, prerenderEnabled] = await Promise.all([
+    getHTML(url, {
+      prerender: false,
+      getBrowserless,
+      gotOpts: { timeout: 1000 }
+    }),
+    getHTML(url, {
+      prerender: true,
+      getBrowserless,
+      puppeteerOpts: { timeout: 2000, adblock: false }
+    })
+  ])
+
+  t.is(prerenderDisabled.url, prerenderEnabled.url)
+  t.is(prerenderDisabled.html, prerenderEnabled.html)
+  t.is(prerenderDisabled.statusCode, prerenderEnabled.statusCode)
+  t.deepEqual(prerenderDisabled.headers, prerenderEnabled.headers)
+})
+
 test('unreachable URL', async t => {
   const url = 'https://notexisturl.dev'
 
