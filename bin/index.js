@@ -3,17 +3,15 @@
 'use strict'
 
 const createBrowserless = require('browserless')
-const minimist = require('minimist')
+const mri = require('mri')
 const { URL } = require('url')
 
 const getHTML = require('..')
 
 const browserlessFactory = createBrowserless()
 
-const [input, ...argv] = process.argv.slice(2)
+const { _: input, debug: isDebug, ...args } = mri(process.argv.slice(2))
 const url = new URL(input).toString()
-
-const { debug: isDebug, ...args } = minimist(argv)
 
 const browserContext = browserlessFactory.createContext()
 const getBrowserless = () => browserContext
