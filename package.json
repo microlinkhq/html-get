@@ -34,7 +34,7 @@
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.0.4",
     "execall": "~2.0.0",
-    "got": "~11.8.5",
+    "got": "~11.8.6",
     "html-encode": "~2.1.6",
     "html-urls": "~2.4.39",
     "is-html-content": "~1.0.0",
@@ -78,7 +78,7 @@
   ],
   "scripts": {
     "clean": "rm -rf node_modules",
-    "contributors": "(git-authors-cli && finepack --sort-ignore-object-at ava && git add package.json && git commit -m 'build: contributors' --no-verify) || true",
+    "contributors": "(npx git-authors-cli && npx finepack --sort-ignore-object-at ava && git add package.json && git commit -m 'build: contributors' --no-verify) || true",
     "lint": "standard-markdown README.md && standard",
     "postinstall": "node scripts/postinstall",
     "postrelease": "npm run release:tags && npm run release:github && (ci-publish || npm publish --access=public)",
