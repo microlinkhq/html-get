@@ -59,7 +59,15 @@ const fetch = (
 
 const prerender = async (
   url,
-  { getBrowserless, toEncode, headers, gotOpts, timeout = REQ_TIMEOUT, ...opts }
+  {
+    getBrowserless,
+    toEncode,
+    headers,
+    gotOpts,
+    timeout = REQ_TIMEOUT,
+    abortTypes = ['stylesheet', 'font'],
+    ...opts
+  }
 ) => {
   let fetchRes
   let data = {}
@@ -90,7 +98,7 @@ const prerender = async (
       {
         timeout,
         headers,
-        abortTypes: ['stylesheet', 'fonts']
+        abortTypes
       }
     )
 
