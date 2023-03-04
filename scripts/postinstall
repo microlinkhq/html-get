@@ -12,6 +12,7 @@ const domains = [
   'bbc',
   'blogspot',
   'csdn',
+  'deviantart',
   'digg',
   'engadget',
   'etsy',
