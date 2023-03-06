@@ -65,7 +65,7 @@ const prerender = async (
     headers,
     gotOpts,
     timeout = REQ_TIMEOUT,
-    abortTypes = ['stylesheet', 'font'],
+    abortTypes = ['image', 'stylesheet', 'font'],
     ...opts
   }
 ) => {
