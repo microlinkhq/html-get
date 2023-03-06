@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.10.0 (2023-03-06)
+
+
+### Features
+
+* abort images by default ([#157](https://github.com/microlinkhq/html-get/issues/157)) ([7794404](https://github.com/microlinkhq/html-get/commit/7794404be273f44a37b3cb5ce7f40b0002ad85f7))
+
 ### 2.9.33 (2023-03-05)
 
 ### 2.9.32 (2023-03-04)
