@@ -136,7 +136,7 @@ const isFetchMode = url =>
   autoDomains.includes(parseUrl(url).domainWithoutSuffix)
 
 const determinateMode = (url, { prerender }) => {
-  if (prerender === false || isMediaUrl(url.toString())) return 'fetch'
+  if (prerender === false || isMediaUrl(url)) return 'fetch'
   if (prerender === true) return 'prerender'
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
