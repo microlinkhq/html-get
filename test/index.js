@@ -11,46 +11,50 @@ const wait = async (promise, prop) => {
   return prop ? res[prop] : res
 }
 
-test('reachable URL', async t => {
-  const url = 'https://example.com'
-  const [prerenderDisabled, prerenderEnabled] = await Promise.all([
-    getHTML(url, { prerender: false, getBrowserless }),
-    getHTML(url, {
-      prerender: true,
-      getBrowserless,
-      puppeteerOpts: { adblock: false }
-    })
-  ])
-
-  t.is(
-    await wait(
+;[
+  { title: 'from URL', url: 'https://example.com' },
+  { title: 'from URL instance', url: new URL('https://example.com') }
+].forEach(({ title, url }) => {
+  test(title, async t => {
+    const [prerenderDisabled, prerenderEnabled] = await Promise.all([
       getHTML(url, { prerender: false, getBrowserless }),
-      'statusCode'
-    ),
-    200
-  )
-  t.is(
-    await wait(
       getHTML(url, {
         prerender: true,
         getBrowserless,
         puppeteerOpts: { adblock: false }
-      }),
-      'statusCode'
-    ),
-    200
-  )
+      })
+    ])
 
-  t.is(prerenderDisabled.statusCode, prerenderEnabled.statusCode)
-  t.is(prerenderDisabled.statusCode, 200)
+    t.is(
+      await wait(
+        getHTML(url, { prerender: false, getBrowserless }),
+        'statusCode'
+      ),
+      200
+    )
+    t.is(
+      await wait(
+        getHTML(url, {
+          prerender: true,
+          getBrowserless,
+          puppeteerOpts: { adblock: false }
+        }),
+        'statusCode'
+      ),
+      200
+    )
 
-  t.true(Object.keys(prerenderDisabled.headers).length > 0)
-  t.true(Object.keys(prerenderEnabled.headers).length > 0)
-  t.is(typeof prerenderDisabled.headers, typeof prerenderEnabled.headers)
+    t.is(prerenderDisabled.statusCode, prerenderEnabled.statusCode)
+    t.is(prerenderDisabled.statusCode, 200)
 
-  t.true(prerenderDisabled.html.length > 0)
-  t.true(prerenderEnabled.html.length > 0)
-  t.is(typeof prerenderDisabled.html, typeof prerenderEnabled.html)
+    t.true(Object.keys(prerenderDisabled.headers).length > 0)
+    t.true(Object.keys(prerenderEnabled.headers).length > 0)
+    t.is(typeof prerenderDisabled.headers, typeof prerenderEnabled.headers)
+
+    t.true(prerenderDisabled.html.length > 0)
+    t.true(prerenderEnabled.html.length > 0)
+    t.is(typeof prerenderDisabled.html, typeof prerenderEnabled.html)
+  })
 })
 
 test('timeout URL', async t => {
