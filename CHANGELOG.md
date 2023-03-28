@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.10.1 (2023-03-28)
+
+
+### Bug Fixes
+
+* pass a URL instance ([#158](https://github.com/microlinkhq/html-get/issues/158)) ([0c51c64](https://github.com/microlinkhq/html-get/commit/0c51c646089f5ace1bed273ee51399cd63348f47))
+
 ## 2.10.0 (2023-03-06)
 
 
