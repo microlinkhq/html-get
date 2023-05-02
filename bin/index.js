@@ -35,12 +35,9 @@ getHTML(url, { getBrowserless, ...args })
     } else {
       console.log(html)
     }
-    process.exit(0)
+    process.exit()
   })
-  .catch(async err => {
-    console.error(err)
-    process.exit(1)
-  })
+  .catch(error => console.error(error) || process.exit(1))
   .finally(async () => {
     await getBrowserless(browser => browser.destroyContext())
     browserlessFactory.close()

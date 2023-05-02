@@ -66,6 +66,6 @@ const { top, rest } = reduce(
   { top: new Array(topsites.length), rest: [] }
 )
 
-writeJsonFile('./src/auto-domains.json', compact(top).concat(rest))
-  .then(() => process.exit())
-  .catch(err => console.log(err))
+writeJsonFile('./src/auto-domains.json', compact(top).concat(rest)).catch(
+  error => console.log(error)
+)
