@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.10.5 (2023-05-13)
+
 ### 2.10.4 (2023-05-02)
 
 ### [2.10.3](https://github.com/microlinkhq/html-get/compare/v2.10.2...v2.10.3) (2023-03-29)
