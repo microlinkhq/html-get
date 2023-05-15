@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.10.6 (2023-05-15)
+
+
+### Bug Fixes
+
+* signal-exit export ([#160](https://github.com/microlinkhq/html-get/issues/160)) ([7a73175](https://github.com/microlinkhq/html-get/commit/7a731758ed4d2c2090b9cc7290c4742c65d0c9c9))
+
 ### 2.10.5 (2023-05-13)
 
 ### 2.10.4 (2023-05-02)
