@@ -2,7 +2,7 @@
 
 const createBrowserless = require('browserless')
 const dateRegex = require('regex-iso-date')
-const onExit = require('signal-exit')
+const { onExit } = require('signal-exit')
 const pretty = require('pretty')
 
 const browserlessFactory = createBrowserless()

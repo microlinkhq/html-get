@@ -63,6 +63,7 @@
     "pretty": "latest",
     "puppeteer": "latest",
     "regex-iso-date": "latest",
+    "signal-exit": "latest",
     "simple-git-hooks": "latest",
     "standard": "latest",
     "standard-markdown": "latest",
