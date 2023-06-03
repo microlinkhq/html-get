@@ -59,78 +59,87 @@ const fetch = PCancelable.fn(
   }
 )
 
-const prerender = async (
-  url,
-  {
-    getBrowserless,
-    toEncode,
-    headers,
-    gotOpts,
-    timeout = REQ_TIMEOUT,
-    abortTypes = ['image', 'stylesheet', 'font'],
-    ...opts
-  }
-) => {
-  let fetchRes
-  let data = {}
-  let isFetchResRejected = false
-
-  try {
-    fetchRes = fetch(url, {
-      reflect: true,
+const prerender = PCancelable.fn(
+  async (
+    url,
+    {
+      getBrowserless,
       toEncode,
-      ...gotOpts,
       headers,
-      timeout
-    })
-    const browserless = await getBrowserless()
+      gotOpts,
+      timeout = REQ_TIMEOUT,
+      abortTypes = ['image', 'stylesheet', 'font'],
+      ...opts
+    },
+    onCancel
+  ) => {
+    let fetchRes
+    let data = {}
+    let isFetchResRejected = false
 
-    const getPayload = browserless.evaluate(
-      async (page, response) => {
-        if (!response) throw new AbortError('empty response')
+    onCancel(() => fetchRes.cancel())
 
-        return {
-          headers: response.headers(),
-          html: await page.content(),
-          mode: 'prerender',
-          url: response.url(),
-          statusCode: response.status()
-        }
-      },
-      {
-        timeout,
+    try {
+      fetchRes = fetch(url, {
+        reflect: true,
+        toEncode,
+        ...gotOpts,
         headers,
-        abortTypes
-      }
-    )
+        timeout
+      })
+      const browserless = await getBrowserless()
 
-    const payload = await getPayload(url, opts)
+      const getPayload = browserless.evaluate(
+        async (page, response) => {
+          if (!response) throw new AbortError('empty response')
 
-    await fetchRes.cancel()
-    debug('prerender', { url, state: 'success' })
-    return payload
-  } catch (err) {
-    const { isRejected, ...dataProps } = await fetchRes
+          return {
+            headers: response.headers(),
+            html: await page.content(),
+            mode: 'prerender',
+            url: response.url(),
+            statusCode: response.status()
+          }
+        },
+        {
+          timeout,
+          headers,
+          abortTypes
+        }
+      )
 
-    debug('prerender:error', {
-      url,
-      isRejected,
-      error: err.message
-    })
+      onCancel(() => {
+        debug('prerender:cancel', { url })
+        getPayload.cancel()
+      })
 
-    isFetchResRejected = isRejected
-    data = dataProps
-  }
+      const payload = await getPayload(url, opts)
+      await fetchRes.cancel()
+      debug('prerender', { url, state: 'success' })
+      return payload
+    } catch (err) {
+      const { isRejected, ...dataProps } = await fetchRes
 
-  return isFetchResRejected
-    ? {
-        headers: data.headers || {},
-        html: '',
+      debug('prerender:error', {
         url,
-        mode: 'prerender'
-      }
-    : data
-}
+        isRejected,
+        error: err.message
+      })
+
+      isFetchResRejected = isRejected
+      data = dataProps
+    }
+
+    return isFetchResRejected
+      ? {
+          headers: data.headers || {},
+          html: '',
+          url,
+          mode: 'prerender'
+        }
+      : data
+  }
+)
 
 const modes = { fetch, prerender }
 
@@ -162,40 +171,47 @@ const getContent = async (
   return { ...content, html }
 }
 
-module.exports = async (
-  targetUrl,
-  {
-    encoding = 'utf-8',
-    getBrowserless,
-    getMode = determinateMode,
-    gotOpts,
-    headers,
-    prerender = 'auto',
-    puppeteerOpts,
-    rewriteUrls = false
-  } = {}
-) => {
-  if (!getBrowserless && prerender !== false) {
-    throw TypeError(
-      "Need to provide a `getBrowserless` function. Try to pass `getBrowserless: require('browserless')`"
-    )
+module.exports = PCancelable.fn(
+  async (
+    targetUrl,
+    {
+      encoding = 'utf-8',
+      getBrowserless,
+      getMode = determinateMode,
+      gotOpts,
+      headers,
+      prerender = 'auto',
+      puppeteerOpts,
+      rewriteUrls = false
+    } = {},
+    onCancel
+  ) => {
+    if (!getBrowserless && prerender !== false) {
+      throw TypeError(
+        "Need to provide a `getBrowserless` function. Try to pass `getBrowserless: require('browserless')`"
+      )
+    }
+
+    const toEncode = htmlEncode(encoding)
+    const reqMode = getMode(targetUrl, { prerender })
+
+    const time = timeSpan()
+
+    const promise = getContent(targetUrl, reqMode, {
+      getBrowserless,
+      gotOpts,
+      headers,
+      puppeteerOpts,
+      rewriteUrls,
+      toEncode
+    })
+
+    onCancel(() => promise.onCancel())
+
+    const { mode, ...payload } = await promise
+
+    return { ...payload, stats: { mode, timing: time.rounded() } }
   }
-
-  const toEncode = htmlEncode(encoding)
-  const reqMode = getMode(targetUrl, { prerender })
-
-  const time = timeSpan()
-
-  const { mode, ...payload } = await getContent(targetUrl, reqMode, {
-    getBrowserless,
-    gotOpts,
-    headers,
-    puppeteerOpts,
-    rewriteUrls,
-    toEncode
-  })
-
-  return { ...payload, stats: { mode, timing: time.rounded() } }
-}
+)
 
 module.exports.REQ_TIMEOUT = REQ_TIMEOUT
