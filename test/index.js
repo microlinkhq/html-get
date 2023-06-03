@@ -11,6 +11,14 @@ const wait = async (promise, prop) => {
   return prop ? res[prop] : res
 }
 
+test('promise is cancelable', async t => {
+  const targetUrl = 'https://example.com'
+  const promise = getHTML(targetUrl, { getBrowserless })
+  promise.catch(() => {})
+  t.is(!!promise.cancel, true)
+  promise.cancel()
+})
+
 test('reachable URL', async t => {
   const url = 'https://example.com'
   const [prerenderDisabled, prerenderEnabled] = await Promise.all([
