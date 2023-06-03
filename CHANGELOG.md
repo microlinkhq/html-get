@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.11.0 (2023-06-03)
+
+
+### Features
+
+* make it cancelable ([#163](https://github.com/microlinkhq/html-get/issues/163)) ([c1d4aa8](https://github.com/microlinkhq/html-get/commit/c1d4aa8cbf9b71827f459df5757474449c9311d0))
+
 ### 2.10.7 (2023-06-03)
 
 ### 2.10.6 (2023-05-15)
