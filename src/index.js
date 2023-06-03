@@ -13,11 +13,12 @@ const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
 
-const fetch = (
-  url,
-  { reflect = false, toEncode, timeout = REQ_TIMEOUT, ...opts }
-) =>
-  new PCancelable(async (resolve, reject, onCancel) => {
+const fetch = PCancelable.fn(
+  async (
+    url,
+    { reflect = false, toEncode, timeout = REQ_TIMEOUT, ...opts },
+    onCancel
+  ) => {
     const reqTimeout = reflect ? timeout / 2 : timeout
 
     const req = got(url, {
@@ -36,26 +37,27 @@ const fetch = (
 
     try {
       const res = await req
-      return resolve({
+      return {
         headers: res.headers,
         html: await toEncode(res.body, res.headers['content-type']),
         mode: 'fetch',
         url: res.url,
         statusCode: res.statusCode
-      })
+      }
     } catch (error) {
       debug('fetch:error', { url, message: error.message || error, reflect })
       return reflect
-        ? resolve({ isRejected: true, error })
-        : resolve({
-          url,
-          html: '',
-          mode: 'fetch',
-          headers: error.response ? error.response.headers : {},
-          statusCode: error.response ? error.response.statusCode : undefined
-        })
+        ? { isRejected: true, error }
+        : {
+            url,
+            html: '',
+            mode: 'fetch',
+            headers: error.response ? error.response.headers : {},
+            statusCode: error.response ? error.response.statusCode : undefined
+          }
     }
-  })
+  }
+)
 
 const prerender = async (
   url,
