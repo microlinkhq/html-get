@@ -108,11 +108,6 @@ const prerender = PCancelable.fn(
         }
       )
 
-      onCancel(() => {
-        debug('prerender:cancel', { url })
-        getPayload.cancel()
-      })
-
       const payload = await getPayload(url, opts)
       await fetchRes.cancel()
       debug('prerender', { url, state: 'success' })
