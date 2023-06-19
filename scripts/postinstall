@@ -8,59 +8,67 @@ const writeJsonFile = require('write-json-file')
 const topsites = require('top-sites')
 
 const domains = [
-  'apple',
-  'bbc',
-  'blogspot',
-  'csdn',
-  'deviantart',
-  'digg',
-  'dribbble',
-  'engadget',
-  'etsy',
-  'eventbrite',
-  'flickr',
-  'ghost',
-  'giphy',
-  'github',
-  'gitlab',
-  'google',
-  'huffingtonpost',
-  'imdb',
-  'imgur',
-  'meetup',
-  'microsoft',
-  'nytimes',
-  'pinterest',
-  'producthunt',
-  'slideshare',
-  'soundcloud',
-  'sourceforge',
-  'spotify',
-  'stackoverflow',
-  'substack',
-  'techcrunch',
-  'telegraph',
-  'theguardian',
-  'theverge',
-  'tumblr',
-  'vimeo',
-  'wikipedia',
-  'wordpress',
-  'ycombinator',
-  'yelp',
-  'youtube',
-  'zoom'
+  [['domainWithoutSuffix', 'apple']],
+  [['domainWithoutSuffix', 'bbc']],
+  [['domainWithoutSuffix', 'blogspot']],
+  [['domainWithoutSuffix', 'csdn']],
+  [['domainWithoutSuffix', 'deviantart']],
+  [['domainWithoutSuffix', 'digg']],
+  [['domainWithoutSuffix', 'dribbble']],
+  [['domainWithoutSuffix', 'engadget']],
+  [['domainWithoutSuffix', 'etsy']],
+  [['domainWithoutSuffix', 'eventbrite']],
+  [['domainWithoutSuffix', 'flickr']],
+  [['domainWithoutSuffix', 'ghost']],
+  [['domainWithoutSuffix', 'giphy']],
+  [['domainWithoutSuffix', 'github']],
+  [['domainWithoutSuffix', 'gitlab']],
+  [['domainWithoutSuffix', 'google']],
+  [['domainWithoutSuffix', 'huffingtonpost']],
+  [['domainWithoutSuffix', 'imdb']],
+  [['domainWithoutSuffix', 'imgur']],
+  [['domainWithoutSuffix', 'meetup']],
+  [['domainWithoutSuffix', 'microsoft']],
+  [['domainWithoutSuffix', 'nytimes']],
+  [['domainWithoutSuffix', 'pinterest']],
+  [['domainWithoutSuffix', 'producthunt']],
+  [['domainWithoutSuffix', 'slideshare']],
+  [['domainWithoutSuffix', 'soundcloud']],
+  [['domainWithoutSuffix', 'sourceforge']],
+  [['domainWithoutSuffix', 'spotify']],
+  [['domainWithoutSuffix', 'stackoverflow']],
+  [['domainWithoutSuffix', 'substack']],
+  [['domainWithoutSuffix', 'techcrunch']],
+  [['domainWithoutSuffix', 'telegraph']],
+  [['domainWithoutSuffix', 'theguardian']],
+  [['domainWithoutSuffix', 'theverge']],
+  [['domainWithoutSuffix', 'tumblr']],
+  [['domainWithoutSuffix', 'vimeo']],
+  [['domainWithoutSuffix', 'wikipedia']],
+  [['domainWithoutSuffix', 'wordpress']],
+  [['domainWithoutSuffix', 'ycombinator']],
+  [['domainWithoutSuffix', 'yelp']],
+  [['domainWithoutSuffix', 'youtube']],
+  [['domainWithoutSuffix', 'zoom']],
+  [['domain', 'abc.net.au']]
 ]
 
 const { top, rest } = reduce(
   domains,
-  (acc, domain) => {
-    const index = findIndex(
-      topsites,
-      ({ rootDomain }) => parseUrl(rootDomain).domainWithoutSuffix === domain
-    )
-    if (index !== -1) acc.top[index] = domain
-    else acc.rest.push(domain)
+  (acc, conditions) => {
+    for (const [key, value] of conditions) {
+      const index = findIndex(topsites, ({ rootDomain }) => {
+        const parsedUrl = parseUrl(rootDomain)
+        return parsedUrl[key] === value
+      })
+
+      if (index !== -1) {
+        acc.top[index] = conditions
+        return acc
+      }
+    }
+
+    acc.rest.push(conditions)
     return acc
   },
   { top: new Array(topsites.length), rest: [] }

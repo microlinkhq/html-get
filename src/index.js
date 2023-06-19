@@ -138,8 +138,12 @@ const prerender = PCancelable.fn(
 
 const modes = { fetch, prerender }
 
-const isFetchMode = url =>
-  autoDomains.includes(parseUrl(url).domainWithoutSuffix)
+const isFetchMode = url => {
+  const parsedUrl = parseUrl(url)
+  return autoDomains.some(conditions =>
+    conditions.every(([prop, value]) => parsedUrl[prop] === value)
+  )
+}
 
 const determinateMode = (url, { prerender }) => {
   if (prerender === false || isMediaUrl(url)) return 'fetch'
@@ -210,3 +214,4 @@ module.exports = PCancelable.fn(
 )
 
 module.exports.REQ_TIMEOUT = REQ_TIMEOUT
+module.exports.isFetchMode = isFetchMode
