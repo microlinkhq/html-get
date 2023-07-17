@@ -12,6 +12,7 @@ const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
+const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
 const fetch = PCancelable.fn(
   async (
@@ -68,7 +69,7 @@ const prerender = PCancelable.fn(
       headers,
       gotOpts,
       timeout = REQ_TIMEOUT,
-      abortTypes = ['image', 'stylesheet', 'font'],
+      abortTypes = ABORT_TYPES,
       ...opts
     },
     onCancel
@@ -214,4 +215,5 @@ module.exports = PCancelable.fn(
 )
 
 module.exports.REQ_TIMEOUT = REQ_TIMEOUT
+module.exports.ABORT_TYPES = ABORT_TYPES
 module.exports.isFetchMode = isFetchMode
