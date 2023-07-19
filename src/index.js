@@ -152,24 +152,32 @@ const determinateMode = (url, { prerender }) => {
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
 
-const getContent = async (
-  url,
-  mode,
-  { getBrowserless, gotOpts, headers, puppeteerOpts, rewriteUrls, toEncode }
-) => {
-  const isFetchMode = mode === 'fetch'
-  const fetchOpts = isFetchMode
-    ? { headers, toEncode, ...gotOpts }
-    : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
-  const content = await modes[mode](url, fetchOpts)
+const getContent = PCancelable.fn(
+  (
+    url,
+    mode,
+    { getBrowserless, gotOpts, headers, puppeteerOpts, rewriteUrls, toEncode },
+    onCancel
+  ) => {
+    const isFetchMode = mode === 'fetch'
+    const fetchOpts = isFetchMode
+      ? { headers, toEncode, ...gotOpts }
+      : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
 
-  const html = addHtml({
-    ...content,
-    ...(isFetchMode ? puppeteerOpts : undefined),
-    rewriteUrls
-  })
-  return { ...content, html }
-}
+    const promise = modes[mode](url, fetchOpts)
+    onCancel(() => promise.cancel())
+
+    return promise.then(content => {
+      const html = addHtml({
+        ...content,
+        ...(isFetchMode ? puppeteerOpts : undefined),
+        rewriteUrls
+      })
+
+      return { ...content, html }
+    })
+  }
+)
 
 module.exports = PCancelable.fn(
   async (
@@ -206,14 +214,15 @@ module.exports = PCancelable.fn(
       toEncode
     })
 
-    onCancel(() => promise.onCancel())
+    onCancel(() => promise.cancel())
 
     const { mode, ...payload } = await promise
 
-    return { ...payload, stats: { mode, timing: time.rounded() } }
+    return Object.assign(payload, { stats: { mode, timing: time.rounded() } })
   }
 )
 
 module.exports.REQ_TIMEOUT = REQ_TIMEOUT
 module.exports.ABORT_TYPES = ABORT_TYPES
 module.exports.isFetchMode = isFetchMode
+module.exports.getContent = getContent
