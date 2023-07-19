@@ -1,5 +1,6 @@
 'use strict'
 
+const PCancelable = require('p-cancelable')
 const cheerio = require('cheerio')
 const test = require('ava')
 
@@ -12,11 +13,13 @@ const wait = async (promise, prop) => {
 }
 
 test('promise is cancelable', async t => {
-  const targetUrl = 'https://example.com'
-  const promise = getHTML(targetUrl, { getBrowserless })
-  promise.catch(() => {})
-  t.is(!!promise.cancel, true)
-  promise.cancel()
+  const url = 'https://example.com'
+  t.true(getHTML(url, { getBrowserless: () => {} }) instanceof PCancelable)
+  t.true(
+    getHTML.getContent(url, 'fetch', {
+      getBrowserless: () => {}
+    }) instanceof PCancelable
+  )
 })
 
 test('reachable URL', async t => {

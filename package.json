@@ -98,7 +98,8 @@
       "test/**/*.js",
       "!test/util.js"
     ],
-    "timeout": "2m"
+    "timeout": "2m",
+    "workerThreads": false
   },
   "commitlint": {
     "extends": [
@@ -107,7 +108,8 @@
   },
   "nano-staged": {
     "*.js": [
-      "prettier-standard"
+      "prettier-standard",
+      "standard --fix"
     ],
     "*.md": [
       "standard-markdown"
