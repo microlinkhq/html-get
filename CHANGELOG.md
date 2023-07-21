@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.11.6 (2023-07-21)
+
+
+### Bug Fixes
+
+* ensure domain is not falsy ([#166](https://github.com/microlinkhq/html-get/issues/166)) ([e42dcf7](https://github.com/microlinkhq/html-get/commit/e42dcf7012c358635c545bb6e15f51392971a1a1))
+
 ### 2.11.5 (2023-07-19)
 
 ### 2.11.4 (2023-07-17)
