@@ -28,16 +28,18 @@ const addHead = ({ $, url, headers }) => {
   const charset = nth(split(contentType, 'charset='), 1)
   const timestamp = get(headers, 'last-modified') || get(headers, 'date')
   const date = timestamp && toDate(timestamp)
-
+  const { domain } = parseUrl(url)
   const head = $('head')
 
   upsert(head.find('title'), tags, `<title>${path.basename(url)}</title>`)
 
-  upsert(
-    head.find('meta[property="og:site_name"]'),
-    tags,
-    `<meta property="og:site_name" content="${parseUrl(url).domain}">`
-  )
+  if (domain) {
+    upsert(
+      head.find('meta[property="og:site_name"]'),
+      tags,
+      `<meta property="og:site_name" content="${domain}">`
+    )
+  }
 
   if (date) {
     upsert(
