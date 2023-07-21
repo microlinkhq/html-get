@@ -2,6 +2,7 @@
 
 'use strict'
 
+const cheerio = require('cheerio')
 const execall = require('execall')
 const path = require('path')
 const test = require('ava')
@@ -52,8 +53,7 @@ test('add doctype', t => {
 
 test('add json markup', t => {
   const output = html({
-    html:
-      '{"origin":"83.46.149.83","city":"Madrid","alpha2":"ES","alpha3":"ESP","callingCodes":["+34"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"eeaMember":true,"euMember":true,"flag":"🇪🇸","languages":{"spa":"Spanish"},"numeric":724,"tld":[".es"],"region":"MD","latitude":"40.4163","longitude":"-3.6934","timezone":"Europe/Madrid","headers":{"accept":"*/*","accept-encoding":"gzip","cdn-loop":"cloudflare","cf-connecting-ip":"83.46.149.83","cf-ipcountry":"ES","cf-ray":"73a29be38cdf37c7-MAD","cf-visitor":"{"scheme":"https"}","connection":"Keep-Alive","host":"geolocation.microlink.io","user-agent":"curl/7.79.1","x-forwarded-for":"172.70.57.171","x-forwarded-host":"geolocation.microlink.io","x-forwarded-proto":"https","x-real-ip":"172.70.57.171","x-vercel-edge-region":"dev","x-vercel-id":"cdg1::x96k9-1660405852783-a0083d276cde","x-vercel-ip-city":"Madrid","x-vercel-ip-country":"ES","x-vercel-ip-country-region":"MD","x-vercel-ip-latitude":"40.4163","x-vercel-ip-longitude":"-3.6934","x-vercel-ip-timezone":"Europe/Madrid","x-vercel-proxied-for":"172.70.57.171"}}',
+    html: '{"origin":"83.46.149.83","city":"Madrid","alpha2":"ES","alpha3":"ESP","callingCodes":["+34"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"eeaMember":true,"euMember":true,"flag":"🇪🇸","languages":{"spa":"Spanish"},"numeric":724,"tld":[".es"],"region":"MD","latitude":"40.4163","longitude":"-3.6934","timezone":"Europe/Madrid","headers":{"accept":"*/*","accept-encoding":"gzip","cdn-loop":"cloudflare","cf-connecting-ip":"83.46.149.83","cf-ipcountry":"ES","cf-ray":"73a29be38cdf37c7-MAD","cf-visitor":"{"scheme":"https"}","connection":"Keep-Alive","host":"geolocation.microlink.io","user-agent":"curl/7.79.1","x-forwarded-for":"172.70.57.171","x-forwarded-host":"geolocation.microlink.io","x-forwarded-proto":"https","x-real-ip":"172.70.57.171","x-vercel-edge-region":"dev","x-vercel-id":"cdg1::x96k9-1660405852783-a0083d276cde","x-vercel-ip-city":"Madrid","x-vercel-ip-country":"ES","x-vercel-ip-country-region":"MD","x-vercel-ip-latitude":"40.4163","x-vercel-ip-longitude":"-3.6934","x-vercel-ip-timezone":"Europe/Madrid","x-vercel-proxied-for":"172.70.57.171"}}',
     url: 'https://geolocation.microlink.io/',
     headers: { 'content-type': 'application/json' }
   })
@@ -72,8 +72,7 @@ test('add image markup', t => {
 
 test('add audio markup', t => {
   const output = html({
-    url:
-      'http://websrvr90va.audiovideoweb.com/va90web25003/companions/Foundations%20of%20Rock/13.01.mp3',
+    url: 'http://websrvr90va.audiovideoweb.com/va90web25003/companions/Foundations%20of%20Rock/13.01.mp3',
     headers: { 'content-type': 'audio/mp3' }
   })
 
@@ -82,8 +81,7 @@ test('add audio markup', t => {
 
 test('add video markup', t => {
   const output = html({
-    url:
-      'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
+    url: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
     headers: { 'content-type': 'video/mp4' }
   })
 
@@ -93,8 +91,7 @@ test('add video markup', t => {
 test("'`rewriteCssUrls` don't modify html markup", t => {
   const output = html({
     rewriteUrls: true,
-    url:
-      'https://www.rubiomonocoatusa.com/blogs/blog/how-to-apply-oil-plus-2c-to-furniture',
+    url: 'https://www.rubiomonocoatusa.com/blogs/blog/how-to-apply-oil-plus-2c-to-furniture',
     html: `<!DOCTYPE html>
 <html>
 <head>
@@ -192,8 +189,7 @@ test('`rewriteHtmlUrls` rewrites relative URLs inside stylesheet', t => {
 test("`rewriteHtmlUrls` don't modify inline javascript", t => {
   const output = html({
     rewriteUrls: true,
-    url:
-      'https://www.latimes.com/opinion/story/2020-06-07/column-muralist-honors-african-americans-killed-by-police',
+    url: 'https://www.latimes.com/opinion/story/2020-06-07/column-muralist-honors-african-americans-killed-by-police',
     html: `
     <!DOCTYPE html>
 <html lang="en">
@@ -222,8 +218,7 @@ test("`rewriteHtmlUrls` don't modify inline javascript", t => {
 test("`rewriteHtmlUrls` don't modify non http protocols", t => {
   const output = html({
     rewriteUrls: true,
-    url:
-      'https://www.latimes.com/opinion/story/2020-06-07/column-muralist-honors-african-americans-killed-by-police',
+    url: 'https://www.latimes.com/opinion/story/2020-06-07/column-muralist-honors-african-americans-killed-by-police',
     html: `
     <!DOCTYPE html>
 <html lang="en">
@@ -284,7 +279,7 @@ test("`rewriteHtmlUrls` don't modify data URIs", t => {
   t.snapshot(prettyHtml(output))
 })
 
-test("`rewriteHtmlUrls` don't modify udnefined attributes", t => {
+test("`rewriteHtmlUrls` don't modify undefined attributes", t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://moovility.me',
@@ -438,4 +433,23 @@ test('remove elements', t => {
 
   t.true(output.includes('#banner { display: none !important; }'))
   t.snapshot(prettyHtml(output))
+})
+
+test('add `og:site_name` when is possible', t => {
+  t.is(
+    cheerio
+      .load(html({ url: 'https://1.1.1.1', html: '', headers: {} }))(
+        'meta[property="og:site_name"]'
+      )
+      .attr('content'),
+    undefined
+  )
+  t.is(
+    cheerio
+      .load(html({ url: 'https://kikobeats.com', html: '', headers: {} }))(
+        'meta[property="og:site_name"]'
+      )
+      .attr('content'),
+    'kikobeats.com'
+  )
 })
