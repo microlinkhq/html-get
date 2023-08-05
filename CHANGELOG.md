@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.12.0 (2023-08-05)
+
+
+### Features
+
+* better timestamp inference ([#167](https://github.com/microlinkhq/html-get/issues/167)) ([6973d25](https://github.com/microlinkhq/html-get/commit/6973d25b96d0c8a01104a8981fbeef9e1f4029bc))
+
 ### 2.11.6 (2023-07-21)
 
 
