@@ -8,9 +8,9 @@ const path = require('path')
 const test = require('ava')
 const fs = require('fs')
 
-const { prettyHtml } = require('./util')
+const { prettyHtml } = require('../util')
 
-const html = require('../src/html')
+const html = require('../../src/html')
 
 test('add minimal html markup', t => {
   const output = html({
@@ -125,7 +125,7 @@ test('`rewriteHtmlUrls` rewrites relative root URLs inside html markup', t => {
     rewriteUrls: true,
     url: 'https://browserless.js.org',
     html: fs.readFileSync(
-      path.resolve(__dirname, 'fixtures/browserless.html'),
+      path.resolve(__dirname, '../fixtures/browserless.html'),
       'utf8'
     ),
     headers: {
