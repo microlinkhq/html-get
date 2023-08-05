@@ -22,12 +22,21 @@ const has = el => el.length !== 0
 
 const upsert = (el, collection, item) => !has(el) && collection.push(item)
 
+/**
+ * Infer timestamp from `last-modified`, `date`, or `age` response headers.
+ */
+const getDate = headers => {
+  const timestamp = get(headers, 'last-modified') || get(headers, 'date')
+  return timestamp
+    ? toDate(timestamp)
+    : toDate(Date.now() - Number(get(headers, 'age')) * 1000)
+}
+
 const addHead = ({ $, url, headers }) => {
   const tags = []
   const contentType = get(headers, 'content-type')
   const charset = nth(split(contentType, 'charset='), 1)
-  const timestamp = get(headers, 'last-modified') || get(headers, 'date')
-  const date = timestamp && toDate(timestamp)
+  const date = getDate(headers)
   const { domain } = parseUrl(url)
   const head = $('head')
 
@@ -179,3 +188,5 @@ module.exports = ({
 
   return rewriteUrls ? rewriteCssUrls({ html: $.html(), url }) : $.html()
 }
+
+module.exports.getDate = getDate

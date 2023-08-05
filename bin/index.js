@@ -3,8 +3,8 @@
 'use strict'
 
 const createBrowserless = require('browserless')
-const mri = require('mri')
 const { URL } = require('url')
+const mri = require('mri')
 
 const getHTML = require('..')
 
@@ -26,9 +26,9 @@ getHTML(url, { getBrowserless, ...args })
    headers: ${
      headers
        ? Object.keys(headers).reduce(
-           (acc, key) => `${acc}${key}=${headers[key]} `,
-           ''
-         )
+         (acc, key) => `${acc}${key}=${headers[key]} `,
+         ''
+       )
        : '-'
    }
 `)
