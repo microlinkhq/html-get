@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.13.0 (2023-08-05)
+
+
+### Features
+
+* add type markup property for video/audio ([#168](https://github.com/microlinkhq/html-get/issues/168)) ([d8a33ed](https://github.com/microlinkhq/html-get/commit/d8a33ed52cd408cedcbe41c003148d7f76c893f6))
+
 ## 2.12.0 (2023-08-05)
 
 
