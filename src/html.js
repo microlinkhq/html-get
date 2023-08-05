@@ -79,9 +79,9 @@ const addBody = ({ url, headers, html }) => {
   if (isMime(contentType, 'image')) {
     element = `<img src="${url}"></img>`
   } else if (isMime(contentType, 'video')) {
-    element = `<video src="${url}"></video>`
+    element = `<video><source src="${url}" type="${contentType}"></source></video>`
   } else if (isMime(contentType, 'audio')) {
-    element = `<audio src="${url}"></audio>`
+    element = `<audio><source src="${url}" type="${contentType}"></source></audio>`
   } else if (mimeExtension(contentType) === 'json') {
     element = `<pre>${html}</pre>`
   }
