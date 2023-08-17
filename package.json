@@ -29,7 +29,7 @@
     "request"
   ],
   "dependencies": {
-    "@metascraper/helpers": "~5.35.0",
+    "@metascraper/helpers": "~5.36.0",
     "cheerio": "~1.0.0-rc.12",
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.0.4",
