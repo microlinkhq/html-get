@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.13.7 (2023-10-08)
+
+
+### Bug Fixes
+
+* invoke function ([2c80be4](https://github.com/microlinkhq/html-get/commit/2c80be4325bb8ace57e0709f36ac3affd5cd5cdf))
+
 ### 2.13.6 (2023-10-08)
 
 ### 2.13.5 (2023-10-08)
