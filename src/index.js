@@ -1,8 +1,8 @@
 'use strict'
 
 const { parseUrl, isMediaUrl } = require('@metascraper/helpers')
+const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
-const timeSpan = require('@kikobeats/time-span')
 const PCancelable = require('p-cancelable')
 const { AbortError } = require('p-retry')
 const htmlEncode = require('html-encode')
