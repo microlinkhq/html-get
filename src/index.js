@@ -2,10 +2,10 @@
 
 const { parseUrl, isMediaUrl } = require('@metascraper/helpers')
 const debug = require('debug-logfmt')('html-get')
+const timeSpan = require('@kikobeats/time-span')
 const PCancelable = require('p-cancelable')
 const { AbortError } = require('p-retry')
 const htmlEncode = require('html-encode')
-const timeSpan = require('time-span')
 const got = require('got')
 
 const autoDomains = require('./auto-domains')
@@ -203,7 +203,7 @@ module.exports = PCancelable.fn(
     const toEncode = htmlEncode(encoding)
     const reqMode = getMode(targetUrl, { prerender })
 
-    const time = timeSpan()
+    const duration = timeSpan()
 
     const promise = getContent(targetUrl, reqMode, {
       getBrowserless,
@@ -218,7 +218,7 @@ module.exports = PCancelable.fn(
 
     const { mode, ...payload } = await promise
 
-    return Object.assign(payload, { stats: { mode, timing: time.rounded() } })
+    return Object.assign(payload, { stats: { mode, timing: duration() } })
   }
 )
 
