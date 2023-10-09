@@ -33,7 +33,7 @@
     "@metascraper/helpers": "~5.37.1",
     "cheerio": "~1.0.0-rc.12",
     "css-url-regex": "~4.0.0",
-    "debug-logfmt": "~1.0.4",
+    "debug-logfmt": "~1.2.0",
     "execall": "~2.0.0",
     "got": "~11.8.6",
     "html-encode": "~2.1.6",
