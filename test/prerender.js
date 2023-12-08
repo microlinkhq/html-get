@@ -3,7 +3,9 @@
 const test = require('ava')
 
 const getHTML = require('../src')
-const { getBrowserless } = require('./util')
+const { initBrowserless } = require('./util')
+
+const getBrowserless = initBrowserless(test)
 
 test('`{ prerender: true }`', async t => {
   const url = 'https://example.com'
