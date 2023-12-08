@@ -2,20 +2,16 @@
 
 const createBrowserless = require('browserless')
 const dateRegex = require('regex-iso-date')
-const { onExit } = require('signal-exit')
 const pretty = require('pretty')
 
-const browserlessFactory = createBrowserless()
-
-onExit(browserlessFactory.close)
-
-const getBrowserless = async () => {
-  const browserless = await browserlessFactory.createContext()
-  return browserless
+const initBrowserless = test => {
+  const browserlessFactory = createBrowserless()
+  test.after.always(browserlessFactory.close)
+  return () => browserlessFactory.createContext()
 }
 
 module.exports = {
   prettyHtml: html =>
     pretty(html, { ocd: true }).replace(dateRegex(), '{DATE}'),
-  getBrowserless
+  initBrowserless
 }

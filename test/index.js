@@ -4,8 +4,10 @@ const PCancelable = require('p-cancelable')
 const cheerio = require('cheerio')
 const test = require('ava')
 
-const { getBrowserless, prettyHtml } = require('./util')
+const { initBrowserless, prettyHtml } = require('./util')
 const getHTML = require('..')
+
+const getBrowserless = initBrowserless(test)
 
 const wait = async (promise, prop) => {
   const res = await promise
