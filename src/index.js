@@ -28,7 +28,6 @@ const fetch = PCancelable.fn(
       responseType: 'buffer'
     })
 
-    setTimeout(req.cancel, reqTimeout).unref()
     onCancel.shouldReject = false
 
     onCancel(() => {
