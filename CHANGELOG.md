@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.13.13 (2023-12-18)
+
+
+### Bug Fixes
+
+* remove redundant setTimeout ([#181](https://github.com/microlinkhq/html-get/issues/181)) ([f265414](https://github.com/microlinkhq/html-get/commit/f265414442133927b4c6b149909e4442a55c0928))
+
 ### 2.13.12 (2023-12-18)
 
 ### 2.13.11 (2023-12-08)
