@@ -74,6 +74,6 @@ const { top, rest } = reduce(
   { top: new Array(topsites.length), rest: [] }
 )
 
-writeFile('./src/auto-domains.js', JSON.stringify(compact(top).concat(rest)), null, 2).catch(
+writeFile('./src/auto-domains.json', JSON.stringify(compact(top).concat(rest)), null, 2).catch(
   error => console.log(error)
 )
