@@ -4,7 +4,7 @@
 
 const { compact, reduce, findIndex } = require('lodash')
 const { parseUrl } = require('@metascraper/helpers')
-const writeJsonFile = require('write-json-file')
+const { writeFile } = require('fs').promises
 const topsites = require('top-sites')
 
 const domains = [
@@ -74,6 +74,6 @@ const { top, rest } = reduce(
   { top: new Array(topsites.length), rest: [] }
 )
 
-writeJsonFile('./src/auto-domains.json', compact(top).concat(rest)).catch(
+writeFile('./src/auto-domains.json', JSON.stringify(compact(top).concat(rest)), null, 2).catch(
   error => console.log(error)
 )

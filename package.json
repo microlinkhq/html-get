@@ -29,23 +29,22 @@
     "request"
   ],
   "dependencies": {
-    "@kikobeats/time-span": "~1.0.2",
-    "@metascraper/helpers": "~5.42.5",
+    "@kikobeats/time-span": "~1.0.3",
+    "@metascraper/helpers": "~5.43.0",
     "cheerio": "~1.0.0-rc.12",
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.2.0",
     "execall": "~2.0.0",
     "got": "~11.8.6",
     "html-encode": "~2.1.6",
-    "html-urls": "~2.4.45",
+    "html-urls": "~2.4.55",
     "is-html-content": "~1.0.0",
     "lodash": "~4.17.21",
     "mri": "~1.2.0",
     "p-cancelable": "~2.1.0",
     "p-retry": "~4.6.0",
     "replace-string": "~3.1.0",
-    "top-sites": "~1.1.169",
-    "write-json-file": "~4.3.0"
+    "top-sites": "~1.1.202"
   },
   "devDependencies": {
     "@commitlint/cli": "latest",

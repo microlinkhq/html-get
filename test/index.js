@@ -133,7 +133,7 @@ test('from image URL', async t => {
 })
 
 test('from video URL', async t => {
-  const targetUrl = 'http://techslides.com/demos/sample-videos/small.mp4'
+  const targetUrl = 'https://cdn.microlink.io/file-examples/sample.mp4'
   const { url, stats, html } = await getHTML(targetUrl, {
     prerender: false,
     getBrowserless
