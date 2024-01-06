@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.14.0 (2024-01-06)
+
+
+### Features
+
+* don't prerender for Twitter ([62bcafe](https://github.com/microlinkhq/html-get/commit/62bcafef070d5c72c87c4fc26df8b8f958c6ef84))
+
 ### 2.13.15 (2024-01-01)
 
 ### 2.13.14 (2023-12-21)
