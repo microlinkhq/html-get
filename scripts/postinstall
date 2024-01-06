@@ -8,6 +8,7 @@ const { writeFile } = require('fs').promises
 const topsites = require('top-sites')
 
 const domains = [
+  [['domain', 'abc.net.au']],
   [['domainWithoutSuffix', 'apple']],
   [['domainWithoutSuffix', 'bbc']],
   [['domainWithoutSuffix', 'blogspot']],
@@ -43,14 +44,14 @@ const domains = [
   [['domainWithoutSuffix', 'theguardian']],
   [['domainWithoutSuffix', 'theverge']],
   [['domainWithoutSuffix', 'tumblr']],
+  [['domainWithoutSuffix', 'twitter']],
   [['domainWithoutSuffix', 'vimeo']],
   [['domainWithoutSuffix', 'wikipedia']],
   [['domainWithoutSuffix', 'wordpress']],
   [['domainWithoutSuffix', 'ycombinator']],
   [['domainWithoutSuffix', 'yelp']],
   [['domainWithoutSuffix', 'youtube']],
-  [['domainWithoutSuffix', 'zoom']],
-  [['domain', 'abc.net.au']]
+  [['domainWithoutSuffix', 'zoom']]
 ]
 
 const { top, rest } = reduce(
