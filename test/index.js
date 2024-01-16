@@ -132,6 +132,14 @@ test('from image URL', async t => {
   t.snapshot(prettyHtml($.html()))
 })
 
+test('from big image URL', async t => {
+  const targetUrl =
+    'https://static.jutarnji.hr/images/live-multimedia/binary/2016/6/17/10/iStock_82744687_XXLARGE.jpg'
+  const { stats } = await getHTML(targetUrl, { getBrowserless })
+  t.true(stats.timing < 3000)
+  t.is(stats.mode, 'fetch')
+})
+
 test('from video URL', async t => {
   const targetUrl = 'https://cdn.microlink.io/file-examples/sample.mp4'
   const { url, stats, html } = await getHTML(targetUrl, {
