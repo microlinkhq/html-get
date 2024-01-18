@@ -1,25 +1,9 @@
 'use strict'
-'use strict'
 
-const { default: listen } = require('async-listen')
-const { createServer } = require('http')
-const { promisify } = require('util')
 const test = require('ava')
 
-const { fixture, initBrowserless } = require('./util')
+const { runFixtureServer, initBrowserless } = require('./util')
 const getHTML = require('..')
-
-const closeServer = server => promisify(server.close)
-
-const runFixtureServer = async (t, fixturePath) => {
-  const server = createServer((_, res) => {
-    res.setHeader('content-type', 'text/html')
-    res.end(fixture(fixturePath))
-  })
-  const url = await listen(server)
-  t.teardown(() => closeServer(server))
-  return url
-}
 
 const getBrowserless = initBrowserless(test)
 

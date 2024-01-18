@@ -4,7 +4,7 @@ const PCancelable = require('p-cancelable')
 const cheerio = require('cheerio')
 const test = require('ava')
 
-const { initBrowserless, prettyHtml } = require('./util')
+const { initBrowserless, runServer, prettyHtml } = require('./util')
 const getHTML = require('..')
 
 const getBrowserless = initBrowserless(test)
@@ -137,6 +137,17 @@ test('from big image URL', async t => {
     'https://static.jutarnji.hr/images/live-multimedia/binary/2016/6/17/10/iStock_82744687_XXLARGE.jpg'
   const { stats } = await getHTML(targetUrl, { getBrowserless })
   t.true(stats.timing < 3000)
+  t.is(stats.mode, 'fetch')
+})
+
+test('from URL with no content type', async t => {
+  const targetUrl = await runServer(t, (_, res) => {
+    res.end('<!doctype html><title>.</title>')
+  })
+  const { stats } = await getHTML(targetUrl, {
+    getBrowserless,
+    prerender: false
+  })
   t.is(stats.mode, 'fetch')
 })
 

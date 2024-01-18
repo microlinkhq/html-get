@@ -40,7 +40,7 @@ const fetch = PCancelable.fn(
       return {
         headers: res.headers,
         html:
-          res.headers['content-type'].startsWith('text/html') ||
+          (res.headers['content-type'] ?? '').startsWith('text/html') ||
           !isMediaUrl(url)
             ? await toEncode(res.body, res.headers['content-type'])
             : res.body,
