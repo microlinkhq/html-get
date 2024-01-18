@@ -140,6 +140,14 @@ test('from big image URL', async t => {
   t.is(stats.mode, 'fetch')
 })
 
+test('from image URL that returns HTML markup', async t => {
+  const targetUrl =
+    'https://www.europapress.es/chance/gente/%7B%7BrutaFoto%7D%7D%7B%7Bfechor%7D%7D_%7B%7BanchoFoto%7D%7D_%7B%7BaltoFoto%7D%7D%7B%7BversionFoto%7D%7D.jpg'
+  const { stats } = await getHTML(targetUrl, { getBrowserless })
+  t.true(stats.timing < 3000)
+  t.is(stats.mode, 'fetch')
+})
+
 test('from video URL', async t => {
   const targetUrl = 'https://cdn.microlink.io/file-examples/sample.mp4'
   const { url, stats, html } = await getHTML(targetUrl, {

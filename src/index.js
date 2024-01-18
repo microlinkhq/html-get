@@ -39,9 +39,11 @@ const fetch = PCancelable.fn(
       const res = await req
       return {
         headers: res.headers,
-        html: isMediaUrl(url)
-          ? res.body
-          : await toEncode(res.body, res.headers['content-type']),
+        html:
+          res.headers['content-type'].startsWith('text/html') ||
+          !isMediaUrl(url)
+            ? await toEncode(res.body, res.headers['content-type'])
+            : res.body,
         mode: 'fetch',
         url: res.url,
         statusCode: res.statusCode
