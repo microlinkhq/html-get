@@ -1,10 +1,15 @@
 'use strict'
 
+const { default: listen } = require('async-listen')
 const createBrowserless = require('browserless')
 const dateRegex = require('regex-iso-date')
+const { createServer } = require('http')
+const { promisify } = require('util')
 const pretty = require('pretty')
 const path = require('path')
 const fs = require('fs')
+
+const closeServer = server => promisify(server.close)
 
 const fixture = name =>
   fs.readFileSync(path.join(__dirname, '/fixtures/', name))
@@ -15,9 +20,25 @@ const initBrowserless = test => {
   return () => browserlessFactory.createContext()
 }
 
+const runServer = async (t, fn) => {
+  const server = createServer(fn)
+  const url = await listen(server)
+  t.teardown(() => closeServer(server))
+  return url
+}
+
+const runFixtureServer = async (t, fixturePath) =>
+  runServer(t, (_, res) => {
+    res.setHeader('content-type', 'text/html')
+    res.end(fixture(fixturePath))
+  })
+
+const prettyHtml = html =>
+  pretty(html, { ocd: true }).replace(dateRegex(), '{DATE}')
+
 module.exports = {
-  prettyHtml: html =>
-    pretty(html, { ocd: true }).replace(dateRegex(), '{DATE}'),
-  fixture,
-  initBrowserless
+  initBrowserless,
+  prettyHtml,
+  runFixtureServer,
+  runServer
 }
