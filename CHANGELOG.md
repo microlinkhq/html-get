@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.14.3 (2024-01-18)
+
+
+### Bug Fixes
+
+* media URL with HTML markup ([8564529](https://github.com/microlinkhq/html-get/commit/8564529823910c3a18ca40a9109d91ebee7f6e4a))
+
 ### 2.14.2 (2024-01-16)
 
 
