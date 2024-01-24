@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.15.0](https://github.com/microlinkhq/html-get/compare/v2.14.4...v2.15.0) (2024-01-24)
+
+
+### Features
+
+* turn PDF into HTML ([#189](https://github.com/microlinkhq/html-get/issues/189)) ([cbf0835](https://github.com/microlinkhq/html-get/commit/cbf08353440cb55ff37aa1434860eb5db5d65fea))
+
 ### 2.14.4 (2024-01-18)
 
 
