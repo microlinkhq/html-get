@@ -1,8 +1,8 @@
 {
   "name": "html-get",
-  "description": "Get the HTML from any website, using prerendering when is necessary.",
+  "description": "Get the HTML from any website, fine-tuned for correction & speed",
   "homepage": "https://nicedoc.com/microlinkhq/html-get",
-  "version": "2.14.4",
+  "version": "2.15.0-1",
   "main": "src/index.js",
   "bin": {
     "html-get": "bin/index.js"
@@ -20,20 +20,25 @@
     "url": "https://github.com/microlinkhq/html-get/issues"
   },
   "keywords": [
+    "audio",
     "fetch",
     "get",
     "got",
     "headless",
     "html",
+    "image",
+    "markup",
+    "pdf",
     "prerender",
-    "request"
+    "request",
+    "video"
   ],
   "dependencies": {
     "@kikobeats/time-span": "~1.0.3",
-    "@metascraper/helpers": "~5.43.0",
+    "@metascraper/helpers": "~5.43.4",
     "cheerio": "~1.0.0-rc.12",
     "css-url-regex": "~4.0.0",
-    "debug-logfmt": "~1.2.0",
+    "debug-logfmt": "~1.2.2",
     "execall": "~2.0.0",
     "got": "~11.8.6",
     "html-encode": "~2.1.6",
@@ -44,7 +49,8 @@
     "p-cancelable": "~2.1.0",
     "p-retry": "~4.6.0",
     "replace-string": "~3.1.0",
-    "top-sites": "~1.1.202"
+    "tinyspawn": "~1.2.6",
+    "top-sites": "~1.1.205"
   },
   "devDependencies": {
     "@commitlint/cli": "latest",
@@ -82,7 +88,7 @@
     "lint": "standard-markdown README.md && standard",
     "postinstall": "node scripts/postinstall",
     "postrelease": "npm run release:tags && npm run release:github && (ci-publish || npm publish --access=public)",
-    "prerelease": "npm run update:check && npm run contributors",
+    "prerelease": "npm run update:check",
     "pretest": "npm run lint",
     "release": "standard-version -a",
     "release:github": "github-generate-release",

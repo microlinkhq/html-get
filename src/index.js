@@ -1,23 +1,37 @@
 'use strict'
 
-const { parseUrl, isMediaUrl } = require('@metascraper/helpers')
+const { parseUrl, isMediaUrl, isPdfUrl } = require('@metascraper/helpers')
 const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
+const { execSync } = require('child_process')
+const { writeFile } = require('fs/promises')
 const PCancelable = require('p-cancelable')
 const { AbortError } = require('p-retry')
 const htmlEncode = require('html-encode')
+const crypto = require('crypto')
+const $ = require('tinyspawn')
+const path = require('path')
 const got = require('got')
+const os = require('os')
 
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
+
 const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
 const fetch = PCancelable.fn(
   async (
     url,
-    { reflect = false, toEncode, timeout = REQ_TIMEOUT, ...opts },
+    {
+      reflect = false,
+      toEncode,
+      timeout = REQ_TIMEOUT,
+      mutoolPath,
+      getTemporalFile,
+      ...opts
+    },
     onCancel
   ) => {
     const reqTimeout = reflect ? timeout / 2 : timeout
@@ -37,13 +51,23 @@ const fetch = PCancelable.fn(
 
     try {
       const res = await req
+
+      const html = await (async () => {
+        const contentType = res.headers['content-type'] ?? ''
+        if (mutoolPath && contentType === 'application/pdf') {
+          const file = getTemporalFile(url, 'pdf')
+          await writeFile(file.path, res.body)
+          return (await $(`mutool draw -q -F html ${file.path}`)).stdout
+        }
+
+        return contentType.startsWith('text/html') || !isMediaUrl(url)
+          ? await toEncode(res.body, res.headers['content-type'])
+          : res.body
+      })()
+
       return {
         headers: res.headers,
-        html:
-          (res.headers['content-type'] ?? '').startsWith('text/html') ||
-          !isMediaUrl(url)
-            ? await toEncode(res.body, res.headers['content-type'])
-            : res.body,
+        html,
         mode: 'fetch',
         url: res.url,
         statusCode: res.statusCode
@@ -149,22 +173,48 @@ const isFetchMode = url => {
   )
 }
 
-const determinateMode = (url, { prerender }) => {
-  if (prerender === false || isMediaUrl(url)) return 'fetch'
+const defaultGetMode = (url, { prerender }) => {
+  if (prerender === false || isMediaUrl(url) || isPdfUrl(url)) return 'fetch'
   if (prerender === true) return 'prerender'
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
+
+const defaultGetTemporalFile = (url, ext) => {
+  const hash = crypto.createHash('sha256').update(url).digest('hex')
+  const filepath = path.join(
+    os.tmpdir(),
+    ext === undefined ? hash : `${hash}.${ext}`
+  )
+  return { path: filepath }
+}
+
+const defaultMutoolPath = () =>
+  (() => {
+    try {
+      return execSync('which mutool').toString().trim()
+    } catch (_) {}
+  })()
 
 const getContent = PCancelable.fn(
   (
     url,
     mode,
-    { getBrowserless, gotOpts, headers, puppeteerOpts, rewriteUrls, toEncode },
+    {
+      getBrowserless,
+      getTemporalFile,
+      gotOpts,
+      headers,
+      mutoolPath,
+      puppeteerOpts,
+      rewriteUrls,
+      toEncode
+    },
     onCancel
   ) => {
     const isFetchMode = mode === 'fetch'
+
     const fetchOpts = isFetchMode
-      ? { headers, toEncode, ...gotOpts }
+      ? { headers, toEncode, mutoolPath, getTemporalFile, ...gotOpts }
       : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
 
     const promise = modes[mode](url, fetchOpts)
@@ -188,9 +238,11 @@ module.exports = PCancelable.fn(
     {
       encoding = 'utf-8',
       getBrowserless,
-      getMode = determinateMode,
+      getMode = defaultGetMode,
+      getTemporalFile = defaultGetTemporalFile,
       gotOpts,
       headers,
+      mutoolPath = defaultMutoolPath(),
       prerender = 'auto',
       puppeteerOpts,
       rewriteUrls = false
@@ -210,8 +262,10 @@ module.exports = PCancelable.fn(
 
     const promise = getContent(targetUrl, reqMode, {
       getBrowserless,
+      getTemporalFile,
       gotOpts,
       headers,
+      mutoolPath,
       puppeteerOpts,
       rewriteUrls,
       toEncode
