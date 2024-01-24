@@ -9,26 +9,16 @@
 [![Coverage Status](https://img.shields.io/coveralls/microlinkhq/html-get.svg?style=flat-square)](https://coveralls.io/github/microlinkhq/html-get)
 [![NPM Status](https://img.shields.io/npm/dm/html-get.svg?style=flat-square)](https://www.npmjs.org/package/html-get)
 
-> Get the HTML from any website, using prerendering when is necessary.
+> Get the HTML from any website, fine-tuned for correction & speed.
 
 ## Features
 
-- Get HTML markup from any website (client side apps as well).
-- Prerendering detection based on domains list.
-- Speed up process blocking ads trackers.
-- Encoding body response properly.
+- Get HTML markup for any URL, including images, video, audio, or pdf.
+- Block ads tracker or any non-necessary network subrequest.
+- Handle unreachable or timeout URLs gracefully.
+- Ensure HTML markup is appropriately encoded.
 
-<br>
-
-Headless technology like [puppeteer](https://github.com/GoogleChrome/puppeteer) brings us to get the HTML markup from any website, even when the target URL is client side app and we need to wait until dom events fire for getting the real markup.
-
-Generally this approach better than a simple GET request from the target URL, but because you need to wait for dom events, prerendering could be slow and in some scenario unnecessary (sites that use server side rendering could be resolved with a simple GET).
-
-**html-get** bring the best of both worlds, doing the following algorithm:
-
-- Determinate if the target URL actually needs prerendering (internally it has a [list of popular site domains](https://github.com/microlinkhq/html-get/blob/master/src/auto-domains.js) that don't need it).
-- If it needs prerendering, perform the action using Headless technology, blocking ads trackers requests for speed up the process, trying to resolve the main request in the minimum amount of time.
-- If it does not need prerendering or prerendering fails for any reason (for example, timeout), the request will be resolved doing a GET request.
+**html-get** takes advantage of [puppeteer](https://github.com/GoogleChrome/puppeteer) headless technology when is needed, such as client-side apps that needs to be prerender.
 
 ## Install
 
@@ -89,14 +79,53 @@ Type: `string`
 
 The target URL for getting the HTML markup.
 
+#### options
+
+##### encoding
+
+Type: `string`
+Default: `'utf-8'`
+
+It ensures the HTML markup is encoded to the encoded value provided.
+
+The value will be passes to [`html-encode`](https://github.com/kikobeats/html-encode) 
+
 ##### getBrowserless
 
 *Required*<br>
-Type: `function`<br>
+Type: `function`
 
 A function that should return a [browserless](https://browserless.js.org/) instance to be used for interact with puppeteer:
 
-#### options
+##### getMode
+
+Type: `function`
+
+It determines the strategy to use based on the `url`, being the possibles values `'fetch'` or `'prerender'` .
+
+##### getTemporalFile
+
+Type: `function`
+
+It creates a temporal file.
+
+##### gotOpts
+
+Type: `object`
+
+It passes configuration object to [got](https://www.npmjs.com/package/got) under `'fetch'` strategy.
+
+##### headers
+
+Type: `object`
+
+Request headers that will be passed to fetch/prerender process.
+
+##### mutoolPath
+
+Type: `function`
+
+It returns the path for [mutool](https://mupdf.com/) binary, used for turning PDF files into HTML markup.
 
 ##### prerender
 
@@ -109,48 +138,11 @@ The value `auto` means that that internally use a list of websites that don't ne
 
 See [getMode parameter](#getMode) for know more.
 
-##### encoding
-
-Type: `string`<br>
-Default: `'utf-8'`
-
-Encoding the HTML markup properly from the body response.
-
-It determines the encode to use A Node.js library for converting HTML documents of arbitrary encoding into a target encoding (utf8, utf16, etc).
-
-##### headers
-
-Type: `object`<br>
-
-Request headers that will be passed to fetch/prerender process.
-
-##### getMode
-
-Type: `function`<br>
-
-A function evaluation that will be invoked to determinate the resolutive `mode` for getting the HTML markup from the target URL.
-
-The default `getMode` is:
-
-```js
-const getMode = (url, { prerender }) => {
-  if (prerender === false) return 'fetch'
-  if (prerender !== 'auto') return 'prerender'
-  return autoDomains.includes(getDomain(url)) ? 'fetch' : 'prerender'
-}
-```
-
-##### gotOptions
-
-Type: `object`<br>
-
-Under `mode=fetch`, pass configuration object to [got](https://www.npmjs.com/package/got).
-
 ##### puppeteerOpts
 
 Type: `object`
 
-Under non `mode=fetch`, pass configuration object to [puppeteer](https://www.npmjs.com/package/puppeteer).
+It passes coniguration object to [puppeteer](https://www.npmjs.com/package/puppeteer) under `'prerender'` strategy.
 
 ##### rewriteUrls
 

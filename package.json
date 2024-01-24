@@ -1,6 +1,6 @@
 {
   "name": "html-get",
-  "description": "Get the HTML from any website, using prerendering when is necessary.",
+  "description": "Get the HTML from any website, fine-tuned for correction & speed",
   "homepage": "https://nicedoc.com/microlinkhq/html-get",
   "version": "2.15.0-1",
   "main": "src/index.js",
@@ -20,13 +20,18 @@
     "url": "https://github.com/microlinkhq/html-get/issues"
   },
   "keywords": [
+    "audio",
     "fetch",
     "get",
     "got",
     "headless",
     "html",
+    "image",
+    "markup",
+    "pdf",
     "prerender",
-    "request"
+    "request",
+    "video"
   ],
   "dependencies": {
     "@kikobeats/time-span": "~1.0.3",
