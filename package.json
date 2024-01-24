@@ -83,7 +83,7 @@
     "lint": "standard-markdown README.md && standard",
     "postinstall": "node scripts/postinstall",
     "postrelease": "npm run release:tags && npm run release:github && (ci-publish || npm publish --access=public)",
-    "prerelease": "npm run update:check && npm run contributors",
+    "prerelease": "npm run update:check",
     "pretest": "npm run lint",
     "release": "standard-version -a",
     "release:github": "github-generate-release",
