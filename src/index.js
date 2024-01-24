@@ -25,11 +25,11 @@ const fetch = PCancelable.fn(
   async (
     url,
     {
-      reflect = false,
-      toEncode,
-      timeout = REQ_TIMEOUT,
-      mutoolPath,
       getTemporalFile,
+      mutoolPath,
+      reflect = false,
+      timeout = REQ_TIMEOUT,
+      toEncode,
       ...opts
     },
     onCancel
@@ -91,12 +91,12 @@ const prerender = PCancelable.fn(
   async (
     url,
     {
-      getBrowserless,
-      toEncode,
-      headers,
-      gotOpts,
-      timeout = REQ_TIMEOUT,
       abortTypes = ABORT_TYPES,
+      getBrowserless,
+      gotOpts,
+      headers,
+      timeout = REQ_TIMEOUT,
+      toEncode,
       ...opts
     },
     onCancel

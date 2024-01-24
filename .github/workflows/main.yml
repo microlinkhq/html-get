@@ -50,6 +50,8 @@ jobs:
         with:
           version: latest
           run_install: true
+      - name: Install mupdf-tools
+        run: sudo apt-get install -y mupdf-tools
       - name: Test
         run: pnpm test
       - name: Report
