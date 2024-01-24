@@ -201,13 +201,13 @@ const getContent = PCancelable.fn(
     mode,
     {
       getBrowserless,
+      getTemporalFile,
       gotOpts,
       headers,
+      mutoolPath,
       puppeteerOpts,
       rewriteUrls,
-      toEncode,
-      mutoolPath,
-      getTemporalFile
+      toEncode
     },
     onCancel
   ) => {
