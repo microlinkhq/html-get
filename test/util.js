@@ -4,12 +4,12 @@ const { default: listen } = require('async-listen')
 const createBrowserless = require('browserless')
 const dateRegex = require('regex-iso-date')
 const { createServer } = require('http')
-const { promisify } = require('util')
 const pretty = require('pretty')
 const path = require('path')
 const fs = require('fs')
 
-const closeServer = server => promisify(server.close)
+const closeServer = server =>
+  require('util').promisify(server.close.bind(server))()
 
 const fixture = name =>
   fs.readFileSync(path.join(__dirname, '/fixtures/', name))
