@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.16.0](https://github.com/microlinkhq/html-get/compare/v2.15.1...v2.16.0) (2024-02-17)
+
+
+### Features
+
+* **html:** remove localhost alike URLs ([#193](https://github.com/microlinkhq/html-get/issues/193)) ([3cf2927](https://github.com/microlinkhq/html-get/commit/3cf2927d532a832f1a0736474b6a7412d8f40b94))
+
 ### [2.15.1](https://github.com/microlinkhq/html-get/compare/v2.15.0...v2.15.1) (2024-02-08)
 
 ## [2.15.0](https://github.com/microlinkhq/html-get/compare/v2.14.4...v2.15.0) (2024-01-24)
