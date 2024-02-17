@@ -44,11 +44,11 @@
     "html-encode": "~2.1.6",
     "html-urls": "~2.4.55",
     "is-html-content": "~1.0.0",
+    "localhost-url-regex": "~1.0.11",
     "lodash": "~4.17.21",
     "mri": "~1.2.0",
     "p-cancelable": "~2.1.0",
     "p-retry": "~4.6.0",
-    "replace-string": "~3.1.0",
     "tinyspawn": "~1.2.6",
     "top-sites": "~1.1.205"
   },
