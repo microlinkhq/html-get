@@ -1,8 +1,8 @@
 'use strict'
 
 const { get, split, nth, castArray, forEach } = require('lodash')
+const localhostUrl = require('localhost-url-regex')
 const { TAGS: URL_TAGS } = require('html-urls')
-const replaceString = require('replace-string')
 const isHTML = require('is-html-content')
 const cssUrl = require('css-url-regex')
 const execall = require('execall')
@@ -95,7 +95,9 @@ const rewriteHtmlUrls = ({ $, url }) => {
       const el = $(this)
       const attr = el.attr(urlAttr)
 
-      if (typeof attr === 'string' && !attr.startsWith('http')) {
+      if (localhostUrl().test(attr)) {
+        el.remove()
+      } else if (typeof attr === 'string' && !attr.startsWith('http')) {
         try {
           const newAttr = new URL(attr, url).toString()
           el.attr(urlAttr, newAttr)
@@ -117,7 +119,7 @@ const rewriteCssUrls = ({ html, url }) => {
     if (cssUrl.startsWith('/')) {
       try {
         const absoluteUrl = new URL(cssUrl, url).toString()
-        html = replaceString(html, `url(${cssUrl})`, `url(${absoluteUrl})`)
+        html = html.replaceAll(`url(${cssUrl})`, `url(${absoluteUrl})`)
       } catch (_) {}
     }
   })
