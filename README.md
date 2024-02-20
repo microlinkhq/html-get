@@ -23,8 +23,10 @@
 ## Install
 
 ```bash
-$ npm install browserless puppeteer html-get --save
+$ npm install browserless puppeteer@21.X html-get --save
 ```
+
+supported puppeteer version: ```puppeteer: 21.x```
 
 ## Usage
 
