@@ -67,7 +67,7 @@
     "nano-staged": "latest",
     "npm-check-updates": "latest",
     "pretty": "latest",
-    "puppeteer": "21",
+    "puppeteer": "latest",
     "regex-iso-date": "latest",
     "simple-git-hooks": "latest",
     "standard": "latest",
