@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.16.3 (2024-03-14)
+
+
+### Bug Fixes
+
+* HTML should be a string ([#201](https://github.com/microlinkhq/html-get/issues/201)) ([f62cbb2](https://github.com/microlinkhq/html-get/commit/f62cbb22de64cc81543b871f38f67e8a3ebd8c99))
+
 ### 2.16.2 (2024-03-02)
 
 ### 2.16.1 (2024-02-26)
