@@ -10,6 +10,7 @@ const topsites = require('top-sites')
 const domains = [
   [['domain', 'abc.net.au']],
   [['domainWithoutSuffix', 'apple']],
+  [['domainWithoutSuffix', 'arxiv']],
   [['domainWithoutSuffix', 'bbc']],
   [['domainWithoutSuffix', 'blogspot']],
   [['domainWithoutSuffix', 'csdn']],
