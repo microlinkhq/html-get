@@ -34,23 +34,23 @@
     "video"
   ],
   "dependencies": {
-    "@kikobeats/time-span": "~1.0.3",
-    "@metascraper/helpers": "~5.45.0",
-    "cheerio": "~1.0.0-rc.12",
+    "@kikobeats/time-span": "~1.0.5",
+    "@metascraper/helpers": "~5.45.22",
+    "cheerio": "~1.0.0",
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.2.2",
     "execall": "~2.0.0",
     "got": "~11.8.6",
-    "html-encode": "~2.1.6",
-    "html-urls": "~2.4.55",
+    "html-encode": "~2.1.7",
+    "html-urls": "~2.4.59",
     "is-html-content": "~1.0.0",
     "localhost-url-regex": "~1.0.11",
     "lodash": "~4.17.21",
     "mri": "~1.2.0",
     "p-cancelable": "~2.1.0",
     "p-retry": "~4.6.0",
-    "tinyspawn": "~1.3.1",
-    "top-sites": "~1.1.205"
+    "tinyspawn": "~1.3.2",
+    "top-sites": "~1.1.217"
   },
   "devDependencies": {
     "@commitlint/cli": "latest",

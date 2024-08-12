@@ -156,4 +156,4 @@ When is `true`, it will be rewritten CSS/HTML relatives URLs present in the HTML
 **html-get** © [Microlink](https://microlink.io), released under the [MIT](https://github.com/microlinkhq/html-get/blob/master/LICENSE.md) License.<br>
 Authored and maintained by [Kiko Beats](https://kikobeats.com) with help from [contributors](https://github.com/microlinkhq/html-get/contributors).
 
-> [microlink.io](https://microlink.io) · GitHub [microlinkhq](https://github.com/microlinkhq) · Twitter [@microlinkhq](https://twitter.com/microlinkhq)
+> [microlink.io](https://microlink.io) · GitHub [microlinkhq](https://github.com/microlinkhq) · X [@microlinkhq](https://x.com/microlinkhq)
