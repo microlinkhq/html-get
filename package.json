@@ -2,7 +2,7 @@
   "name": "html-get",
   "description": "Get the HTML from any website, fine-tuned for correction & speed",
   "homepage": "https://nicedoc.com/microlinkhq/html-get",
-  "version": "2.16.10",
+  "version": "2.16.11",
   "main": "src/index.js",
   "bin": {
     "html-get": "bin/index.js"

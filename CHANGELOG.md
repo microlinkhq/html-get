@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.16.11 (2024-09-15)
+
+
+### Bug Fixes
+
+* don't pipe stderr to stdout ([#206](https://github.com/microlinkhq/html-get/issues/206)) ([6b6b4cb](https://github.com/microlinkhq/html-get/commit/6b6b4cbf97791f6495d1c1bc60fe5dadf3dee318))
+
 ### 2.16.10 (2024-09-08)
 
 ### 2.16.9 (2024-08-12)
