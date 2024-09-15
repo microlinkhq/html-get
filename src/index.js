@@ -57,7 +57,7 @@ const fetch = PCancelable.fn(
         if (mutoolPath && contentType === 'application/pdf') {
           const file = getTemporalFile(url, 'pdf')
           await writeFile(file.path, res.body)
-          return (await $(`mutool draw -q -F html ${file.path}`)).stdout
+          return (await $(`${mutoolPath} draw -q -F html ${file.path}`)).stdout
         }
 
         return contentType.startsWith('text/html') || !isMediaUrl(url)
@@ -191,7 +191,7 @@ const defaultGetTemporalFile = (url, ext) => {
 const defaultMutoolPath = () =>
   (() => {
     try {
-      return execSync('which mutool').toString().trim()
+      return execSync('which mutool', { stdio: 'pipe' }).toString().trim()
     } catch (_) {}
   })()
 
