@@ -89,6 +89,22 @@ const addBody = ({ url, headers, html }) => {
   return `<!DOCTYPE html><html><head></head><body>${element}</body></html>`
 }
 
+const rewriteOpenGraph = ({ $ }) =>
+  $('meta[name^="og:"]').each((_, element) => {
+    const el = $(element)
+    const name = el.attr('name')
+    el.removeAttr('name')
+    el.attr('property', name)
+  })
+
+const rewriteMetaProperty = ({ $ }) =>
+  $('meta[property]:not([property^="og"])').each((_, element) => {
+    const el = $(element)
+    const property = el.attr('property')
+    el.removeAttr('property')
+    el.attr('name', property)
+  })
+
 const rewriteHtmlUrls = ({ $, url }) => {
   forEach(URL_TAGS, (tagName, urlAttr) => {
     $(tagName.join(',')).each(function () {
@@ -156,6 +172,7 @@ module.exports = ({
   hide,
   remove,
   rewriteUrls,
+  rewriteHtml,
   scripts,
   modules
 }) => {
@@ -166,6 +183,11 @@ module.exports = ({
   const $ = cheerio.load(content)
 
   if (rewriteUrls) rewriteHtmlUrls({ $, url })
+
+  if (rewriteHtml) {
+    rewriteOpenGraph({ $ })
+    rewriteMetaProperty({ $ })
+  }
 
   addHead({ $, url, headers })
 
