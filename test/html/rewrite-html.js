@@ -67,3 +67,27 @@ test('rewrite multiple meta wrong markup', async t => {
     'https://kikobeats.com/image.jpg'
   )
 })
+
+test('rewrite multiple twitter wrong markup', async t => {
+  const output = html({
+    rewriteHtml: true,
+    url: 'https://kikobeats.com',
+    html: composeHtml([
+      '<meta property="twitter:title" content="Kiko Beats">',
+      '<meta property="twitter:description" content="Personal website of Kiko Beats">',
+      '<meta property="twitter:image" content="https://kikobeats.com/image.jpg">'
+    ]),
+    headers: { 'content-type': 'text/html; charset=utf-8' }
+  })
+
+  const $ = cheerio.load(output)
+  t.is($('meta[name="twitter:title"]').attr('content'), 'Kiko Beats')
+  t.is(
+    $('meta[name="twitter:description"]').attr('content'),
+    'Personal website of Kiko Beats'
+  )
+  t.is(
+    $('meta[name="twitter:image"]').attr('content'),
+    'https://kikobeats.com/image.jpg'
+  )
+})

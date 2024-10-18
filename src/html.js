@@ -1,6 +1,7 @@
 'use strict'
 
 const { get, split, nth, castArray, forEach } = require('lodash')
+const debug = require('debug-logfmt')('html-get:rewrite')
 const localhostUrl = require('localhost-url-regex')
 const { TAGS: URL_TAGS } = require('html-urls')
 const isHTML = require('is-html-content')
@@ -89,21 +90,24 @@ const addBody = ({ url, headers, html }) => {
   return `<!DOCTYPE html><html><head></head><body>${element}</body></html>`
 }
 
-const rewriteOpenGraph = ({ $ }) =>
-  $('meta[name^="og:"]').each((_, element) => {
+const rewriteMetaTags = ({ $ }) => {
+  $('meta').each((_, element) => {
     const el = $(element)
-    const name = el.attr('name')
-    el.removeAttr('name')
-    el.attr('property', name)
+    // Convert 'name' to 'property' for Open Graph tags
+    // <meta name="og:title" content="Kiko Beats"> → <meta property="og:title" content="Kiko Beats">
+    if (el.attr('name')?.startsWith('og:')) {
+      const name = el.attr('name')
+      el.removeAttr('name').attr('property', name)
+      debug('og', el.attr())
+      // Convert 'property' to 'name' for non-Open Graph tags
+      // <meta property="title" content="Kiko Beats"> → <meta name="title" content="Kiko Beats">
+    } else if (el.attr('property') && !el.attr('property').startsWith('og')) {
+      const property = el.attr('property')
+      el.removeAttr('property').attr('name', property)
+      debug('meta', el.attr())
+    }
   })
-
-const rewriteMetaProperty = ({ $ }) =>
-  $('meta[property]:not([property^="og"])').each((_, element) => {
-    const el = $(element)
-    const property = el.attr('property')
-    el.removeAttr('property')
-    el.attr('name', property)
-  })
+}
 
 const rewriteHtmlUrls = ({ $, url }) => {
   forEach(URL_TAGS, (tagName, urlAttr) => {
@@ -184,10 +188,7 @@ module.exports = ({
 
   if (rewriteUrls) rewriteHtmlUrls({ $, url })
 
-  if (rewriteHtml) {
-    rewriteOpenGraph({ $ })
-    rewriteMetaProperty({ $ })
-  }
+  if (rewriteHtml) rewriteMetaTags({ $ })
 
   addHead({ $, url, headers })
 
