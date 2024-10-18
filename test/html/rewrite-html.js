@@ -20,6 +20,27 @@ const composeHtml = meta =>
   <body></body>
   </html>`)
 
+test("don't rewrite og if property is already present", async t => {
+  const output = html({
+    rewriteHtml: true,
+    url: 'https://kikobeats.com',
+    html: composeHtml([
+      '<meta content="This Pin was discovered by NMA Group" data-app="true" name="og:description" property="og:description">'
+    ]),
+    headers: { 'content-type': 'text/html; charset=utf-8' }
+  })
+
+  const $ = cheerio.load(output)
+  t.is(
+    $('meta[name="og:description"]').attr('content'),
+    'This Pin was discovered by NMA Group'
+  )
+  t.is(
+    $('meta[property="og:description"]').attr('content'),
+    'This Pin was discovered by NMA Group'
+  )
+})
+
 test('rewrite multiple og wrong markup', async t => {
   const output = html({
     rewriteHtml: true,

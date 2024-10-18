@@ -93,16 +93,16 @@ const addBody = ({ url, headers, html }) => {
 const rewriteMetaTags = ({ $ }) => {
   $('meta').each((_, element) => {
     const el = $(element)
-    // Convert 'name' to 'property' for Open Graph tags
-    // <meta name="og:title" content="Kiko Beats"> → <meta property="og:title" content="Kiko Beats">
-    if (el.attr('name')?.startsWith('og:')) {
-      const name = el.attr('name')
+
+    const name = el.attr('name')
+    const property = el.attr('property')
+
+    // Convert 'name' to 'property' for Open Graph tags if 'property' is not already set correctly
+    if (name?.startsWith('og:') && property !== name) {
       el.removeAttr('name').attr('property', name)
       debug('og', el.attr())
       // Convert 'property' to 'name' for non-Open Graph tags
-      // <meta property="title" content="Kiko Beats"> → <meta name="title" content="Kiko Beats">
-    } else if (el.attr('property') && !el.attr('property').startsWith('og')) {
-      const property = el.attr('property')
+    } else if (property && !property.startsWith('og')) {
       el.removeAttr('property').attr('name', property)
       debug('meta', el.attr())
     }
@@ -188,7 +188,7 @@ module.exports = ({
 
   if (rewriteUrls) rewriteHtmlUrls({ $, url })
 
-  if (rewriteHtml) rewriteMetaTags({ $ })
+  if (rewriteHtml) rewriteMetaTags({ $, url })
 
   addHead({ $, url, headers })
 
