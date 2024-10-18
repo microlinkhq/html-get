@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.17.0 (2024-10-18)
+
+
+### Features
+
+* add `rewriteHtml` ([#207](https://github.com/microlinkhq/html-get/issues/207)) ([ec99777](https://github.com/microlinkhq/html-get/commit/ec99777a91869c679309f7747573e734ed8e5e73))
+
 ### 2.16.11 (2024-09-15)
 
 
