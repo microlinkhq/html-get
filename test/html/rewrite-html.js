@@ -41,6 +41,33 @@ test("don't rewrite og if property is already present", async t => {
   )
 })
 
+test('fb propietary tags should be treat as og', async t => {
+  {
+    const output = html({
+      rewriteHtml: true,
+      url: 'https://kikobeats.com',
+      html: composeHtml(['<meta content="1234" property="fb:app_id">']),
+      headers: { 'content-type': 'text/html; charset=utf-8' }
+    })
+
+    const $ = cheerio.load(output)
+    t.is($('meta[property="fb:app_id"]').attr('content'), '1234')
+    t.is($('meta[name="fb:app_id"]').attr('content'), undefined)
+  }
+  {
+    const output = html({
+      rewriteHtml: true,
+      url: 'https://kikobeats.com',
+      html: composeHtml(['<meta content="1234" name="fb:app_id">']),
+      headers: { 'content-type': 'text/html; charset=utf-8' }
+    })
+
+    const $ = cheerio.load(output)
+    t.is($('meta[property="fb:app_id"]').attr('content'), '1234')
+    t.is($('meta[name="fb:app_id"]').attr('content'), undefined)
+  }
+})
+
 test("don't rewrite og if content is empty", async t => {
   const output = html({
     rewriteHtml: true,
