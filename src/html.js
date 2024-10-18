@@ -93,6 +93,7 @@ const addBody = ({ url, headers, html }) => {
 const rewriteMetaTags = ({ $ }) => {
   $('meta').each((_, element) => {
     const el = $(element)
+    if (!el.attr('content')) return
 
     const name = el.attr('name')
     const property = el.attr('property')

@@ -41,6 +41,19 @@ test("don't rewrite og if property is already present", async t => {
   )
 })
 
+test("don't rewrite og if content is empty", async t => {
+  const output = html({
+    rewriteHtml: true,
+    url: 'https://kikobeats.com',
+    html: composeHtml(['<meta content="" name="twitter:description">']),
+    headers: { 'content-type': 'text/html; charset=utf-8' }
+  })
+
+  const $ = cheerio.load(output)
+  t.is($('meta[name="twitter:description"]').attr('content'), '')
+  t.is($('meta[property="twitter:description"]').attr('content'), undefined)
+})
+
 test('rewrite multiple og wrong markup', async t => {
   const output = html({
     rewriteHtml: true,
