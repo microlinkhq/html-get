@@ -207,6 +207,7 @@ const getContent = PCancelable.fn(
       mutoolPath,
       puppeteerOpts,
       rewriteUrls,
+      rewriteHtml,
       toEncode
     },
     onCancel
@@ -224,7 +225,8 @@ const getContent = PCancelable.fn(
       const html = addHtml({
         ...content,
         ...(isFetchMode ? puppeteerOpts : undefined),
-        rewriteUrls
+        rewriteUrls,
+        rewriteHtml
       })
 
       return { ...content, html }
@@ -245,7 +247,8 @@ module.exports = PCancelable.fn(
       mutoolPath = defaultMutoolPath(),
       prerender = 'auto',
       puppeteerOpts,
-      rewriteUrls = false
+      rewriteUrls = false,
+      rewriteHtml = false
     } = {},
     onCancel
   ) => {
@@ -268,6 +271,7 @@ module.exports = PCancelable.fn(
       mutoolPath,
       puppeteerOpts,
       rewriteUrls,
+      rewriteHtml,
       toEncode
     })
 

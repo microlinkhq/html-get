@@ -1,6 +1,7 @@
 'use strict'
 
 const { get, split, nth, castArray, forEach } = require('lodash')
+const debug = require('debug-logfmt')('html-get:rewrite')
 const localhostUrl = require('localhost-url-regex')
 const { TAGS: URL_TAGS } = require('html-urls')
 const isHTML = require('is-html-content')
@@ -89,6 +90,29 @@ const addBody = ({ url, headers, html }) => {
   return `<!DOCTYPE html><html><head></head><body>${element}</body></html>`
 }
 
+const isOpenGraph = (prop = '') =>
+  ['og:', 'fb:'].some(prefix => prop.startsWith(prefix))
+
+const rewriteMetaTags = ({ $ }) => {
+  $('meta').each((_, element) => {
+    const el = $(element)
+    if (!el.attr('content')) return
+
+    const name = el.attr('name')
+    const property = el.attr('property')
+
+    // Convert 'name' to 'property' for Open Graph tags if 'property' is not already set correctly
+    if (property !== name && isOpenGraph(name)) {
+      el.removeAttr('name').attr('property', name)
+      debug('og', el.attr())
+      // Convert 'property' to 'name' for non-Open Graph tags
+    } else if (property && !isOpenGraph(property)) {
+      el.removeAttr('property').attr('name', property)
+      debug('meta', el.attr())
+    }
+  })
+}
+
 const rewriteHtmlUrls = ({ $, url }) => {
   forEach(URL_TAGS, (tagName, urlAttr) => {
     $(tagName.join(',')).each(function () {
@@ -156,6 +180,7 @@ module.exports = ({
   hide,
   remove,
   rewriteUrls,
+  rewriteHtml,
   scripts,
   modules
 }) => {
@@ -166,6 +191,8 @@ module.exports = ({
   const $ = cheerio.load(content)
 
   if (rewriteUrls) rewriteHtmlUrls({ $, url })
+
+  if (rewriteHtml) rewriteMetaTags({ $, url })
 
   addHead({ $, url, headers })
 

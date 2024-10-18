@@ -151,6 +151,13 @@ Default: `false`
 
 When is `true`, it will be rewritten CSS/HTML relatives URLs present in the HTML markup into absolutes.
 
+##### rewriteHtml
+
+Type: `boolean`<br>
+Default: `false`
+
+When is `true`, it will rewrite some common mistake related with HTML meta tags.
+
 ## License
 
 **html-get** © [Microlink](https://microlink.io), released under the [MIT](https://github.com/microlinkhq/html-get/blob/master/LICENSE.md) License.<br>
