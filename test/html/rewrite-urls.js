@@ -8,7 +8,7 @@ const { prettyHtml } = require('../util')
 
 const html = require('../../src/html')
 
-test('remove localhost alike URLs', async t => {
+test('remove localhost alike URLs', t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://kikobeats.com',

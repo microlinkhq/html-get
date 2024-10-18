@@ -20,7 +20,7 @@ const composeHtml = meta =>
   <body></body>
   </html>`)
 
-test("don't rewrite og if property is already present", async t => {
+test("don't rewrite og if property is already present", t => {
   const output = html({
     rewriteHtml: true,
     url: 'https://kikobeats.com',
@@ -41,7 +41,7 @@ test("don't rewrite og if property is already present", async t => {
   )
 })
 
-test('fb propietary tags should be treat as og', async t => {
+test('fb propietary tags should be treat as og', t => {
   {
     const output = html({
       rewriteHtml: true,
@@ -68,7 +68,7 @@ test('fb propietary tags should be treat as og', async t => {
   }
 })
 
-test("don't rewrite og if content is empty", async t => {
+test("don't rewrite og if content is empty", t => {
   const output = html({
     rewriteHtml: true,
     url: 'https://kikobeats.com',
@@ -81,7 +81,7 @@ test("don't rewrite og if content is empty", async t => {
   t.is($('meta[property="twitter:description"]').attr('content'), undefined)
 })
 
-test('rewrite multiple og wrong markup', async t => {
+test('rewrite multiple og wrong markup', t => {
   const output = html({
     rewriteHtml: true,
     url: 'https://kikobeats.com',
@@ -105,7 +105,7 @@ test('rewrite multiple og wrong markup', async t => {
   )
 })
 
-test('rewrite multiple meta wrong markup', async t => {
+test('rewrite multiple meta wrong markup', t => {
   const output = html({
     rewriteHtml: true,
     url: 'https://kikobeats.com',
@@ -129,7 +129,7 @@ test('rewrite multiple meta wrong markup', async t => {
   )
 })
 
-test('rewrite multiple twitter wrong markup', async t => {
+test('rewrite multiple twitter wrong markup', t => {
   const output = html({
     rewriteHtml: true,
     url: 'https://kikobeats.com',
