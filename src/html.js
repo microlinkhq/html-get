@@ -91,7 +91,7 @@ const addBody = ({ url, headers, html }) => {
 }
 
 const isOpenGraph = (prop = '') =>
-  ['og:', 'fb:'].some(prefix => prop.startsWith(prefix))
+  ['og:', 'fb:', 'al:'].some(prefix => prop.startsWith(prefix))
 
 const rewriteMetaTags = ({ $ }) => {
   $('meta').each((_, element) => {
