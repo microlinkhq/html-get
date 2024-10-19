@@ -20,89 +20,51 @@ const composeHtml = meta =>
   <body></body>
   </html>`)
 
-test("don't rewrite og if property is already present", t => {
-  const output = html({
-    rewriteHtml: true,
-    url: 'https://kikobeats.com',
-    html: composeHtml([
-      '<meta content="This Pin was discovered by NMA Group" data-app="true" name="og:description" property="og:description">'
-    ]),
-    headers: { 'content-type': 'text/html; charset=utf-8' }
-  })
-
-  const $ = cheerio.load(output)
-  t.is(
-    $('meta[name="og:description"]').attr('content'),
-    'This Pin was discovered by NMA Group'
-  )
-  t.is(
-    $('meta[property="og:description"]').attr('content'),
-    'This Pin was discovered by NMA Group'
-  )
-})
-
-test('fb propietary tags should be treat as og', t => {
-  {
+;['fb', 'al'].forEach(prefix => {
+  test(`treat '${prefix}:' following 'og:' spec`, t => {
     const output = html({
       rewriteHtml: true,
       url: 'https://kikobeats.com',
-      html: composeHtml(['<meta content="1234" property="fb:app_id">']),
+      html: composeHtml([
+        `<meta content="applinks://docs" name="${prefix}:ios:url">`
+      ]),
       headers: { 'content-type': 'text/html; charset=utf-8' }
     })
 
     const $ = cheerio.load(output)
-    t.is($('meta[property="fb:app_id"]').attr('content'), '1234')
-    t.is($('meta[name="fb:app_id"]').attr('content'), undefined)
-  }
-  {
+    t.is(
+      $(`meta[property="${prefix}:ios:url"]`).attr('content'),
+      'applinks://docs'
+    )
+    t.is($(`meta[name="${prefix}:ios:url"]`).attr('content'), undefined)
+  })
+})
+;['twitter', 'fb', 'al', 'og'].forEach(prefix => {
+  test(`don't rewrite '${prefix}:' if content is empty`, t => {
     const output = html({
       rewriteHtml: true,
       url: 'https://kikobeats.com',
-      html: composeHtml(['<meta content="1234" name="fb:app_id">']),
+      html: composeHtml([`<meta content="" name="${prefix}:ios:url">`]),
       headers: { 'content-type': 'text/html; charset=utf-8' }
     })
 
     const $ = cheerio.load(output)
-    t.is($('meta[property="fb:app_id"]').attr('content'), '1234')
-    t.is($('meta[name="fb:app_id"]').attr('content'), undefined)
-  }
+    t.is($(`meta[name="${prefix}:ios:url"]`).attr('content'), '')
+    t.is($(`meta[property="${prefix}:ios:url"]`).attr('content'), undefined)
+  })
 })
 
-test("don't rewrite og if content is empty", t => {
+test("don't rewrite meta if content is empty", t => {
   const output = html({
     rewriteHtml: true,
     url: 'https://kikobeats.com',
-    html: composeHtml(['<meta content="" name="twitter:description">']),
+    html: composeHtml(['<meta property="title" content="">']),
     headers: { 'content-type': 'text/html; charset=utf-8' }
   })
 
   const $ = cheerio.load(output)
-  t.is($('meta[name="twitter:description"]').attr('content'), '')
-  t.is($('meta[property="twitter:description"]').attr('content'), undefined)
-})
-
-test('rewrite multiple og wrong markup', t => {
-  const output = html({
-    rewriteHtml: true,
-    url: 'https://kikobeats.com',
-    html: composeHtml([
-      '<meta name="og:title" content="Kiko Beats">',
-      '<meta name="og:description" content="Personal website of Kiko Beats">',
-      '<meta name="og:image" content="https://kikobeats.com/image.jpg">'
-    ]),
-    headers: { 'content-type': 'text/html; charset=utf-8' }
-  })
-
-  const $ = cheerio.load(output)
-  t.is($('meta[property="og:title"]').attr('content'), 'Kiko Beats')
-  t.is(
-    $('meta[property="og:description"]').attr('content'),
-    'Personal website of Kiko Beats'
-  )
-  t.is(
-    $('meta[property="og:image"]').attr('content'),
-    'https://kikobeats.com/image.jpg'
-  )
+  t.is($('meta[property="title"]').attr('content'), '')
+  t.is($('meta[name="title"]').attr('content'), undefined)
 })
 
 test('rewrite multiple meta wrong markup', t => {
@@ -119,17 +81,20 @@ test('rewrite multiple meta wrong markup', t => {
 
   const $ = cheerio.load(output)
   t.is($('meta[name="title"]').attr('content'), 'Kiko Beats')
+  t.is($('meta[property="title"]').attr('content'), undefined)
   t.is(
     $('meta[name="description"]').attr('content'),
     'Personal website of Kiko Beats'
   )
+  t.is($('meta[property="description"]').attr('content'), undefined)
   t.is(
     $('meta[name="image"]').attr('content'),
     'https://kikobeats.com/image.jpg'
   )
+  t.is($('meta[property="image"]').attr('content'), undefined)
 })
 
-test('rewrite multiple twitter wrong markup', t => {
+test("rewrite multiple 'twitter:' wrong markup", t => {
   const output = html({
     rewriteHtml: true,
     url: 'https://kikobeats.com',
@@ -143,12 +108,34 @@ test('rewrite multiple twitter wrong markup', t => {
 
   const $ = cheerio.load(output)
   t.is($('meta[name="twitter:title"]').attr('content'), 'Kiko Beats')
+  t.is($('meta[property="twitter:title"]').attr('content'), undefined)
   t.is(
     $('meta[name="twitter:description"]').attr('content'),
     'Personal website of Kiko Beats'
   )
+  t.is($('meta[property="twitter:description"]').attr('content'), undefined)
   t.is(
     $('meta[name="twitter:image"]').attr('content'),
     'https://kikobeats.com/image.jpg'
   )
+  t.is($('meta[property="twitter:image"]').attr('content'), undefined)
+})
+;['al', 'fb', 'og'].forEach(prefix => {
+  test(`rewrite multiple '${prefix}' wrong markup`, t => {
+    const output = html({
+      rewriteHtml: true,
+      url: 'https://kikobeats.com',
+      html: composeHtml([
+        `<meta content="1234" name="${prefix}:app_id">`,
+        `<meta content="5678" name="${prefix}:session_id">`
+      ]),
+      headers: { 'content-type': 'text/html; charset=utf-8' }
+    })
+
+    const $ = cheerio.load(output)
+    t.is($(`meta[property="${prefix}:app_id"]`).attr('content'), '1234')
+    t.is($(`meta[name="${prefix}:app_id"]`).attr('content'), undefined)
+    t.is($(`meta[property="${prefix}:session_id"]`).attr('content'), '5678')
+    t.is($(`meta[name="${prefix}:session_id"]`).attr('content'), undefined)
+  })
 })
