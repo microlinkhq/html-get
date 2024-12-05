@@ -37,7 +37,7 @@ test("`{ prerender: 'auto' }`", async t => {
       getBrowserless,
       puppeteerOpts: { adblock: false }
     })
-    t.true(html.includes('og:description'))
+    t.true(html.includes('og:title'))
     t.is(stats.mode, 'fetch')
   }
 })
