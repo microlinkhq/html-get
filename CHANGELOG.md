@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.18.0 (2024-12-05)
+
+
+### Features
+
+* add redirects ([#210](https://github.com/microlinkhq/html-get/issues/210)) ([54cfe61](https://github.com/microlinkhq/html-get/commit/54cfe610e6dd3fd463e5af9b9252eabc66b59936))
+
 ### 2.17.2 (2024-10-19)
 
 ### 2.17.1 (2024-10-18)
