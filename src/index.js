@@ -49,6 +49,11 @@ const fetch = PCancelable.fn(
       req.cancel()
     })
 
+    const redirects = []
+    req.on('redirect', res =>
+      redirects.push({ statusCode: res.statusCode, url: res.url })
+    )
+
     try {
       const res = await req
 
@@ -70,7 +75,8 @@ const fetch = PCancelable.fn(
         html,
         mode: 'fetch',
         url: res.url,
-        statusCode: res.statusCode
+        statusCode: res.statusCode,
+        redirects
       }
     } catch (error) {
       debug('fetch:error', { url, message: error.message || error, reflect })
@@ -81,7 +87,8 @@ const fetch = PCancelable.fn(
             html: '',
             mode: 'fetch',
             headers: error.response ? error.response.headers : {},
-            statusCode: error.response ? error.response.statusCode : undefined
+            statusCode: error.response ? error.response.statusCode : undefined,
+            redirects
           }
     }
   }
@@ -126,7 +133,14 @@ const prerender = PCancelable.fn(
             html: await page.content(),
             mode: 'prerender',
             url: response.url(),
-            statusCode: response.status()
+            statusCode: response.status(),
+            redirects: response
+              .request()
+              .redirectChain()
+              .map(req => ({
+                statusCode: req.response().status(),
+                url: req.url()
+              }))
           }
         },
         {
