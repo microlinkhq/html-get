@@ -30,6 +30,7 @@ const domains = [
   [['domainWithoutSuffix', 'huffingtonpost']],
   [['domainWithoutSuffix', 'imdb']],
   [['domainWithoutSuffix', 'imgur']],
+  [['domainWithoutSuffix', 'instagram']],
   [['domainWithoutSuffix', 'meetup']],
   [['domainWithoutSuffix', 'microsoft']],
   [['domainWithoutSuffix', 'nytimes']],
