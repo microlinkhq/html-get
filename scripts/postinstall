@@ -36,6 +36,7 @@ const domains = [
   [['domainWithoutSuffix', 'nytimes']],
   [['domainWithoutSuffix', 'pinterest']],
   [['domainWithoutSuffix', 'producthunt']],
+  [['domainWithoutSuffix', 'reddit']],
   [['domainWithoutSuffix', 'slideshare']],
   [['domainWithoutSuffix', 'soundcloud']],
   [['domainWithoutSuffix', 'sourceforge']],
