@@ -36,22 +36,22 @@
   ],
   "dependencies": {
     "@kikobeats/time-span": "~1.0.5",
-    "@metascraper/helpers": "~5.46.0",
+    "@metascraper/helpers": "~5.46.1",
     "cheerio": "~1.0.0",
     "css-url-regex": "~4.0.0",
-    "debug-logfmt": "~1.2.2",
+    "debug-logfmt": "~1.2.3",
     "execall": "~2.0.0",
     "got": "~11.8.6",
     "html-encode": "~2.1.7",
-    "html-urls": "~2.4.59",
+    "html-urls": "~2.4.62",
     "is-html-content": "~1.0.0",
-    "localhost-url-regex": "~1.0.11",
+    "localhost-url-regex": "~1.0.13",
     "lodash": "~4.17.21",
     "mri": "~1.2.0",
     "p-cancelable": "~2.1.0",
     "p-retry": "~4.6.0",
-    "tinyspawn": "~1.3.2",
-    "top-sites": "~1.1.217"
+    "tinyspawn": "~1.3.3",
+    "top-sites": "~1.1.220"
   },
   "devDependencies": {
     "@commitlint/cli": "latest",
