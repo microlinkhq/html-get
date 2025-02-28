@@ -21,9 +21,13 @@ test('remove localhost alike URLs', t => {
        <meta charset="utf-8">
       </head>
       <body>
+        <script async="" src="/testfile" id="livereloadscript"></script>
         <script async="" src="http://localhost:35729/livereload.js?snipver=1" id="livereloadscript"></script>
         <script async="" src="http://127.0.0.1:35729/livereload.js?snipver=1" id="livereloadscript"></script>
         <script async="" src="http://0.0.0.1:35729/livereload.js?snipver=1" id="livereloadscript"></script>
+        <a href="mailto:example@example.com">Email</a>
+        <a href="ftp://example.com/file.txt">FTP Link</a>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Base64 Image">
       </body>
     </html>`,
     headers: { 'content-type': 'text/html; charset=utf-8' }
