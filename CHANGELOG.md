@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.19.0 (2025-02-28)
+
+
+### Features
+
+* **html:** better url rewrite ([#213](https://github.com/microlinkhq/html-get/issues/213)) ([e261c9c](https://github.com/microlinkhq/html-get/commit/e261c9cb39972a4cc7791f0b0a7927650f13cb74))
+
 ### 2.18.5 (2025-01-13)
 
 ### 2.18.4 (2025-01-08)
