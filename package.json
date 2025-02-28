@@ -45,7 +45,7 @@
     "html-encode": "~2.1.7",
     "html-urls": "~2.4.62",
     "is-html-content": "~1.0.0",
-    "localhost-url-regex": "~1.0.13",
+    "is-local-address": "~2.2.0",
     "lodash": "~4.17.21",
     "mri": "~1.2.0",
     "p-cancelable": "~2.1.0",
