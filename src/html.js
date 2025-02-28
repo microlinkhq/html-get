@@ -2,7 +2,7 @@
 
 const { get, split, nth, castArray, forEach } = require('lodash')
 const debug = require('debug-logfmt')('html-get:rewrite')
-const localhostUrl = require('localhost-url-regex')
+const isLocalAddress = require('is-local-address')
 const { TAGS: URL_TAGS } = require('html-urls')
 const isHTML = require('is-html-content')
 const cssUrl = require('css-url-regex')
@@ -118,15 +118,16 @@ const rewriteHtmlUrls = ({ $, url }) => {
     $(tagName.join(',')).each(function () {
       const el = $(this)
       const attr = el.attr(urlAttr)
-
-      if (localhostUrl().test(attr)) {
-        el.remove()
-      } else if (typeof attr === 'string' && !attr.startsWith('http')) {
-        try {
-          const newAttr = new URL(attr, url).toString()
-          el.attr(urlAttr, newAttr)
-        } catch (_) {}
-      }
+      if (typeof attr !== 'string') return
+      try {
+        const urlObj = new URL(attr, url)
+        if (!urlObj.protocol.startsWith('http')) return
+        if (isLocalAddress(urlObj.hostname)) {
+          el.remove()
+        } else {
+          el.attr(urlAttr, urlObj.toString())
+        }
+      } catch (_) {}
     })
   })
 }
