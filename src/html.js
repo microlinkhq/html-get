@@ -118,7 +118,7 @@ const rewriteHtmlUrls = ({ $, url }) => {
     $(tagName.join(',')).each(function () {
       const el = $(this)
       const attr = el.attr(urlAttr)
-      if (typeof attr !== 'string' || attr.startsWith('http')) return
+      if (typeof attr !== 'string') return
       try {
         const urlObj = new URL(attr, url)
         if (!urlObj.protocol.startsWith('http')) return
