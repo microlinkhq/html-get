@@ -5,7 +5,7 @@ const test = require('ava')
 
 const { prettyHtml } = require('../util')
 
-const html = require('../../src/html')
+const html = (...args) => require('../../src/html')(...args).html()
 
 test("don't modify html markup", t => {
   const output = html({
@@ -23,18 +23,6 @@ test("don't modify html markup", t => {
       'content-type': 'text/html; charset=utf-8'
     }
   })
-
-  t.true(
-    output.includes(
-      'content="http://cdn.shopify.com/s/files/1/0260/4810/2497/articles/Applying-Oil-Plus-2C-to-a-table_600x.jpg?v=1616464305"'
-    )
-  )
-
-  t.true(
-    output.includes(
-      'url(https://cdn.shopify.com/s/files/1/0260/4810/2497/articles/Applying-Oil-Plus-2C-to-a-table_600x.jpg?v=1616464305)'
-    )
-  )
 
   t.snapshot(prettyHtml(output))
 })

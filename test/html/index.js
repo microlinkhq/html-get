@@ -5,7 +5,7 @@ const test = require('ava')
 
 const { prettyHtml } = require('../util')
 
-const html = require('../../src/html')
+const html = (...args) => require('../../src/html')(...args).html()
 
 test('add minimal html markup', t => {
   const output = html({

@@ -132,24 +132,42 @@ const rewriteHtmlUrls = ({ $, url }) => {
   })
 }
 
-const rewriteCssUrls = ({ html, url }) => {
-  const cssUrls = Array.from(
-    execall(cssUrl(), html).reduce((acc, match) => {
+const replaceCssUrls = (url, cssContent) => {
+  const cssUrls = Array.from(execall(cssUrl(), cssContent)).reduce(
+    (acc, match) => {
       match.subMatches.forEach(match => acc.add(match))
       return acc
-    }, new Set())
+    },
+    new Set()
   )
 
   cssUrls.forEach(cssUrl => {
     if (cssUrl.startsWith('/')) {
       try {
         const absoluteUrl = new URL(cssUrl, url).toString()
-        html = html.replaceAll(`url(${cssUrl})`, `url(${absoluteUrl})`)
+        cssContent = cssContent.replaceAll(
+          `url(${cssUrl})`,
+          `url(${absoluteUrl})`
+        )
       } catch (_) {}
     }
   })
 
-  return html
+  return cssContent
+}
+
+const rewriteCssUrls = ({ $, url }) => {
+  // Process <style> tags
+  $('style').each((_, element) =>
+    $(element).html(replaceCssUrls(url, $(element).html()))
+  )
+
+  // Process elements with style attributes
+  $('[style]').each((_, element) =>
+    $(element).attr('style', replaceCssUrls(url, $(element).attr('style')))
+  )
+
+  return $
 }
 
 const injectStyle = ({ $, styles }) =>
@@ -216,7 +234,7 @@ module.exports = ({
   if (scripts) injectScripts({ $, scripts, type: 'text/javascript' })
   if (modules) injectScripts({ $, modules, type: 'module' })
 
-  return rewriteUrls ? rewriteCssUrls({ html: $.html(), url }) : $
+  return rewriteUrls ? rewriteCssUrls({ $, url }) : $
 }
 
 module.exports.getDate = getDate
