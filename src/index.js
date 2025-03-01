@@ -236,14 +236,14 @@ const getContent = PCancelable.fn(
     onCancel(() => promise.cancel())
 
     return promise.then(content => {
-      const html = addHtml({
+      const $ = addHtml({
         ...content,
         ...(isFetchMode ? puppeteerOpts : undefined),
         rewriteUrls,
         rewriteHtml
       })
 
-      return { ...content, html }
+      return { ...content, $ }
     })
   }
 )
@@ -260,6 +260,7 @@ module.exports = PCancelable.fn(
       headers,
       mutoolPath = defaultMutoolPath(),
       prerender = 'auto',
+      serializeHtml = $ => ({ html: $.html() }),
       puppeteerOpts,
       rewriteUrls = false,
       rewriteHtml = false
@@ -291,9 +292,12 @@ module.exports = PCancelable.fn(
 
     onCancel(() => promise.cancel())
 
-    const { mode, ...payload } = await promise
+    const { mode, $, ...payload } = await promise
 
-    return Object.assign(payload, { stats: { mode, timing: duration() } })
+    return Object.assign(payload, {
+      ...serializeHtml($),
+      stats: { mode, timing: duration() }
+    })
   }
 )
 

@@ -216,7 +216,7 @@ module.exports = ({
   if (scripts) injectScripts({ $, scripts, type: 'text/javascript' })
   if (modules) injectScripts({ $, modules, type: 'module' })
 
-  return rewriteUrls ? rewriteCssUrls({ html: $.html(), url }) : $.html()
+  return rewriteUrls ? rewriteCssUrls({ html: $.html(), url }) : $
 }
 
 module.exports.getDate = getDate
