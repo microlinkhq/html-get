@@ -132,8 +132,8 @@ const rewriteHtmlUrls = ({ $, url }) => {
   })
 }
 
-const replaceCssUrls = (url, cssContent) => {
-  const cssUrls = Array.from(execall(cssUrl(), cssContent)).reduce(
+const replaceCssUrls = (url, stylesheet) => {
+  const cssUrls = Array.from(execall(cssUrl(), stylesheet)).reduce(
     (acc, match) => {
       match.subMatches.forEach(match => acc.add(match))
       return acc
@@ -145,7 +145,7 @@ const replaceCssUrls = (url, cssContent) => {
     if (cssUrl.startsWith('/')) {
       try {
         const absoluteUrl = new URL(cssUrl, url).toString()
-        cssContent = cssContent.replaceAll(
+        stylesheet = stylesheet.replaceAll(
           `url(${cssUrl})`,
           `url(${absoluteUrl})`
         )
@@ -153,16 +153,18 @@ const replaceCssUrls = (url, cssContent) => {
     }
   })
 
-  return cssContent
+  return stylesheet
 }
 
 const rewriteCssUrls = ({ $, url }) => {
   // Process <style> tags
+  // e.g., <style>body { background-image: url('/image.jpg'); }</style>
   $('style').each((_, element) =>
     $(element).html(replaceCssUrls(url, $(element).html()))
   )
 
   // Process elements with style attributes
+  // e.g., <div style="background-image: url('/image.jpg');"></div>
   $('[style]').each((_, element) =>
     $(element).attr('style', replaceCssUrls(url, $(element).attr('style')))
   )

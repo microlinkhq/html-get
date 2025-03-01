@@ -5,7 +5,7 @@ const cheerio = require('cheerio')
 
 const { prettyHtml } = require('../util')
 
-const html = require('../../src/html')
+const html = (...args) => require('../../src/html')(...args).html()
 
 const composeHtml = meta =>
   prettyHtml(`

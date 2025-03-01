@@ -6,7 +6,7 @@ const fs = require('fs')
 
 const { prettyHtml } = require('../util')
 
-const html = require('../../src/html')
+const html = (...args) => require('../../src/html')(...args).html()
 
 test('remove localhost alike URLs', t => {
   const output = html({
