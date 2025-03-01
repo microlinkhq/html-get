@@ -260,10 +260,10 @@ module.exports = PCancelable.fn(
       headers,
       mutoolPath = defaultMutoolPath(),
       prerender = 'auto',
-      serializeHtml = $ => ({ html: $.html() }),
       puppeteerOpts,
+      rewriteHtml = false,
       rewriteUrls = false,
-      rewriteHtml = false
+      serializeHtml = $ => ({ html: $.html() })
     } = {},
     onCancel
   ) => {

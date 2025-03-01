@@ -158,6 +158,12 @@ Default: `false`
 
 When is `true`, it will rewrite some common mistake related with HTML meta tags.
 
+##### serializeHtml
+
+It determines how HTML should be serialied before returning.
+
+It's serialized `$ => ({ html: $.html() })` by default.
+
 ## License
 
 **html-get** © [Microlink](https://microlink.io), released under the [MIT](https://github.com/microlinkhq/html-get/blob/master/LICENSE.md) License.<br>
