@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.20.0](https://github.com/microlinkhq/html-get/compare/v2.18.5...v2.20.0) (2025-03-02)
+
+
+### Features
+
+* add `serializeHtml` ([6018775](https://github.com/microlinkhq/html-get/commit/60187753fcd4b636c152f3e6d3091cc0c59d00fb))
+* **html:** better url rewrite ([#213](https://github.com/microlinkhq/html-get/issues/213)) ([e261c9c](https://github.com/microlinkhq/html-get/commit/e261c9cb39972a4cc7791f0b0a7927650f13cb74))
+
 ## 2.19.0 (2025-02-28)
 
 
