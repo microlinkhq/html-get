@@ -29,7 +29,7 @@ const ABORT_TYPES = ['image', 'stylesheet', 'font']
 const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
 
 const contentType = res =>
-  res.headers['content-type'].split(';')[0].toLowerCase()
+  res.headers['content-type']?.split(';')[0].toLowerCase()
 
 const fetch = PCancelable.fn(
   async (
