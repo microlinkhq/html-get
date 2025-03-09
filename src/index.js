@@ -1,6 +1,7 @@
 'use strict'
 
 const { parseUrl, isMediaUrl, isPdfUrl } = require('@metascraper/helpers')
+const { parse: parseContentType } = require('content-type')
 const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
 const { execSync } = require('child_process')
@@ -28,8 +29,10 @@ const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
 const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
 
-const contentType = res =>
-  res.headers['content-type']?.split(';')[0].toLowerCase()
+const getContentType = ({ headers }) =>
+  parseContentType(headers['content-type'])
+
+const getContentLength = res => Number(res.headers['content-length'])
 
 const fetch = PCancelable.fn(
   async (
@@ -65,8 +68,11 @@ const fetch = PCancelable.fn(
     )
 
     let file
+    let contentType
+
     req.on('response', res => {
-      if (mutool && contentType(res) === 'application/pdf') {
+      contentType = getContentType(res)
+      if (mutool && contentType === 'application/pdf') {
         file = getTemporalFile(url, 'pdf')
         pipeline(res, createWriteStream(file.path))
       }
@@ -76,10 +82,8 @@ const fetch = PCancelable.fn(
       const res = await req
 
       const html = await (async () => {
-        const contentType = res.headers['content-type'] ?? ''
-
         if (file) {
-          if (res.headers['content-length'] > PDF_SIZE_TRESHOLD) {
+          if (getContentLength(res) > PDF_SIZE_TRESHOLD) {
             const ofile = getTemporalFile(`${url}-pdf`, 'pdf')
             await mutool(`-o ${ofile.path} ${file.path}`)
             return readFile(ofile.path, 'utf-8')
@@ -89,7 +93,7 @@ const fetch = PCancelable.fn(
           }
         }
 
-        return contentType.startsWith('text/html') || !isMediaUrl(url)
+        return contentType === 'text/html' || !isMediaUrl(url)
           ? await toEncode(res.body, res.headers['content-type'])
           : res.body.toString()
       })()
@@ -330,6 +334,8 @@ module.exports = PCancelable.fn(
 
 module.exports.REQ_TIMEOUT = REQ_TIMEOUT
 module.exports.ABORT_TYPES = ABORT_TYPES
+module.exports.PDF_SIZE_TRESHOLD = PDF_SIZE_TRESHOLD
 module.exports.isFetchMode = isFetchMode
 module.exports.getContent = getContent
 module.exports.defaultMutool = defaultMutool
+module.exports.getContentLength = getContentLength

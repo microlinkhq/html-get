@@ -1,7 +1,8 @@
 'use strict'
 
-const { get, split, nth, castArray, forEach } = require('lodash')
+const { parse: parseContentType } = require('content-type')
 const debug = require('debug-logfmt')('html-get:rewrite')
+const { get, castArray, forEach } = require('lodash')
 const isLocalAddress = require('is-local-address')
 const { TAGS: URL_TAGS } = require('html-urls')
 const isHTML = require('is-html-content')
@@ -35,8 +36,7 @@ const getDate = headers => {
 
 const addHead = ({ $, url, headers }) => {
   const tags = []
-  const contentType = get(headers, 'content-type')
-  const charset = nth(split(contentType, 'charset='), 1)
+  const charset = parseContentType(headers['content-type']).parameters.charset
   const date = getDate(headers)
   const { domain } = parseUrl(url)
   const head = $('head')
@@ -73,7 +73,7 @@ const addHead = ({ $, url, headers }) => {
 }
 
 const addBody = ({ url, headers, html }) => {
-  const contentType = get(headers, 'content-type')
+  const contentType = parseContentType(headers['content-type']).type
 
   let element = ''
 
