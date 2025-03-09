@@ -1,8 +1,7 @@
 'use strict'
 
-const { defaultMutoolPath: getMutoolPath } = require('../src/index')
 const { readFile, readdir } = require('fs/promises')
-const $ = require('tinyspawn')
+const { defaultMutool } = require('../src/index')
 const path = require('path')
 
 const OUTPUT = path.join(__dirname, 'output.pdf')
@@ -67,7 +66,7 @@ class Benchmark {
 }
 
 const main = async () => {
-  const mutoolPath = getMutoolPath()
+  const mutool = defaultMutool()
 
   const fixtures = await readdir(path.join(__dirname, 'fixtures'))
 
@@ -81,11 +80,11 @@ const main = async () => {
         }
       })
       .add('write in memory', async () => {
-        const result = await $(`${mutoolPath} draw -q -F html ${filepath}`)
+        const result = await mutool(filepath)
         return result.stdout
       })
       .add('write in file, read async', async () => {
-        await $(`${mutoolPath} draw -q -F html -o ${OUTPUT} ${filepath}`)
+        await mutool(`-o ${OUTPUT} ${filepath}`)
         return readFile(OUTPUT, 'utf-8')
       })
       .run()

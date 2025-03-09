@@ -11,7 +11,7 @@ const getBrowserless = initBrowserless(test)
 test('disable if `mutool` is not installed', async t => {
   const targetUrl = 'https://cdn.microlink.io/file-examples/sample.pdf'
   const { url, stats, html } = await getHTML(targetUrl, {
-    mutoolPath: false,
+    mutool: false,
     getBrowserless
   })
 
