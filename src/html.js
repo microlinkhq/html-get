@@ -36,7 +36,7 @@ const getDate = headers => {
 
 const addHead = ({ $, url, headers }) => {
   const tags = []
-  const charset = parseContentType(headers['content-type']).parameters.charset
+  const { charset } = parseContentType(headers['content-type']).parameters
   const date = getDate(headers)
   const { domain } = parseUrl(url)
   const head = $('head')
@@ -73,7 +73,7 @@ const addHead = ({ $, url, headers }) => {
 }
 
 const addBody = ({ url, headers, html }) => {
-  const contentType = parseContentType(headers['content-type']).type
+  const { type: contentType } = parseContentType(headers['content-type'])
 
   let element = ''
 
