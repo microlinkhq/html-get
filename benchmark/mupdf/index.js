@@ -1,7 +1,7 @@
 'use strict'
 
 const { readFile, readdir } = require('fs/promises')
-const { defaultMutool } = require('../src/index')
+const { defaultMutool } = require('../../src')
 const path = require('path')
 
 const OUTPUT = path.join(__dirname, 'output.pdf')
