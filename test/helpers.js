@@ -8,6 +8,10 @@ const pretty = require('pretty')
 const path = require('path')
 const fs = require('fs')
 
+const createHeaders = name => contentType => ({
+  [name]: contentType
+})
+
 const closeServer = server =>
   require('util').promisify(server.close.bind(server))()
 
@@ -37,6 +41,7 @@ const prettyHtml = html =>
   pretty(html, { ocd: true }).replace(dateRegex(), '{DATE}')
 
 module.exports = {
+  createHeaders,
   initBrowserless,
   prettyHtml,
   runFixtureServer,

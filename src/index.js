@@ -1,25 +1,20 @@
 'use strict'
 
 const { parseUrl, isMediaUrl, isPdfUrl } = require('@metascraper/helpers')
-const { parse: parseContentType } = require('content-type')
+const { readFile, writeFile } = require('fs/promises')
 const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
 const { execSync } = require('child_process')
-const { readFile } = require('fs/promises')
 const PCancelable = require('p-cancelable')
-const { createWriteStream } = require('fs')
 const { AbortError } = require('p-retry')
 const htmlEncode = require('html-encode')
-const { promisify } = require('util')
-const stream = require('stream')
 const crypto = require('crypto')
 const $ = require('tinyspawn')
 const path = require('path')
 const got = require('got')
 const os = require('os')
 
-const pipeline = promisify(stream.pipeline)
-
+const { getContentLength, getContentType } = require('./util')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
@@ -28,11 +23,6 @@ const REQ_TIMEOUT = 8000
 const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
 const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
-
-const getContentType = ({ headers }) =>
-  parseContentType(headers['content-type'])
-
-const getContentLength = res => Number(res.headers['content-length'])
 
 const fetch = PCancelable.fn(
   async (
@@ -67,23 +57,16 @@ const fetch = PCancelable.fn(
       redirects.push({ statusCode: res.statusCode, url: res.url })
     )
 
-    let file
-    let contentType
-
-    req.on('response', res => {
-      contentType = getContentType(res)
-      if (mutool && contentType === 'application/pdf') {
-        file = getTemporalFile(url, 'pdf')
-        pipeline(res, createWriteStream(file.path))
-      }
-    })
-
     try {
       const res = await req
 
       const html = await (async () => {
-        if (file) {
-          if (getContentLength(res) > PDF_SIZE_TRESHOLD) {
+        const contentType = getContentType(res.headers)
+
+        if (mutool && contentType === 'application/pdf') {
+          const file = getTemporalFile(url, 'pdf')
+          await writeFile(file.path, res.body)
+          if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
             const ofile = getTemporalFile(`${url}-pdf`, 'pdf')
             await mutool(`-o ${ofile.path} ${file.path}`)
             return readFile(ofile.path, 'utf-8')
@@ -338,4 +321,3 @@ module.exports.PDF_SIZE_TRESHOLD = PDF_SIZE_TRESHOLD
 module.exports.isFetchMode = isFetchMode
 module.exports.getContent = getContent
 module.exports.defaultMutool = defaultMutool
-module.exports.getContentLength = getContentLength

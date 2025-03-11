@@ -2,7 +2,7 @@
 
 const test = require('ava')
 
-const { initBrowserless } = require('./util')
+const { initBrowserless } = require('./helpers')
 const getHTML = require('..')
 
 const getBrowserless = initBrowserless(test)

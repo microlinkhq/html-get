@@ -98,7 +98,7 @@
   "ava": {
     "files": [
       "test/**/*.js",
-      "!test/util.js"
+      "!test/helpers.js"
     ],
     "timeout": "2m",
     "workerThreads": false

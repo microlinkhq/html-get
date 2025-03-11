@@ -4,7 +4,7 @@ const PCancelable = require('p-cancelable')
 const cheerio = require('cheerio')
 const test = require('ava')
 
-const { initBrowserless, runServer, prettyHtml } = require('./util')
+const { initBrowserless, runServer, prettyHtml } = require('./helpers')
 const getHTML = require('..')
 
 const getBrowserless = initBrowserless(test)

@@ -3,7 +3,7 @@
 const test = require('ava')
 const cheerio = require('cheerio')
 
-const { prettyHtml } = require('../util')
+const { prettyHtml } = require('../helpers')
 
 const html = (...args) => require('../../src/html')(...args).html()
 

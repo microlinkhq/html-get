@@ -4,7 +4,7 @@ const path = require('path')
 const test = require('ava')
 const fs = require('fs')
 
-const { prettyHtml } = require('../util')
+const { prettyHtml } = require('../helpers')
 
 const html = (...args) => require('../../src/html')(...args).html()
 

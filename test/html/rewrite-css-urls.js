@@ -3,7 +3,7 @@
 const execall = require('execall')
 const test = require('ava')
 
-const { prettyHtml } = require('../util')
+const { prettyHtml } = require('../helpers')
 
 const html = (...args) => require('../../src/html')(...args).html()
 
