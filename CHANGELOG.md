@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.21.0 (2025-03-13)
+
+
+### Features
+
+* improve pdf handling ([#215](https://github.com/microlinkhq/html-get/issues/215)) ([a9d9bbf](https://github.com/microlinkhq/html-get/commit/a9d9bbf640155775418f759c2fc7110e5c81ca65))
+
 ## [2.20.0](https://github.com/microlinkhq/html-get/compare/v2.18.5...v2.20.0) (2025-03-02)
 
 
