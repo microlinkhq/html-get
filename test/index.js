@@ -14,6 +14,16 @@ const wait = async (promise, prop) => {
   return prop ? res[prop] : res
 }
 
+test('throw an error if `getBrowserless` is not provided', async t => {
+  const url = 'https://example.com'
+  const error = await t.throwsAsync(getHTML(url))
+  t.is(error.name, 'TypeError')
+  t.is(
+    error.message,
+    "Need to provide a `getBrowserless` function. Try to pass `getBrowserless: require('browserless')`"
+  )
+})
+
 test('promise is cancelable', async t => {
   const url = 'https://example.com'
   t.true(getHTML(url, { getBrowserless: () => {} }) instanceof PCancelable)
