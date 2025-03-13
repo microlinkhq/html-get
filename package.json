@@ -38,6 +38,7 @@
     "@kikobeats/time-span": "~1.0.5",
     "@metascraper/helpers": "~5.46.1",
     "cheerio": "~1.0.0",
+    "content-type": "~1.0.5",
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.2.3",
     "execall": "~2.0.0",
@@ -97,7 +98,7 @@
   "ava": {
     "files": [
       "test/**/*.js",
-      "!test/util.js"
+      "!test/helpers.js"
     ],
     "timeout": "2m",
     "workerThreads": false

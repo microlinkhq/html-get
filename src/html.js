@@ -1,7 +1,7 @@
 'use strict'
 
-const { get, split, nth, castArray, forEach } = require('lodash')
 const debug = require('debug-logfmt')('html-get:rewrite')
+const { get, castArray, forEach } = require('lodash')
 const isLocalAddress = require('is-local-address')
 const { TAGS: URL_TAGS } = require('html-urls')
 const isHTML = require('is-html-content')
@@ -19,6 +19,8 @@ const {
   parseUrl
 } = require('@metascraper/helpers')
 
+const { getContentType, getCharset } = require('./util')
+
 const has = el => el.length !== 0
 
 const upsert = (el, collection, item) => !has(el) && collection.push(item)
@@ -35,8 +37,7 @@ const getDate = headers => {
 
 const addHead = ({ $, url, headers }) => {
   const tags = []
-  const contentType = get(headers, 'content-type')
-  const charset = nth(split(contentType, 'charset='), 1)
+  const charset = getCharset(headers)
   const date = getDate(headers)
   const { domain } = parseUrl(url)
   const head = $('head')
@@ -73,8 +74,7 @@ const addHead = ({ $, url, headers }) => {
 }
 
 const addBody = ({ url, headers, html }) => {
-  const contentType = get(headers, 'content-type')
-
+  const contentType = getContentType(headers)
   let element = ''
 
   if (isMime(contentType, 'image')) {

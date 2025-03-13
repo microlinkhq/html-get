@@ -1,10 +1,10 @@
 'use strict'
 
 const { parseUrl, isMediaUrl, isPdfUrl } = require('@metascraper/helpers')
+const { readFile, writeFile } = require('fs/promises')
 const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
 const { execSync } = require('child_process')
-const { writeFile } = require('fs/promises')
 const PCancelable = require('p-cancelable')
 const { AbortError } = require('p-retry')
 const htmlEncode = require('html-encode')
@@ -14,6 +14,7 @@ const path = require('path')
 const got = require('got')
 const os = require('os')
 
+const { getContentLength, getContentType } = require('./util')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
@@ -21,12 +22,14 @@ const REQ_TIMEOUT = 8000
 
 const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
+const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
+
 const fetch = PCancelable.fn(
   async (
     url,
     {
       getTemporalFile,
-      mutoolPath,
+      mutool,
       reflect = false,
       timeout = REQ_TIMEOUT,
       toEncode,
@@ -58,14 +61,22 @@ const fetch = PCancelable.fn(
       const res = await req
 
       const html = await (async () => {
-        const contentType = res.headers['content-type'] ?? ''
-        if (mutoolPath && contentType === 'application/pdf') {
+        const contentType = getContentType(res.headers)
+
+        if (mutool && contentType === 'application/pdf') {
           const file = getTemporalFile(url, 'pdf')
           await writeFile(file.path, res.body)
-          return (await $(`${mutoolPath} draw -q -F html ${file.path}`)).stdout
+          if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
+            const ofile = getTemporalFile(`${url}-pdf`, 'pdf')
+            await mutool(`-o ${ofile.path} ${file.path}`)
+            return readFile(ofile.path, 'utf-8')
+          } else {
+            const { stdout } = await mutool(file.path)
+            return stdout
+          }
         }
 
-        return contentType.startsWith('text/html') || !isMediaUrl(url)
+        return contentType === 'text/html' || !isMediaUrl(url)
           ? await toEncode(res.body, res.headers['content-type'])
           : res.body.toString()
       })()
@@ -193,8 +204,8 @@ const defaultGetMode = (url, { prerender }) => {
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
 
-const defaultGetTemporalFile = (url, ext) => {
-  const hash = crypto.createHash('sha256').update(url).digest('hex')
+const defaultGetTemporalFile = (input, ext) => {
+  const hash = crypto.createHash('sha256').update(input).digest('hex')
   const filepath = path.join(
     os.tmpdir(),
     ext === undefined ? hash : `${hash}.${ext}`
@@ -202,10 +213,13 @@ const defaultGetTemporalFile = (url, ext) => {
   return { path: filepath }
 }
 
-const defaultMutoolPath = () =>
+const defaultMutool = () =>
   (() => {
     try {
-      return execSync('which mutool', { stdio: 'pipe' }).toString().trim()
+      const mutoolPath = execSync('which mutool', { stdio: 'pipe' })
+        .toString()
+        .trim()
+      return (...args) => $(`${mutoolPath} draw -q -F html ${args}`)
     } catch (_) {}
   })()
 
@@ -218,7 +232,7 @@ const getContent = PCancelable.fn(
       getTemporalFile,
       gotOpts,
       headers,
-      mutoolPath,
+      mutool,
       puppeteerOpts,
       rewriteUrls,
       rewriteHtml,
@@ -229,7 +243,7 @@ const getContent = PCancelable.fn(
     const isFetchMode = mode === 'fetch'
 
     const fetchOpts = isFetchMode
-      ? { headers, toEncode, mutoolPath, getTemporalFile, ...gotOpts }
+      ? { headers, toEncode, mutool, getTemporalFile, ...gotOpts }
       : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
 
     const promise = modes[mode](url, fetchOpts)
@@ -258,7 +272,7 @@ module.exports = PCancelable.fn(
       getTemporalFile = defaultGetTemporalFile,
       gotOpts,
       headers,
-      mutoolPath = defaultMutoolPath(),
+      mutool = defaultMutool(),
       prerender = 'auto',
       puppeteerOpts,
       rewriteHtml = false,
@@ -283,7 +297,7 @@ module.exports = PCancelable.fn(
       getTemporalFile,
       gotOpts,
       headers,
-      mutoolPath,
+      mutool,
       puppeteerOpts,
       rewriteUrls,
       rewriteHtml,
@@ -303,5 +317,7 @@ module.exports = PCancelable.fn(
 
 module.exports.REQ_TIMEOUT = REQ_TIMEOUT
 module.exports.ABORT_TYPES = ABORT_TYPES
+module.exports.PDF_SIZE_TRESHOLD = PDF_SIZE_TRESHOLD
 module.exports.isFetchMode = isFetchMode
 module.exports.getContent = getContent
+module.exports.defaultMutool = defaultMutool

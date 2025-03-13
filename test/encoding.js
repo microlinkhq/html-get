@@ -2,7 +2,7 @@
 
 const test = require('ava')
 
-const { runFixtureServer, initBrowserless } = require('./util')
+const { runFixtureServer, initBrowserless } = require('./helpers')
 const getHTML = require('..')
 
 const getBrowserless = initBrowserless(test)

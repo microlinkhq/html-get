@@ -121,11 +121,14 @@ Type: `object`
 
 Request headers that will be passed to fetch/prerender process.
 
-##### mutoolPath
+##### mutool
 
-Type: `function`
+Type: `function`|`boolean`<br>
+Default: `source code`
 
-It returns the path for [mutool](https://mupdf.com/) binary, used for turning PDF files into HTML markup.
+It returns a function that receives that executes [mutool](https://mupdf.com/) binary for turning PDF files into HTML markup.
+
+It can explicitly disabled passing `false`.
 
 ##### prerender
 

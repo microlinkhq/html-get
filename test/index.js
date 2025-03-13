@@ -4,7 +4,7 @@ const PCancelable = require('p-cancelable')
 const cheerio = require('cheerio')
 const test = require('ava')
 
-const { initBrowserless, runServer, prettyHtml } = require('./util')
+const { initBrowserless, runServer, prettyHtml } = require('./helpers')
 const getHTML = require('..')
 
 const getBrowserless = initBrowserless(test)
@@ -13,6 +13,16 @@ const wait = async (promise, prop) => {
   const res = await promise
   return prop ? res[prop] : res
 }
+
+test('throw an error if `getBrowserless` is not provided', async t => {
+  const url = 'https://example.com'
+  const error = await t.throwsAsync(getHTML(url))
+  t.is(error.name, 'TypeError')
+  t.is(
+    error.message,
+    "Need to provide a `getBrowserless` function. Try to pass `getBrowserless: require('browserless')`"
+  )
+})
 
 test('promise is cancelable', async t => {
   const url = 'https://example.com'
