@@ -216,9 +216,7 @@ const defaultGetTemporalFile = (input, ext) => {
 const defaultMutool = () =>
   (() => {
     try {
-      const mutoolPath = execSync('which mutool', { stdio: 'pipe' })
-        .toString()
-        .trim()
+      const mutoolPath = execSync('which mutool').toString().trim()
       return (...args) => $(`${mutoolPath} draw -q -F html ${args}`)
     } catch (_) {}
   })()
