@@ -139,9 +139,10 @@ const prerender = PCancelable.fn(
         async (page, response) => {
           if (!response) throw new AbortError('empty response')
 
-          const duration = debug.duration()
+          const duration = debug.duration('payload')
           const payload = {
             headers: response.headers(),
+            html: await page.content('html'),
             mode: 'prerender',
             url: response.url(),
             statusCode: response.status(),
@@ -154,9 +155,7 @@ const prerender = PCancelable.fn(
               }))
           }
 
-          duration('payload:basic')
-          payload.html = await page.content('html')
-          duration('payload:html')
+          duration()
           return payload
         },
         {
