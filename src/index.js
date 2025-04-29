@@ -139,9 +139,10 @@ const prerender = PCancelable.fn(
         async (page, response) => {
           if (!response) throw new AbortError('empty response')
 
-          return {
+          const duration = debug.duration('payload')
+          const payload = {
             headers: response.headers(),
-            html: await page.content(),
+            html: await page.content('html'),
             mode: 'prerender',
             url: response.url(),
             statusCode: response.status(),
@@ -153,6 +154,9 @@ const prerender = PCancelable.fn(
                 url: req.url()
               }))
           }
+
+          duration()
+          return payload
         },
         {
           timeout,
@@ -161,9 +165,10 @@ const prerender = PCancelable.fn(
         }
       )
 
+      const duration = debug.duration('prerender')
       const payload = await getPayload(url, opts)
       await fetchRes.cancel()
-      debug('prerender', { url, state: 'success' })
+      duration({ url, state: 'success' })
       return payload
     } catch (err) {
       const { isRejected, ...dataProps } = await fetchRes
