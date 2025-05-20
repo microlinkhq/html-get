@@ -1,3 +1,6 @@
+'use strict'
+
+const NullProtoObj = require('null-prototype-object')
 const { parse } = require('content-type')
 
 const parseContentType = contentType =>
@@ -6,7 +9,7 @@ const parseContentType = contentType =>
     : { type: undefined, parameters: {} }
 
 const createContentTypeFunction = useCache => {
-  const CACHE = useCache ? Object.create(null) : null
+  const CACHE = useCache ? new NullProtoObj() : null
 
   return headers => {
     const contentType = headers['content-type']

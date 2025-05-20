@@ -1,8 +1,9 @@
 'use strict'
 
+const NullProtoObj = require('null-prototype-object')
 const { parse } = require('content-type')
 
-const CACHE = Object.create(null)
+const CACHE = new NullProtoObj()
 
 const parseContentType = contentType =>
   typeof contentType === 'string'
