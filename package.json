@@ -49,7 +49,7 @@
     "is-local-address": "~2.2.0",
     "lodash": "~4.17.21",
     "mri": "~1.2.0",
-    "null-prototype-object": "~1.0.0",
+    "null-prototype-object": "~1.2.0",
     "p-cancelable": "~2.1.0",
     "p-retry": "~4.6.0",
     "tinyspawn": "~1.5.0",
