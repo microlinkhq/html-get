@@ -36,7 +36,7 @@
   ],
   "dependencies": {
     "@kikobeats/time-span": "~1.0.5",
-    "@metascraper/helpers": "~5.47.1",
+    "@metascraper/helpers": "~5.49.1",
     "cheerio": "~1.1.0",
     "content-type": "~1.0.5",
     "css-url-regex": "~4.0.0",
