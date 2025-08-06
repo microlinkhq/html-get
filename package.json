@@ -40,7 +40,7 @@
     "cheerio": "~1.1.0",
     "content-type": "~1.0.5",
     "css-url-regex": "~4.0.0",
-    "debug-logfmt": "~1.2.3",
+    "debug-logfmt": "~1.4.0",
     "execall": "~2.0.0",
     "got": "~11.8.6",
     "html-encode": "~2.1.7",
