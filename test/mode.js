@@ -20,26 +20,12 @@ test('`{ prerender: false }`', async t => {
 })
 
 test("`{ prerender: 'auto' }`", async t => {
-  {
-    const url = 'https://google.com'
-    const { stats } = await getHTML(url, {
-      getBrowserless,
-      puppeteerOpts: { adblock: false }
-    })
-    t.is(stats.mode, 'fetch')
-  }
-  {
-    const url = 'https://twitter.com/Kikobeats/status/1741205717636264436'
-    const { html, stats } = await getHTML(url, {
-      headers: {
-        'user-agent': 'Slackbot 1.0 (+https://api.slack.com/robots)'
-      },
-      getBrowserless,
-      puppeteerOpts: { adblock: false }
-    })
-    t.true(html.includes('og:title'))
-    t.is(stats.mode, 'fetch')
-  }
+  const url = 'https://google.com'
+  const { stats } = await getHTML(url, {
+    getBrowserless,
+    puppeteerOpts: { adblock: false }
+  })
+  t.is(stats.mode, 'fetch')
 })
 
 test.skip('prerender error fallback into fetch mode', async t => {

@@ -9,7 +9,6 @@ const topsites = require('top-sites')
 
 const domains = [
   [['domain', 'abc.net.au']],
-  [['domain', 'x.com']],
   [['domainWithoutSuffix', 'apple']],
   [['domainWithoutSuffix', 'arxiv']],
   [['domainWithoutSuffix', 'bbc']],
@@ -48,7 +47,6 @@ const domains = [
   [['domainWithoutSuffix', 'theguardian']],
   [['domainWithoutSuffix', 'theverge']],
   [['domainWithoutSuffix', 'tumblr']],
-  [['domainWithoutSuffix', 'twitter']],
   [['domainWithoutSuffix', 'vimeo']],
   [['domainWithoutSuffix', 'wikipedia']],
   [['domainWithoutSuffix', 'wordpress']],
