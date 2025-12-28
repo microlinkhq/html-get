@@ -1,11 +1,9 @@
 'use strict'
 
+const { getBrowserContext } = require('@browserless/test')
 const test = require('ava')
 
-const { initBrowserless } = require('./helpers')
 const getHTML = require('..')
-
-const getBrowserless = initBrowserless(test)
 
 ;[true, false].forEach(prerender => {
   const mode = prerender ? 'prerender' : 'fetch'
@@ -16,7 +14,7 @@ const getBrowserless = initBrowserless(test)
 
     const { redirects } = await getHTML(targetUrl, {
       prerender,
-      getBrowserless
+      getBrowserless: () => getBrowserContext(t)
     })
 
     t.deepEqual(redirects, [
