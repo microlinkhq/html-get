@@ -1,11 +1,10 @@
 'use strict'
 
+const { getBrowserContext } = require('@browserless/test')
 const test = require('ava')
 
-const { initBrowserless, runServer, prettyHtml } = require('./helpers')
+const { runServer, prettyHtml } = require('./helpers')
 const getHTML = require('..')
-
-const getBrowserless = initBrowserless(test)
 
 ;[false, true].forEach(prerender => {
   const mode = prerender ? 'prerender' : 'fetch'
@@ -14,7 +13,7 @@ const getBrowserless = initBrowserless(test)
       res.end('<!doctype html><title>.</title>')
     )
     const { html } = await getHTML(url.toString(), {
-      getBrowserless,
+      getBrowserless: () => getBrowserContext(t),
       prerender,
       puppeteerOpts: { adblock: false, animations: true }
     })
@@ -38,7 +37,7 @@ const getBrowserless = initBrowserless(test)
       res.end('<!doctype html><title>.</title>')
     )
     const { html } = await getHTML(url, {
-      getBrowserless,
+      getBrowserless: () => getBrowserContext(t),
       prerender,
       puppeteerOpts: { adblock: false, animations: true }
     })

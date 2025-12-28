@@ -56,6 +56,7 @@
     "top-sites": "~1.1.220"
   },
   "devDependencies": {
+    "@browserless/test": "latest",
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "@ksmithut/prettier-standard": "latest",
