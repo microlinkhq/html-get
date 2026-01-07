@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.21.17 (2026-01-07)
+
+
+### Bug Fixes
+
+* typo in postinstall script ([#232](https://github.com/microlinkhq/html-get/issues/232)) ([2d3aaea](https://github.com/microlinkhq/html-get/commit/2d3aaeaccd6e5c043c88f9cfc277f0fd0600a24e))
+
 ### 2.21.16 (2025-12-28)
 
 ### 2.21.15 (2025-12-23)
