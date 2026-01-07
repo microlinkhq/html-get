@@ -12,7 +12,12 @@
     "name": "Kiko Beats",
     "url": "https://kikobeats.com"
   },
-  "contributors": [],
+  "contributors": [
+    {
+      "name": "Divyansh Singh",
+      "email": "40380293+brc-dd@users.noreply.github.com"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microlinkhq/html-get.git"
