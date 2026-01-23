@@ -11,6 +11,12 @@ const contentType = createHeaders('content-type')
 test('returns lower case value detected from content-type', t => {
   t.is(getCharset(contentType('text/html; charset=UTF-8')), 'utf-8')
   t.is(getCharset(contentType('text/html; charset=ISO-8859-1')), 'iso-8859-1')
+  t.is(
+    getCharset(
+      contentType('text/html; charset=utf-8\ntext/html; charset=utf-8')
+    ),
+    'utf-8'
+  )
 })
 
 test('returns undefined when charset is not detected', t => {

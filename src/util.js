@@ -2,12 +2,13 @@
 
 const NullProtoObj = require('null-prototype-object')
 const { parse } = require('content-type')
+const { EOL } = require('node:os')
 
 const CACHE = new NullProtoObj()
 
 const parseContentType = contentType =>
   typeof contentType === 'string'
-    ? parse(contentType)
+    ? parse(contentType.split(EOL)[0])
     : { type: undefined, parameters: {} }
 
 const contentType = headers => {
