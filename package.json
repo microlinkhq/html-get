@@ -66,7 +66,7 @@
     "@commitlint/config-conventional": "latest",
     "@ksmithut/prettier-standard": "latest",
     "async-listen": "latest",
-    "ava": "5",
+    "ava": "7",
     "browserless": "latest",
     "c8": "latest",
     "ci-publish": "latest",
