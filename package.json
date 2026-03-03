@@ -2,8 +2,8 @@
   "name": "html-get",
   "description": "Get the HTML from any website, fine-tuned for correction & speed",
   "homepage": "https://nicedoc.com/microlinkhq/html-get",
-  "types": "index.d.ts",
   "version": "2.21.22",
+  "types": "index.d.ts",
   "main": "src/index.js",
   "bin": {
     "html-get": "bin/index.js"
