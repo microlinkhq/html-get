@@ -3,8 +3,8 @@
   "description": "Get the HTML from any website, fine-tuned for correction & speed",
   "homepage": "https://nicedoc.com/microlinkhq/html-get",
   "version": "2.21.21",
-  "main": "src/index.js",
   "types": "index.d.ts",
+  "main": "src/index.js",
   "bin": {
     "html-get": "bin/index.js"
   },
@@ -17,6 +17,10 @@
     {
       "name": "Divyansh Singh",
       "email": "40380293+brc-dd@users.noreply.github.com"
+    },
+    {
+      "name": "Michael Lip",
+      "email": "51033404+theluckystrike@users.noreply.github.com"
     }
   ],
   "repository": {
