@@ -29,6 +29,15 @@ test('handles comma-duplicated content-type headers', t => {
   t.is(getCharset(contentType('text/html,text/html')), undefined)
 })
 
+test('handles CRLF-duplicated content-type headers', t => {
+  t.is(
+    getCharset(
+      contentType('text/html; charset=utf-8\r\ntext/html; charset=utf-8')
+    ),
+    'utf-8'
+  )
+})
+
 test('returns undefined when charset is not detected', t => {
   t.is(getCharset(contentType('text/html; foo=bar')), undefined)
   t.is(getCharset(contentType('text/html')), undefined)
