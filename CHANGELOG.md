@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.22.0](https://github.com/microlinkhq/html-get/compare/v2.21.21...v2.22.0) (2026-03-06)
+
+
+### Features
+
+* add TypeScript type definitions ([#239](https://github.com/microlinkhq/html-get/issues/239)) ([a0689fd](https://github.com/microlinkhq/html-get/commit/a0689fd1ad00099725b2365e96bdb5e9b32d218d))
+
+
+### Bug Fixes
+
+* handle comma duplicate ([#240](https://github.com/microlinkhq/html-get/issues/240)) ([e2f0689](https://github.com/microlinkhq/html-get/commit/e2f0689f61dcf1cd396d79ad01f7ea1c2fbd2049))
+
 ### [2.21.22](https://github.com/microlinkhq/html-get/compare/v2.21.21...v2.21.22) (2026-03-03)
 
 ### 2.21.21 (2026-01-30)
