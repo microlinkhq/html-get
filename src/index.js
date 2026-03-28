@@ -308,7 +308,7 @@ module.exports = PCancelable.fn(
 
     onCancel(() => promise.cancel())
 
-    const { mode, $, ...payload } = await promise
+    const { mode, html, $, ...payload } = await promise
 
     return Object.assign(payload, {
       ...serializeHtml($),
