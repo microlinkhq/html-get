@@ -51,7 +51,7 @@
     "content-type": "~1.0.5",
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.4.0",
-    "execall": "~2.0.0",
+    "execall": "~3.0.0",
     "got": "~11.8.6",
     "html-encode": "~2.1.7",
     "html-urls": "~2.4.62",
