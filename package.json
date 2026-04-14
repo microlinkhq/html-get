@@ -144,8 +144,7 @@
       "simple-git-hooks",
       "spawn-sync",
       "top-sites"
-    ],
-    "neverBuiltDependencies": []
+    ]
   },
   "simple-git-hooks": {
     "commit-msg": "npx commitlint --edit",
