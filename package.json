@@ -69,7 +69,6 @@
     "@browserless/test": "latest",
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
-
     "async-listen": "latest",
     "ava": "5",
     "browserless": "latest",
