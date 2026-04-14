@@ -134,18 +134,6 @@
       "finepack"
     ]
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@browserless/goto",
-      "es5-ext",
-      "puppeteer",
-      "re2",
-      "sharp",
-      "simple-git-hooks",
-      "spawn-sync",
-      "top-sites"
-    ]
-  },
   "simple-git-hooks": {
     "commit-msg": "npx commitlint --edit",
     "pre-commit": "npx nano-staged"

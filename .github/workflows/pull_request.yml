@@ -29,7 +29,7 @@ jobs:
         with:
           version: latest
       - name: Install
-        run: pnpm install
+        run: pnpm install  --dangerously-allow-all-builds
       - name: Install mupdf-tools
         run: sudo apt-get install -y mupdf-tools
       - name: Test
