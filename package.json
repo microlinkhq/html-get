@@ -69,7 +69,7 @@
     "@browserless/test": "latest",
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
-    "@ksmithut/prettier-standard": "latest",
+
     "async-listen": "latest",
     "ava": "5",
     "browserless": "latest",
@@ -128,7 +128,6 @@
   },
   "nano-staged": {
     "*.js": [
-      "prettier-standard",
       "standard --fix"
     ],
     "package.json": [
