@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+env:
+  SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
+
 jobs:
   contributors:
     if: "${{ github.event.head_commit.message != 'build: contributors' }}"
