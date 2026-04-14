@@ -8,6 +8,9 @@ on:
     branches:
       - master
 
+env:
+  SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
+
 jobs:
   test:
     if: github.ref != 'refs/heads/master'
@@ -22,10 +25,11 @@ jobs:
         with:
           node-version: lts/*
       - name: Setup PNPM
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
         with:
           version: latest
-          run_install: true
+      - name: Install
+        run: pnpm install --dangerously-allow-all-builds
       - name: Install mupdf-tools
         run: sudo apt-get install -y mupdf-tools
       - name: Test
