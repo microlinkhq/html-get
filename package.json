@@ -70,7 +70,7 @@
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "async-listen": "latest",
-    "ava": "5",
+    "ava": "8",
     "browserless": "latest",
     "c8": "latest",
     "ci-publish": "latest",
