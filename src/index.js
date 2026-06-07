@@ -192,6 +192,11 @@ const prerender = PCancelable.fn(
 
 const modes = { fetch, prerender }
 
+const hasShadowDOM = $ =>
+  $('*')
+    .toArray()
+    .some(el => el.tagName?.includes('-'))
+
 const isFetchMode = url => {
   const parsedUrl = parseUrl(url)
   return autoDomains.some(conditions =>
@@ -309,7 +314,24 @@ module.exports = PCancelable.fn(
 
     onCancel(() => promise.cancel())
 
-    const { mode, html, $, ...payload } = await promise
+    let { mode, html, $, ...payload } = await promise
+
+    if (mode === 'fetch' && getBrowserless && hasShadowDOM($)) {
+      debug('shadow DOM detected, retrying with prerender', { url: targetUrl })
+      const prerenderPromise = getContent(targetUrl, 'prerender', {
+        getBrowserless,
+        getTemporalFile,
+        gotOpts,
+        headers,
+        mutool,
+        puppeteerOpts,
+        rewriteUrls,
+        rewriteHtml,
+        toEncode
+      })
+      onCancel(() => prerenderPromise.cancel())
+      ;({ mode, html, $, ...payload } = await prerenderPromise)
+    }
 
     return Object.assign(payload, {
       ...serializeHtml($),

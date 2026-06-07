@@ -50,3 +50,18 @@ test('shadow DOM content is flattened by default in prerender mode', async t => 
   t.true(html.includes('200'))
   t.true(html.includes('300'))
 })
+
+test('auto mode upgrades to prerender when shadow DOM is detected', async t => {
+  const url = await getUrl(t)
+  const result = await getHTML(url, {
+    prerender: 'auto',
+    getBrowserless: () => getBrowserContext(t),
+    puppeteerOpts: { adblock: false }
+  })
+
+  t.is(result.stats.mode, 'prerender')
+  const html = result.html
+  t.true(html.includes('Alice'))
+  t.true(html.includes('Bob'))
+  t.true(html.includes('Charlie'))
+})
