@@ -142,15 +142,14 @@ const replaceCssUrls = (url, stylesheet) => {
   )
 
   cssUrls.forEach(cssUrl => {
-    if (cssUrl.startsWith('/')) {
-      try {
-        const absoluteUrl = new URL(cssUrl, url).toString()
-        stylesheet = stylesheet.replaceAll(
-          `url(${cssUrl})`,
-          `url(${absoluteUrl})`
-        )
-      } catch (_) {}
-    }
+    if (/^(?:https?|data):/.test(cssUrl)) return
+    try {
+      const absoluteUrl = new URL(cssUrl, url).toString()
+      stylesheet = stylesheet.replaceAll(
+        `url(${cssUrl})`,
+        `url(${absoluteUrl})`
+      )
+    } catch (_) {}
   })
 
   return stylesheet

@@ -52,3 +52,30 @@ test('rewrites relative URLs inside stylesheet', t => {
   t.is(results.length, 2)
   t.snapshot(prettyHtml(output))
 })
+
+test('rewrites non-root-relative CSS URLs', t => {
+  const output = html({
+    rewriteUrls: true,
+    url: 'https://example.com/blog/post',
+    html: `
+    <html lang="en">
+      <head>
+        <style>
+          .hero { background: url(images/bg.jpg) }
+          .icon { background: url(./icons/star.png) }
+          .logo { background: url(../assets/logo.svg) }
+        </style>
+      </head>
+      <body></body>
+    </html>
+    `,
+    headers: {
+      'content-type': 'text/html; charset=utf-8'
+    }
+  })
+
+  t.true(output.includes('https://example.com/blog/images/bg.jpg'))
+  t.true(output.includes('https://example.com/blog/icons/star.png'))
+  t.true(output.includes('https://example.com/assets/logo.svg'))
+  t.snapshot(prettyHtml(output))
+})
