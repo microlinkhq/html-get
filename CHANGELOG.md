@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.24.0 (2026-06-07)
+
+
+### Features
+
+* auto-prerender when shadow DOM detected in fetch ([#253](https://github.com/microlinkhq/html-get/issues/253)) ([7b22ce4](https://github.com/microlinkhq/html-get/commit/7b22ce4b42c939a1ab6a595d4376ed7577ffdeee))
+
 ## 2.23.0 (2026-06-07)
 
 
