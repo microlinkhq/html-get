@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.24.2 (2026-06-07)
+
+
+### Bug Fixes
+
+* include statusCode and redirects when both prerender and fetch fail ([#254](https://github.com/microlinkhq/html-get/issues/254)) ([b0020ab](https://github.com/microlinkhq/html-get/commit/b0020ab7f4153f661c15b3ff175bfe9c55774bf1)), closes [#237](https://github.com/microlinkhq/html-get/issues/237)
+
 ### 2.24.1 (2026-06-07)
 
 ## 2.24.0 (2026-06-07)
