@@ -155,6 +155,7 @@ const prerender = PCancelable.fn(
           }
         },
         {
+          flattenShadowDOM: true,
           timeout,
           headers,
           abortTypes
