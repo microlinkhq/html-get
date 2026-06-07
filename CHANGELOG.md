@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.24.3 (2026-06-07)
+
+
+### Bug Fixes
+
+* rewrite all relative CSS URLs, not just root-relative ([#255](https://github.com/microlinkhq/html-get/issues/255)) ([aa663b1](https://github.com/microlinkhq/html-get/commit/aa663b163c9bf45a72da640bc19e64b4f348803a)), closes [#236](https://github.com/microlinkhq/html-get/issues/236)
+
 ### 2.24.2 (2026-06-07)
 
 
