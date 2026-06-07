@@ -184,7 +184,9 @@ const prerender = PCancelable.fn(
           headers: data.headers || {},
           html: '',
           url,
-          mode: 'prerender'
+          mode: 'prerender',
+          statusCode: data.error?.response?.statusCode,
+          redirects: []
         }
       : data
   }
