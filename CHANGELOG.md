@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.23.0 (2026-06-07)
+
+
+### Features
+
+* handle shadow dom ([#252](https://github.com/microlinkhq/html-get/issues/252)) ([7a4f6d2](https://github.com/microlinkhq/html-get/commit/7a4f6d26a6d5a4e10dea3191bce77296018c8b1c))
+
 ### 2.22.3 (2026-06-07)
 
 ### [2.22.2](https://github.com/microlinkhq/html-get/compare/v2.22.1...v2.22.2) (2026-03-28)
