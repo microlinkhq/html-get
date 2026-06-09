@@ -3,7 +3,7 @@
 const { getBrowserContext } = require('@browserless/test')
 const PCancelable = require('p-cancelable')
 const cheerio = require('cheerio')
-const test = require('ava')
+const test = require('ava').default
 
 const { runServer, prettyHtml } = require('./helpers')
 const getHTML = require('..')

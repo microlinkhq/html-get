@@ -1,7 +1,7 @@
 'use strict'
 
 const execall = require('execall')
-const test = require('ava')
+const test = require('ava').default
 
 const { prettyHtml } = require('../helpers')
 

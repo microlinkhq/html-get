@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const test = require('ava')
+const test = require('ava').default
 const fs = require('fs')
 
 const { prettyHtml } = require('../helpers')

@@ -1,7 +1,7 @@
 'use strict'
 
 const { getBrowserContext } = require('@browserless/test')
-const test = require('ava')
+const test = require('ava').default
 
 const getHTML = require('../src')
 

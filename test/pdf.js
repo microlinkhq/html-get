@@ -2,7 +2,7 @@
 
 const { getBrowserContext } = require('@browserless/test')
 const cheerio = require('cheerio')
-const test = require('ava')
+const test = require('ava').default
 
 const { prettyHtml } = require('./helpers')
 const getHTML = require('..')

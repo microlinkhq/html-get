@@ -1,6 +1,6 @@
 'use strict'
 
-const test = require('ava')
+const test = require('ava').default
 
 const autoDomains = require('../src/auto-domains.json')
 
