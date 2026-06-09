@@ -1,9 +1,6 @@
 'use strict'
 
-const { getBrowserContext } = require('@browserless/test')
-const test = require('ava').default
-
-const { runFixtureServer } = require('./helpers')
+const { getBrowserContext, runFixtureServer, test } = require('./helpers')
 const getHTML = require('..')
 
 ;[false, true].forEach(prerender => {

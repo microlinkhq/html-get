@@ -1,12 +1,11 @@
 'use strict'
 
-const { getBrowserContext, runServer } = require('@browserless/test')
-const test = require('ava').default
+const { getBrowserContext, runServer, test } = require('./helpers')
 
 const getHTML = require('..')
 
 const getUrl = t =>
-  runServer(t, ({ res }) => {
+  runServer(t, (_, res) => {
     res.setHeader('content-type', 'text/html')
     res.end(`<!DOCTYPE html>
 <html>
