@@ -1,11 +1,24 @@
 'use strict'
 
 const { default: listen } = require('async-listen')
+const browserless = require('@browserless/test')
 const dateRegex = require('regex-iso-date')
 const { createServer } = require('http')
+const test = require('ava').default
 const pretty = require('pretty')
 const path = require('path')
 const fs = require('fs')
+
+let browserUsed = false
+
+test.after.always(() => {
+  if (browserUsed) return browserless.getBrowser().close()
+})
+
+const getBrowserContext = (...args) => {
+  browserUsed = true
+  return browserless.getBrowserContext(...args)
+}
 
 const createHeaders = name => contentType => ({
   [name]: contentType
@@ -35,7 +48,9 @@ const prettyHtml = html =>
 
 module.exports = {
   createHeaders,
+  getBrowserContext,
   prettyHtml,
   runFixtureServer,
-  runServer
+  runServer,
+  test
 }

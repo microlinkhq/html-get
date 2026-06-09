@@ -1,10 +1,7 @@
 'use strict'
 
-const { getBrowserContext } = require('@browserless/test')
 const cheerio = require('cheerio')
-const test = require('ava')
-
-const { prettyHtml } = require('./helpers')
+const { getBrowserContext, prettyHtml, test } = require('./helpers')
 const getHTML = require('..')
 
 const PDF_OVER_TRESHOLD = 'https://cdn.microlink.io/file-examples/sample.pdf'
