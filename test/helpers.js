@@ -9,16 +9,9 @@ const pretty = require('pretty')
 const path = require('path')
 const fs = require('fs')
 
-let browserUsed = false
+test.after.always(() => browserless.getBrowser().close())
 
-test.after.always(() => {
-  if (browserUsed) return browserless.getBrowser().close()
-})
-
-const getBrowserContext = (...args) => {
-  browserUsed = true
-  return browserless.getBrowserContext(...args)
-}
+const getBrowserContext = (...args) => browserless.getBrowserContext(...args)
 
 const createHeaders = name => contentType => ({
   [name]: contentType
