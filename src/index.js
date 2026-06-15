@@ -194,10 +194,22 @@ const prerender = PCancelable.fn(
 
 const modes = { fetch, prerender }
 
+const isInsideEmbeddedDocument = el => {
+  let node = el.parent
+  while (node) {
+    const tag = node.tagName
+    if (tag === 'svg' || tag === 'math') return true
+    node = node.parent
+  }
+  return false
+}
+
+// Custom element names must contain a hyphen, but SVG/MathML also use
+// hyphenated tags (e.g. font-face) that are not shadow hosts.
 const hasShadowDOM = $ =>
   $('*')
     .toArray()
-    .some(el => el.tagName?.includes('-'))
+    .some(el => el.tagName?.includes('-') && !isInsideEmbeddedDocument(el))
 
 const isFetchMode = url => {
   const parsedUrl = parseUrl(url)
@@ -334,8 +346,11 @@ module.exports = PCancelable.fn(
         toEncode
       })
       onCancel(() => prerenderPromise.cancel())
-      ;({ mode, html, $, ...payload } = await prerenderPromise)
-      shadowDOM = hasShadowDOM($)
+      const prerenderResult = await prerenderPromise
+      if (prerenderResult.html) {
+        ;({ mode, html, $, ...payload } = prerenderResult)
+        shadowDOM = hasShadowDOM($)
+      }
     }
 
     return Object.assign(payload, {

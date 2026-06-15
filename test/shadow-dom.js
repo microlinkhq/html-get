@@ -35,7 +35,7 @@ const getUrl = t =>
 
 test('shadow DOM content is flattened by default in prerender mode', async t => {
   const url = await getUrl(t)
-  const result = await getHTML(url, {
+  const result = await getHTML(String(url), {
     prerender: true,
     getBrowserless: () => getBrowserContext(t),
     puppeteerOpts: { adblock: false }
@@ -52,7 +52,7 @@ test('shadow DOM content is flattened by default in prerender mode', async t => 
 
 test('auto mode upgrades to prerender when shadow DOM is detected', async t => {
   const url = await getUrl(t)
-  const result = await getHTML(url, {
+  const result = await getHTML(String(url), {
     prerender: 'auto',
     getBrowserless: () => getBrowserContext(t),
     puppeteerOpts: { adblock: false }
@@ -63,4 +63,74 @@ test('auto mode upgrades to prerender when shadow DOM is detected', async t => {
   t.true(html.includes('Alice'))
   t.true(html.includes('Bob'))
   t.true(html.includes('Charlie'))
+})
+
+test('auto mode does not upgrade for SVG hyphenated tags', async t => {
+  const url = await runServer(t, (_, res) => {
+    res.setHeader('content-type', 'text/html')
+    res.end(`<!DOCTYPE html>
+<html>
+<body>
+  <svg><font-face /></svg>
+  <p id="content">plain fetch content</p>
+</body>
+</html>`)
+  })
+
+  const result = await getHTML(String(url), {
+    prerender: 'auto',
+    getMode: () => 'fetch',
+    getBrowserless: () => getBrowserContext(t),
+    puppeteerOpts: { adblock: false }
+  })
+
+  t.is(result.stats.mode, 'fetch')
+  t.false(result.stats.shadowDOM)
+  t.true(result.html.includes('plain fetch content'))
+})
+
+test('auto mode keeps fetch result when prerender retry fails', async t => {
+  let hits = 0
+  const url = await runServer(t, (_, res) => {
+    hits++
+    res.setHeader('content-type', 'text/html')
+    if (hits === 1) {
+      return res.end(`<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    class MyRow extends HTMLElement {
+      connectedCallback() {
+        const shadow = this.attachShadow({ mode: 'open' })
+        shadow.innerHTML = '<div class="row"><span>Alice</span></div>'
+      }
+    }
+    customElements.define('my-row', MyRow)
+  </script>
+</head>
+<body>
+  <h1>Shadow DOM Table</h1>
+  <my-row></my-row>
+</body>
+</html>`)
+    }
+    res.statusCode = 500
+    res.end('origin down')
+  })
+
+  const failingBrowserless = () => ({
+    evaluate: () => async () => {
+      throw new Error('browser blocked')
+    }
+  })
+
+  const result = await getHTML(String(url), {
+    prerender: 'auto',
+    getMode: () => 'fetch',
+    getBrowserless: failingBrowserless,
+    puppeteerOpts: { adblock: false }
+  })
+
+  t.is(result.stats.mode, 'fetch')
+  t.true(result.html.includes('Shadow DOM Table'))
 })
