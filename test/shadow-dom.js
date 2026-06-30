@@ -65,6 +65,20 @@ test('auto mode upgrades to prerender when shadow DOM is detected', async t => {
   t.true(html.includes('Charlie'))
 })
 
+test('explicit prerender:false is not upgraded despite shadow DOM', async t => {
+  const url = await getUrl(t)
+  const result = await getHTML(String(url), {
+    prerender: false,
+    getBrowserless: () => getBrowserContext(t),
+    puppeteerOpts: { adblock: false }
+  })
+
+  // shadow DOM is present but the explicit opt-out must win: no prerender retry
+  t.is(result.stats.mode, 'fetch')
+  t.true(result.stats.shadowDOM)
+  t.true(result.html.includes('<my-row'))
+})
+
 test('auto mode does not upgrade for SVG hyphenated tags', async t => {
   const url = await runServer(t, (_, res) => {
     res.setHeader('content-type', 'text/html')
