@@ -146,6 +146,23 @@ test('detects format by extension when content-type is generic', async t => {
   t.true(cheerio.load(html).text().includes('Lorem ipsum'))
 })
 
+test('extension fallback uses the final url after a redirect', async t => {
+  // octet-stream + extension only on the redirected URL: detection must look at
+  // res.url, not the original request url
+  const base = await runServer(t, (req, res) => {
+    if (req.url.endsWith('.docx')) {
+      res.setHeader('content-type', 'application/octet-stream')
+      return res.end(officeFixture('sample.docx'))
+    }
+    res.writeHead(302, { location: '/redirected.docx' })
+    res.end()
+  })
+
+  const { html, stats } = await getHTML(`${base}download`, { prerender: false })
+  t.is(stats.mode, 'fetch')
+  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+})
+
 test('detects format by content-type when the url has no extension', async t => {
   const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
   // no extension on the url: fetch mode is forced, content-type drives detection

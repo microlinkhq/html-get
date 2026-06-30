@@ -78,9 +78,10 @@ const fetch = PCancelable.fn(
           }
         }
 
-        const officeFormat = pandoc && getOfficeFormat({ contentType, url })
+        const officeFormat =
+          pandoc && getOfficeFormat({ contentType, url: res.url })
         if (officeFormat) {
-          const file = getTemporalFile(url, officeFormat)
+          const file = getTemporalFile(res.url, officeFormat)
           await writeFile(file.path, res.body)
           return pandoc(officeFormat, file.path)
         }
