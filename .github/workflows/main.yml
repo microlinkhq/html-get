@@ -55,6 +55,13 @@ jobs:
         run: pnpm install  --dangerously-allow-all-builds
       - name: Install mupdf-tools
         run: sudo apt-get install -y mupdf-tools
+      - name: Install pandoc
+        env:
+          PANDOC_VERSION: '3.10'
+        run: |
+          curl -fsSL "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-1-amd64.deb" -o /tmp/pandoc.deb
+          sudo apt-get install -y /tmp/pandoc.deb
+          rm -f /tmp/pandoc.deb
       - name: Test
         run: pnpm test
       - name: Report
