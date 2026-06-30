@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.24.8 (2026-06-30)
+
+
+### Bug Fixes
+
+* respect explicit prerender:false over shadow DOM auto-upgrade ([#260](https://github.com/microlinkhq/html-get/issues/260)) ([7a7f7f0](https://github.com/microlinkhq/html-get/commit/7a7f7f000d3bea1a9201988b112fde210591e4b6))
+
 ### 2.24.7 (2026-06-19)
 
 ### 2.24.6 (2026-06-15)
