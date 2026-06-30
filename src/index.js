@@ -65,7 +65,12 @@ const fetch = PCancelable.fn(
       const html = await (async () => {
         const contentType = getContentType(res.headers)
 
-        if (mutool && contentType === 'application/pdf') {
+        const officeFormat =
+          pandoc && getOfficeFormat({ contentType, url: [res.url, url] })
+
+        // a recognized office file never goes through mutool, even if the
+        // response is mislabeled as application/pdf
+        if (mutool && !officeFormat && contentType === 'application/pdf') {
           const file = getTemporalFile(url, 'pdf')
           await writeFile(file.path, res.body)
           if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
@@ -78,8 +83,6 @@ const fetch = PCancelable.fn(
           }
         }
 
-        const officeFormat =
-          pandoc && getOfficeFormat({ contentType, url: res.url })
         if (officeFormat) {
           const file = getTemporalFile(res.url, officeFormat)
           await writeFile(file.path, res.body)

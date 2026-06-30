@@ -60,12 +60,32 @@ const getUrlExtension = url => {
 
 const getOfficeFormatFromUrl = url => byExtension.get(getUrlExtension(url))
 
-// Resolve the Pandoc `--from` format for a document, preferring its declared
-// content-type and falling back to the URL extension (many CDNs serve office
-// files as application/octet-stream).
-const getOfficeFormat = ({ contentType, url } = {}) =>
-  byContentType.get(contentType) ||
-  (url ? getOfficeFormatFromUrl(url) : undefined)
+// Content-types that positively identify a web page or media. They are
+// authoritative: the URL extension must never override them (e.g. an HTML page
+// served at a `.docx` vanity URL is still a web page, not an office document).
+const isWebContentType = type =>
+  /^(text\/html|application\/xhtml\+xml|application\/json|image\/|audio\/|video\/)/.test(
+    type || ''
+  )
+
+// Resolve the Pandoc `--from` format for a document:
+//   1. an explicit office content-type wins
+//   2. an explicit web/media content-type means "not an office document"
+//   3. otherwise the content-type is non-committal (octet-stream, zip, missing,
+//      or a mislabeled binary type) so the URL extension decides; `url` may be a
+//      list of candidates, tried in order (e.g. final URL then original request
+//      URL after a redirect)
+const getOfficeFormat = ({ contentType, url } = {}) => {
+  const byType = byContentType.get(contentType)
+  if (byType) return byType
+  if (isWebContentType(contentType)) return undefined
+  const candidates = Array.isArray(url) ? url : [url]
+  for (const candidate of candidates) {
+    const format = candidate && getOfficeFormatFromUrl(candidate)
+    if (format) return format
+  }
+  return undefined
+}
 
 const isOfficeUrl = url => byExtension.has(getUrlExtension(url))
 

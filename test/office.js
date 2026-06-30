@@ -43,6 +43,40 @@ test('getOfficeFormat falls back to the url extension', t => {
   t.is(getOfficeFormat({ url: 'https://example.com' }), undefined)
 })
 
+test('an explicit web content-type is not overridden by the url extension', t => {
+  // HTML/media served at a .docx vanity URL stays a web page, not an office doc
+  t.is(
+    getOfficeFormat({ contentType: 'text/html', url: 'https://x.com/a.docx' }),
+    undefined
+  )
+  t.is(
+    getOfficeFormat({ contentType: 'image/png', url: 'https://x.com/a.xlsx' }),
+    undefined
+  )
+})
+
+test('a mislabeled binary content-type still resolves by extension', t => {
+  // a .docx wrongly served as application/pdf is an office doc, not a PDF
+  t.is(
+    getOfficeFormat({
+      contentType: 'application/pdf',
+      url: 'https://x.com/a.docx'
+    }),
+    'docx'
+  )
+})
+
+test('getOfficeFormat tries each url candidate in order', t => {
+  // extension only on the original url survives a redirect to an extensionless target
+  t.is(
+    getOfficeFormat({
+      contentType: 'application/octet-stream',
+      url: ['https://cdn.com/download', 'https://x.com/a.docx']
+    }),
+    'docx'
+  )
+})
+
 test('isOfficeUrl matches only office extensions', t => {
   t.true(isOfficeUrl('https://x.com/a.docx'))
   t.true(isOfficeUrl('https://x.com/a.PPTX'))
@@ -159,6 +193,34 @@ test('extension fallback uses the final url after a redirect', async t => {
   })
 
   const { html, stats } = await getHTML(`${base}download`, { prerender: false })
+  t.is(stats.mode, 'fetch')
+  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+})
+
+test('extension fallback survives redirect to an extensionless target', async t => {
+  // original url has the .docx extension, redirect target is extensionless
+  // octet-stream: detection must fall back to the original request url
+  const base = await runServer(t, (req, res) => {
+    if (req.url.includes('download')) {
+      res.setHeader('content-type', 'application/octet-stream')
+      return res.end(officeFixture('sample.docx'))
+    }
+    res.writeHead(302, { location: '/download' })
+    res.end()
+  })
+
+  const { html, stats } = await getHTML(`${base}sample.docx`, {
+    getBrowserless: () => getBrowserContext(t)
+  })
+  t.is(stats.mode, 'fetch')
+  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+})
+
+test('office file mislabeled as application/pdf is converted by pandoc', async t => {
+  const { html, stats } = await convert(t, {
+    file: 'sample.docx',
+    contentType: 'application/pdf'
+  })
   t.is(stats.mode, 'fetch')
   t.true(cheerio.load(html).text().includes('Lorem ipsum'))
 })
