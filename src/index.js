@@ -332,7 +332,12 @@ module.exports = PCancelable.fn(
 
     let shadowDOM = hasShadowDOM($)
 
-    if (mode === 'fetch' && getBrowserless && shadowDOM) {
+    if (
+      mode === 'fetch' &&
+      getBrowserless &&
+      shadowDOM &&
+      prerender !== false
+    ) {
       debug('shadow DOM detected, retrying with prerender', { url: targetUrl })
       const prerenderPromise = getContent(targetUrl, 'prerender', {
         getBrowserless,
