@@ -13,7 +13,7 @@
 
 ## Features
 
-- Get HTML markup for any URL, including images, video, audio, or pdf.
+- Get HTML markup for any URL, including images, video, audio, pdf, or office documents (docx, xlsx, pptx, odt, rtf, epub).
 - Block ads tracker or any non-necessary network subrequest.
 - Handle unreachable or timeout URLs gracefully.
 - Ensure HTML markup is appropriately encoded.
@@ -129,6 +129,17 @@ Default: `source code`
 It returns a function that receives that executes [mutool](https://mupdf.com/) binary for turning PDF files into HTML markup.
 
 It can explicitly disabled passing `false`.
+
+##### pandoc
+
+Type: `function`|`boolean`<br>
+Default: `source code`
+
+It returns a function that executes the [pandoc](https://pandoc.org/) binary for turning office documents (docx, xlsx, pptx, odt, rtf, epub) into HTML markup.
+
+The format is resolved from the response content-type, falling back to the URL extension.
+
+It can be explicitly disabled passing `false`.
 
 ##### prerender
 

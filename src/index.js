@@ -15,6 +15,7 @@ const got = require('got')
 const os = require('os')
 
 const { getContentLength, getContentType } = require('./util')
+const { getOfficeFormat, isOfficeUrl } = require('./office')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
@@ -30,6 +31,7 @@ const fetch = PCancelable.fn(
     {
       getTemporalFile,
       mutool,
+      pandoc,
       reflect = false,
       timeout = REQ_TIMEOUT,
       toEncode,
@@ -63,7 +65,12 @@ const fetch = PCancelable.fn(
       const html = await (async () => {
         const contentType = getContentType(res.headers)
 
-        if (mutool && contentType === 'application/pdf') {
+        const officeFormat =
+          pandoc && getOfficeFormat({ contentType, url: [res.url, url] })
+
+        // a recognized office file never goes through mutool, even if the
+        // response is mislabeled as application/pdf
+        if (mutool && !officeFormat && contentType === 'application/pdf') {
           const file = getTemporalFile(url, 'pdf')
           await writeFile(file.path, res.body)
           if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
@@ -74,6 +81,12 @@ const fetch = PCancelable.fn(
             const { stdout } = await mutool(file.path)
             return stdout
           }
+        }
+
+        if (officeFormat) {
+          const file = getTemporalFile(res.url, officeFormat)
+          await writeFile(file.path, res.body)
+          return pandoc(officeFormat, file.path)
         }
 
         return contentType === 'text/html' || !isMediaUrl(url)
@@ -219,7 +232,14 @@ const isFetchMode = url => {
 }
 
 const defaultGetMode = (url, { prerender }) => {
-  if (prerender === false || isMediaUrl(url) || isPdfUrl(url)) return 'fetch'
+  if (
+    prerender === false ||
+    isMediaUrl(url) ||
+    isPdfUrl(url) ||
+    isOfficeUrl(url)
+  ) {
+    return 'fetch'
+  }
   if (prerender === true) return 'prerender'
   return isFetchMode(url) ? 'fetch' : 'prerender'
 }
@@ -245,6 +265,23 @@ const defaultMutool = () =>
     } catch (_) {}
   })()
 
+const defaultPandoc = () =>
+  (() => {
+    try {
+      const pandocPath = execSync('which pandoc', {
+        stdio: ['pipe', 'pipe', 'ignore']
+      })
+        .toString()
+        .trim()
+      return async (format, filepath) => {
+        const { stdout } = await $(
+          `${pandocPath} --from=${format} --to=html --standalone --embed-resources ${filepath}`
+        )
+        return stdout
+      }
+    } catch (_) {}
+  })()
+
 const getContent = PCancelable.fn(
   (
     url,
@@ -255,6 +292,7 @@ const getContent = PCancelable.fn(
       gotOpts,
       headers,
       mutool,
+      pandoc,
       puppeteerOpts,
       rewriteUrls,
       rewriteHtml,
@@ -265,7 +303,7 @@ const getContent = PCancelable.fn(
     const isFetchMode = mode === 'fetch'
 
     const fetchOpts = isFetchMode
-      ? { headers, toEncode, mutool, getTemporalFile, ...gotOpts }
+      ? { headers, toEncode, mutool, pandoc, getTemporalFile, ...gotOpts }
       : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
 
     const promise = modes[mode](url, fetchOpts)
@@ -295,6 +333,7 @@ module.exports = PCancelable.fn(
       gotOpts,
       headers,
       mutool = defaultMutool(),
+      pandoc = defaultPandoc(),
       prerender = 'auto',
       puppeteerOpts,
       rewriteHtml = false,
@@ -320,6 +359,7 @@ module.exports = PCancelable.fn(
       gotOpts,
       headers,
       mutool,
+      pandoc,
       puppeteerOpts,
       rewriteUrls,
       rewriteHtml,

@@ -55,6 +55,8 @@ jobs:
         run: pnpm install  --dangerously-allow-all-builds
       - name: Install mupdf-tools
         run: sudo apt-get install -y mupdf-tools
+      - name: Install pandoc
+        uses: pandoc/actions/setup@main
       - name: Test
         run: pnpm test
       - name: Report
