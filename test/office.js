@@ -119,7 +119,7 @@ const convert = async (t, { file, contentType, opts } = {}) => {
   })
 }
 
-test('docx is converted to HTML', async t => {
+test.serial('docx is converted to HTML', async t => {
   const { html, stats } = await convert(t, {
     file: 'sample.docx',
     contentType: CONTENT_TYPE.docx
@@ -129,7 +129,7 @@ test('docx is converted to HTML', async t => {
   t.true($('h1').first().text().includes('Lorem ipsum'))
 })
 
-test('xlsx becomes an HTML table', async t => {
+test.serial('xlsx becomes an HTML table', async t => {
   const { html } = await convert(t, {
     file: 'sample.xlsx',
     contentType: CONTENT_TYPE.xlsx
@@ -139,7 +139,7 @@ test('xlsx becomes an HTML table', async t => {
   t.true($.text().includes('Dulce'))
 })
 
-test('pptx is converted to HTML', async t => {
+test.serial('pptx is converted to HTML', async t => {
   const { html } = await convert(t, {
     file: 'sample.pptx',
     contentType: CONTENT_TYPE.pptx
@@ -147,7 +147,7 @@ test('pptx is converted to HTML', async t => {
   t.true(cheerio.load(html).text().includes('Slide One'))
 })
 
-test('odt is converted to HTML', async t => {
+test.serial('odt is converted to HTML', async t => {
   const { html } = await convert(t, {
     file: 'sample.odt',
     contentType: CONTENT_TYPE.odt
@@ -155,7 +155,7 @@ test('odt is converted to HTML', async t => {
   t.true(cheerio.load(html).text().includes('Lorem ipsum'))
 })
 
-test('rtf is converted to HTML', async t => {
+test.serial('rtf is converted to HTML', async t => {
   const { html } = await convert(t, {
     file: 'sample.rtf',
     contentType: CONTENT_TYPE.rtf
@@ -163,7 +163,7 @@ test('rtf is converted to HTML', async t => {
   t.true(cheerio.load(html).text().includes('Lorem ipsum'))
 })
 
-test('epub is converted to HTML', async t => {
+test.serial('epub is converted to HTML', async t => {
   const { html } = await convert(t, {
     file: 'sample.epub',
     contentType: CONTENT_TYPE.epub
@@ -171,68 +171,85 @@ test('epub is converted to HTML', async t => {
   t.true(cheerio.load(html).text().includes('Lorem ipsum'))
 })
 
-test('detects format by extension when content-type is generic', async t => {
-  const { html, stats } = await convert(t, {
-    file: 'sample.docx',
-    contentType: 'application/octet-stream'
-  })
-  t.is(stats.mode, 'fetch')
-  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-})
+test.serial(
+  'detects format by extension when content-type is generic',
+  async t => {
+    const { html, stats } = await convert(t, {
+      file: 'sample.docx',
+      contentType: 'application/octet-stream'
+    })
+    t.is(stats.mode, 'fetch')
+    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+  }
+)
 
-test('extension fallback uses the final url after a redirect', async t => {
-  // octet-stream + extension only on the redirected URL: detection must look at
-  // res.url, not the original request url
-  const base = await runServer(t, (req, res) => {
-    if (req.url.endsWith('.docx')) {
-      res.setHeader('content-type', 'application/octet-stream')
-      return res.end(officeFixture('sample.docx'))
-    }
-    res.writeHead(302, { location: '/redirected.docx' })
-    res.end()
-  })
+test.serial(
+  'extension fallback uses the final url after a redirect',
+  async t => {
+    // octet-stream + extension only on the redirected URL: detection must look at
+    // res.url, not the original request url
+    const base = await runServer(t, (req, res) => {
+      if (req.url.endsWith('.docx')) {
+        res.setHeader('content-type', 'application/octet-stream')
+        return res.end(officeFixture('sample.docx'))
+      }
+      res.writeHead(302, { location: '/redirected.docx' })
+      res.end()
+    })
 
-  const { html, stats } = await getHTML(`${base}download`, { prerender: false })
-  t.is(stats.mode, 'fetch')
-  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-})
+    const { html, stats } = await getHTML(`${base}download`, {
+      prerender: false
+    })
+    t.is(stats.mode, 'fetch')
+    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+  }
+)
 
-test('extension fallback survives redirect to an extensionless target', async t => {
-  // original url has the .docx extension, redirect target is extensionless
-  // octet-stream: detection must fall back to the original request url
-  const base = await runServer(t, (req, res) => {
-    if (req.url.includes('download')) {
-      res.setHeader('content-type', 'application/octet-stream')
-      return res.end(officeFixture('sample.docx'))
-    }
-    res.writeHead(302, { location: '/download' })
-    res.end()
-  })
+test.serial(
+  'extension fallback survives redirect to an extensionless target',
+  async t => {
+    // original url has the .docx extension, redirect target is extensionless
+    // octet-stream: detection must fall back to the original request url
+    const base = await runServer(t, (req, res) => {
+      if (req.url.includes('download')) {
+        res.setHeader('content-type', 'application/octet-stream')
+        return res.end(officeFixture('sample.docx'))
+      }
+      res.writeHead(302, { location: '/download' })
+      res.end()
+    })
 
-  const { html, stats } = await getHTML(`${base}sample.docx`, {
-    getBrowserless: () => getBrowserContext(t)
-  })
-  t.is(stats.mode, 'fetch')
-  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-})
+    const { html, stats } = await getHTML(`${base}sample.docx`, {
+      getBrowserless: () => getBrowserContext(t)
+    })
+    t.is(stats.mode, 'fetch')
+    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+  }
+)
 
-test('office file mislabeled as application/pdf is converted by pandoc', async t => {
-  const { html, stats } = await convert(t, {
-    file: 'sample.docx',
-    contentType: 'application/pdf'
-  })
-  t.is(stats.mode, 'fetch')
-  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-})
+test.serial(
+  'office file mislabeled as application/pdf is converted by pandoc',
+  async t => {
+    const { html, stats } = await convert(t, {
+      file: 'sample.docx',
+      contentType: 'application/pdf'
+    })
+    t.is(stats.mode, 'fetch')
+    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+  }
+)
 
-test('detects format by content-type when the url has no extension', async t => {
-  const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
-  // no extension on the url: fetch mode is forced, content-type drives detection
-  const { html } = await getHTML(baseUrl.toString(), { prerender: false })
-  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-})
+test.serial(
+  'detects format by content-type when the url has no extension',
+  async t => {
+    const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
+    // no extension on the url: fetch mode is forced, content-type drives detection
+    const { html } = await getHTML(baseUrl.toString(), { prerender: false })
+    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+  }
+)
 
-test('disable if `pandoc` is not installed', async t => {
+test.serial('disable if `pandoc` is not installed', async t => {
   const { html } = await convert(t, {
     file: 'sample.docx',
     contentType: CONTENT_TYPE.docx,
