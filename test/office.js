@@ -17,6 +17,17 @@ const CONTENT_TYPE = {
   epub: 'application/epub+zip'
 }
 
+// intentionally excluded: OLE binaries (.doc/.xls/.ppt) and ODF
+// spreadsheet/presentation (.ods/.odp) need a headless LibreOffice that Pandoc
+// alone can't provide
+const UNSUPPORTED = {
+  doc: 'application/msword',
+  xls: 'application/vnd.ms-excel',
+  ppt: 'application/vnd.ms-powerpoint',
+  ods: 'application/vnd.oasis.opendocument.spreadsheet',
+  odp: 'application/vnd.oasis.opendocument.presentation'
+}
+
 const officeFixture = name =>
   fs.readFileSync(path.join(__dirname, 'fixtures', 'office', name))
 
@@ -93,11 +104,15 @@ test('detection tolerates a URL object as input', t => {
 })
 
 test('legacy and unsupported formats are not detected', t => {
-  // OLE binaries (.doc/.xls/.ppt) and ODF spreadsheet/presentation (.ods/.odp)
-  // need a headless LibreOffice that Pandoc alone can't provide.
-  for (const ext of ['doc', 'xls', 'ppt', 'ods', 'odp']) {
+  // excluded both by content-type and by extension
+  for (const [ext, contentType] of Object.entries(UNSUPPORTED)) {
     t.false(isOfficeUrl(`https://x.com/a.${ext}`), ext)
     t.is(getOfficeFormat({ url: `https://x.com/a.${ext}` }), undefined, ext)
+    t.is(
+      getOfficeFormat({ contentType, url: `https://x.com/a.${ext}` }),
+      undefined,
+      `${ext} via content-type`
+    )
   }
 })
 
@@ -258,3 +273,23 @@ test.serial('disable if `pandoc` is not installed', async t => {
   // without pandoc the binary bytes are never turned into readable HTML
   t.false(cheerio.load(html).text().includes('Lorem ipsum'))
 })
+
+test.serial(
+  'unsupported office formats pass through without conversion or crashing',
+  async t => {
+    // real demo files for legacy (.doc/.xls/.ppt) and ODF sheet/presentation
+    // (.ods/.odp): Pandoc can't read them, so they must be left untouched, not
+    // fed to pandoc and not throw
+    for (const [ext, contentType] of Object.entries(UNSUPPORTED)) {
+      const baseUrl = await serveOffice(t, `sample.${ext}`, contentType)
+      const { html, stats } = await getHTML(`${baseUrl}sample.${ext}`, {
+        prerender: false
+      })
+      t.is(stats.mode, 'fetch', ext)
+      t.is(typeof html, 'string', ext)
+      // pandoc's standalone output carries this marker; its absence proves the
+      // file was never converted
+      t.false(html.includes('name="generator" content="pandoc"'), ext)
+    }
+  }
+)
