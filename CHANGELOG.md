@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.24.11 (2026-07-02)
+
+
+### Bug Fixes
+
+* avoid silent empty HTML when pandoc cannot convert office files ([#265](https://github.com/microlinkhq/html-get/issues/265)) ([b0e84df](https://github.com/microlinkhq/html-get/commit/b0e84dfba60f1716f0e5421546e38b461c155662))
+
 ### 2.24.10 (2026-07-01)
 
 ### 2.24.9 (2026-07-01)
