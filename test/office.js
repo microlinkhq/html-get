@@ -3,6 +3,7 @@
 const cheerio = require('cheerio')
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
 
 const { getBrowserContext, runServer, test } = require('./helpers')
 const { getOfficeFormat, isOfficeUrl } = require('../src/office')
@@ -315,6 +316,33 @@ test.serial('defaultPandoc probes the binary once', async t => {
   // memoized: repeated calls return the same runner rather than re-spawning
   t.is(getHTML.defaultPandoc(), getHTML.defaultPandoc())
 })
+
+test.serial(
+  'a broken pandoc probe disables conversion instead of throwing',
+  t => {
+    // pandoc is on PATH but `--list-input-formats` fails: the probe must swallow
+    // it and disable conversion, not throw out of the default-parameter evaluation
+    // and break every getHTML call
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pandoc-probe-'))
+    fs.writeFileSync(path.join(dir, 'pandoc'), '#!/bin/sh\nexit 1\n', {
+      mode: 0o755
+    })
+
+    const originalPath = process.env.PATH
+    process.env.PATH = dir + path.delimiter + originalPath
+
+    // fresh module so memoizeOne re-probes with the broken pandoc on PATH
+    delete require.cache[require.resolve('..')]
+    const fresh = require('..')
+
+    try {
+      t.is(fresh.defaultPandoc(), undefined)
+    } finally {
+      process.env.PATH = originalPath
+      delete require.cache[require.resolve('..')]
+    }
+  }
+)
 
 test.serial('disable if `pandoc` is not installed', async t => {
   const { html } = await convert(t, {

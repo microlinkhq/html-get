@@ -290,28 +290,33 @@ const defaultMutool = memoizeOne(() => {
 })
 
 const defaultPandoc = memoizeOne(() => {
-  const pandocPath = whichSync('pandoc')
-  if (!pandocPath) return
-  const supported = new Set(
-    execFileSync(pandocPath, ['--list-input-formats'], {
-      stdio: ['pipe', 'pipe', 'ignore']
-    })
-      .toString()
-      .trim()
-      .split(/\s+/)
-  )
-  return async (format, filepath) => {
-    if (!supported.has(format)) return
-    // array form keeps `filepath` a single argv entry even if it has spaces
-    const { stdout } = await $(pandocPath, [
-      `--from=${format}`,
-      '--to=html',
-      '--standalone',
-      '--embed-resources',
-      filepath
-    ])
-    return stdout.trim() ? stdout : undefined
-  }
+  try {
+    const pandocPath = whichSync('pandoc')
+    if (!pandocPath) return
+    // a broken/incompatible pandoc can throw here (or on the runner below); in
+    // either case conversion stays disabled instead of breaking every getHTML
+    // call through the default-parameter evaluation
+    const supported = new Set(
+      execFileSync(pandocPath, ['--list-input-formats'], {
+        stdio: ['pipe', 'pipe', 'ignore']
+      })
+        .toString()
+        .trim()
+        .split(/\s+/)
+    )
+    return async (format, filepath) => {
+      if (!supported.has(format)) return
+      // array form keeps `filepath` a single argv entry even if it has spaces
+      const { stdout } = await $(pandocPath, [
+        `--from=${format}`,
+        '--to=html',
+        '--standalone',
+        '--embed-resources',
+        filepath
+      ])
+      return stdout.trim() ? stdout : undefined
+    }
+  } catch (_) {}
 })
 
 const getContent = PCancelable.fn(
