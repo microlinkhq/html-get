@@ -291,6 +291,31 @@ test.serial('falls back when pandoc does not support the format', async t => {
   t.true(html.length > 0)
 })
 
+test.serial(
+  'defaultPandoc skips formats the installed pandoc cannot read',
+  async t => {
+    // exercises the real `--list-input-formats` probe, which the mock-injection
+    // tests above bypass
+    const pandoc = getHTML.defaultPandoc()
+    if (!pandoc) return t.pass('pandoc not installed in this environment')
+
+    const file = path.join(__dirname, 'fixtures', 'office', 'sample.docx')
+
+    // a supported format is converted
+    const html = await pandoc('docx', file)
+    t.true(typeof html === 'string' && html.includes('Lorem ipsum'))
+
+    // a format the installed pandoc cannot read (legacy OLE .doc) is skipped,
+    // returning undefined instead of empty/garbage output, and never throws
+    t.is(await pandoc('doc', file), undefined)
+  }
+)
+
+test.serial('defaultPandoc probes the binary once', async t => {
+  // memoized: repeated calls return the same runner rather than re-spawning
+  t.is(getHTML.defaultPandoc(), getHTML.defaultPandoc())
+})
+
 test.serial('disable if `pandoc` is not installed', async t => {
   const { html } = await convert(t, {
     file: 'sample.docx',

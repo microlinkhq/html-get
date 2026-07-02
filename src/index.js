@@ -4,7 +4,7 @@ const { parseUrl, isMediaUrl, isPdfUrl } = require('@metascraper/helpers')
 const { readFile, writeFile } = require('fs/promises')
 const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
-const { execSync } = require('child_process')
+const { execFileSync } = require('child_process')
 const PCancelable = require('p-cancelable')
 const { AbortError } = require('p-retry')
 const htmlEncode = require('html-encode')
@@ -89,7 +89,14 @@ const fetch = PCancelable.fn(
           try {
             const converted = await pandoc(officeFormat, file.path)
             if (converted) return converted
-          } catch (_) {}
+            debug('pandoc:empty', { url: res.url, format: officeFormat })
+          } catch (error) {
+            debug('pandoc:error', {
+              url: res.url,
+              format: officeFormat,
+              message: error.message || error
+            })
+          }
         }
 
         return contentType === 'text/html' || !isMediaUrl(url)
@@ -256,43 +263,63 @@ const defaultGetTemporalFile = (input, ext) => {
   return { path: filepath }
 }
 
-const defaultMutool = () =>
-  (() => {
-    try {
-      const mutoolPath = execSync('which mutool', {
-        stdio: ['pipe', 'pipe', 'ignore']
-      })
-        .toString()
-        .trim()
-      return (...args) => $(`${mutoolPath} draw -q -F html ${args}`)
-    } catch (_) {}
-  })()
+// run the binary probe once, not per request: the default runners are wired as
+// default parameters (evaluated on every call), so without memoization each
+// request would re-spawn `which` and, for pandoc, `--list-input-formats`.
+const memoize = fn => {
+  let value
+  let cached = false
+  return () => {
+    if (!cached) {
+      value = fn()
+      cached = true
+    }
+    return value
+  }
+}
 
-const defaultPandoc = () =>
-  (() => {
-    try {
-      const pandocPath = execSync('which pandoc', {
-        stdio: ['pipe', 'pipe', 'ignore']
-      })
-        .toString()
-        .trim()
-      const supported = new Set(
-        execSync(`${pandocPath} --list-input-formats`, {
-          stdio: ['pipe', 'pipe', 'ignore']
-        })
-          .toString()
-          .trim()
-          .split(/\s+/)
-      )
-      return async (format, filepath) => {
-        if (!supported.has(format)) return
-        const { stdout } = await $(
-          `${pandocPath} --from=${format} --to=html --standalone --embed-resources ${filepath}`
-        )
-        return stdout.trim() ? stdout : undefined
-      }
-    } catch (_) {}
-  })()
+// use execFileSync (no shell) to resolve the binary path: faster than execSync
+// and free of any interpolation surface.
+const whichSync = bin => {
+  try {
+    return execFileSync('which', [bin], {
+      stdio: ['pipe', 'pipe', 'ignore']
+    })
+      .toString()
+      .trim()
+  } catch (_) {}
+}
+
+const defaultMutool = memoize(() => {
+  const mutoolPath = whichSync('mutool')
+  if (!mutoolPath) return
+  return (...args) => $(`${mutoolPath} draw -q -F html ${args}`)
+})
+
+const defaultPandoc = memoize(() => {
+  const pandocPath = whichSync('pandoc')
+  if (!pandocPath) return
+  const supported = new Set(
+    execFileSync(pandocPath, ['--list-input-formats'], {
+      stdio: ['pipe', 'pipe', 'ignore']
+    })
+      .toString()
+      .trim()
+      .split(/\s+/)
+  )
+  return async (format, filepath) => {
+    if (!supported.has(format)) return
+    // array form keeps `filepath` a single argv entry even if it has spaces
+    const { stdout } = await $(pandocPath, [
+      `--from=${format}`,
+      '--to=html',
+      '--standalone',
+      '--embed-resources',
+      filepath
+    ])
+    return stdout.trim() ? stdout : undefined
+  }
+})
 
 const getContent = PCancelable.fn(
   (
@@ -423,3 +450,4 @@ module.exports.PDF_SIZE_TRESHOLD = PDF_SIZE_TRESHOLD
 module.exports.isFetchMode = isFetchMode
 module.exports.getContent = getContent
 module.exports.defaultMutool = defaultMutool
+module.exports.defaultPandoc = defaultPandoc
