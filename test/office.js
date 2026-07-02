@@ -292,24 +292,21 @@ test.serial('defaultPandoc probes the binary once', async t => {
   t.is(getHTML.defaultPandoc(), getHTML.defaultPandoc())
 })
 
-test.serial('getPandocPath exposes the resolved pandoc path', t => {
-  const expected = require('child_process')
-    .execFileSync('which', ['pandoc'], { stdio: ['pipe', 'pipe', 'ignore'] })
-    .toString()
-    .trim()
-  t.is(getHTML.getPandocPath(), expected)
-})
-
-test.serial('getMutoolPath exposes the resolved mutool path', t => {
-  let expected
-  try {
-    expected = require('child_process')
-      .execFileSync('which', ['mutool'], { stdio: ['pipe', 'pipe', 'ignore'] })
-      .toString()
-      .trim()
-  } catch (_) {} // mutool not installed -> undefined, must match
-  t.is(getHTML.getMutoolPath(), expected)
-})
+for (const [bin, accessor] of [
+  ['pandoc', 'getPandocPath'],
+  ['mutool', 'getMutoolPath']
+]) {
+  test.serial(`${accessor} exposes the resolved ${bin} path`, t => {
+    let expected
+    try {
+      expected = require('child_process')
+        .execFileSync('which', [bin], { stdio: ['pipe', 'pipe', 'ignore'] })
+        .toString()
+        .trim()
+    } catch (_) {} // binary not installed -> undefined, must match
+    t.is(getHTML[accessor](), expected)
+  })
+}
 
 test.serial('a broken pandoc probe disables conversion instead of throwing', t => {
   // pandoc is on PATH but `--list-input-formats` fails: the probe must swallow
