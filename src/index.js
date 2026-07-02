@@ -1,10 +1,10 @@
 'use strict'
 
-const { parseUrl, isMediaUrl, isPdfUrl } = require('@metascraper/helpers')
+const { parseUrl, isMediaUrl, isPdfUrl, memoizeOne } = require('@metascraper/helpers')
 const { readFile, writeFile } = require('fs/promises')
 const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
-const { execSync } = require('child_process')
+const { execFileSync } = require('child_process')
 const PCancelable = require('p-cancelable')
 const { AbortError } = require('p-retry')
 const htmlEncode = require('html-encode')
@@ -28,15 +28,7 @@ const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
 const fetch = PCancelable.fn(
   async (
     url,
-    {
-      getTemporalFile,
-      mutool,
-      pandoc,
-      reflect = false,
-      timeout = REQ_TIMEOUT,
-      toEncode,
-      ...opts
-    },
+    { getTemporalFile, mutool, pandoc, reflect = false, timeout = REQ_TIMEOUT, toEncode, ...opts },
     onCancel
   ) => {
     const reqTimeout = reflect ? timeout / 2 : timeout
@@ -55,9 +47,7 @@ const fetch = PCancelable.fn(
     })
 
     const redirects = []
-    req.on('redirect', res =>
-      redirects.push({ statusCode: res.statusCode, url: res.url })
-    )
+    req.on('redirect', res => redirects.push({ statusCode: res.statusCode, url: res.url }))
 
     try {
       const res = await req
@@ -65,8 +55,7 @@ const fetch = PCancelable.fn(
       const html = await (async () => {
         const contentType = getContentType(res.headers)
 
-        const officeFormat =
-          pandoc && getOfficeFormat({ contentType, url: [res.url, url] })
+        const officeFormat = pandoc && getOfficeFormat({ contentType, url: [res.url, url] })
 
         // a recognized office file never goes through mutool, even if the
         // response is mislabeled as application/pdf
@@ -86,7 +75,17 @@ const fetch = PCancelable.fn(
         if (officeFormat) {
           const file = getTemporalFile(res.url, officeFormat)
           await writeFile(file.path, res.body)
-          return pandoc(officeFormat, file.path)
+          try {
+            const converted = await pandoc(officeFormat, file.path)
+            if (converted) return converted
+            debug('pandoc:empty', { url: res.url, format: officeFormat })
+          } catch (error) {
+            debug('pandoc:error', {
+              url: res.url,
+              format: officeFormat,
+              message: error.message || error
+            })
+          }
         }
 
         return contentType === 'text/html' || !isMediaUrl(url)
@@ -232,12 +231,7 @@ const isFetchMode = url => {
 }
 
 const defaultGetMode = (url, { prerender }) => {
-  if (
-    prerender === false ||
-    isMediaUrl(url) ||
-    isPdfUrl(url) ||
-    isOfficeUrl(url)
-  ) {
+  if (prerender === false || isMediaUrl(url) || isPdfUrl(url) || isOfficeUrl(url)) {
     return 'fetch'
   }
   if (prerender === true) return 'prerender'
@@ -246,41 +240,60 @@ const defaultGetMode = (url, { prerender }) => {
 
 const defaultGetTemporalFile = (input, ext) => {
   const hash = crypto.createHash('sha256').update(input).digest('hex')
-  const filepath = path.join(
-    os.tmpdir(),
-    ext === undefined ? hash : `${hash}.${ext}`
-  )
+  const filepath = path.join(os.tmpdir(), ext === undefined ? hash : `${hash}.${ext}`)
   return { path: filepath }
 }
 
-const defaultMutool = () =>
-  (() => {
-    try {
-      const mutoolPath = execSync('which mutool', {
-        stdio: ['pipe', 'pipe', 'ignore']
-      })
-        .toString()
-        .trim()
-      return (...args) => $(`${mutoolPath} draw -q -F html ${args}`)
-    } catch (_) {}
-  })()
+// use execFileSync (no shell) to resolve the binary path: faster than execSync
+// and free of any interpolation surface.
+const whichSync = bin => {
+  try {
+    return execFileSync('which', [bin], {
+      stdio: ['pipe', 'pipe', 'ignore']
+    })
+      .toString()
+      .trim()
+  } catch (_) {}
+}
 
-const defaultPandoc = () =>
-  (() => {
-    try {
-      const pandocPath = execSync('which pandoc', {
+// probe the binary once, not per request: the default runners are wired as
+// default parameters (evaluated on every call), so memoizeOne keeps the probe
+// (`which` and, for pandoc, `--list-input-formats`) from re-spawning each time.
+const defaultMutool = memoizeOne(() => {
+  const mutoolPath = whichSync('mutool')
+  if (!mutoolPath) return
+  return (...args) => $(`${mutoolPath} draw -q -F html ${args}`)
+})
+
+const defaultPandoc = memoizeOne(() => {
+  try {
+    const pandocPath = whichSync('pandoc')
+    if (!pandocPath) return
+    // a broken/incompatible pandoc can throw here (or on the runner below); in
+    // either case conversion stays disabled instead of breaking every getHTML
+    // call through the default-parameter evaluation
+    const supported = new Set(
+      execFileSync(pandocPath, ['--list-input-formats'], {
         stdio: ['pipe', 'pipe', 'ignore']
       })
         .toString()
         .trim()
-      return async (format, filepath) => {
-        const { stdout } = await $(
-          `${pandocPath} --from=${format} --to=html --standalone --embed-resources ${filepath}`
-        )
-        return stdout
-      }
-    } catch (_) {}
-  })()
+        .split(/\s+/)
+    )
+    return async (format, filepath) => {
+      if (!supported.has(format)) return
+      // array form keeps `filepath` a single argv entry even if it has spaces
+      const { stdout } = await $(pandocPath, [
+        `--from=${format}`,
+        '--to=html',
+        '--standalone',
+        '--embed-resources',
+        filepath
+      ])
+      return stdout.trim() ? stdout : undefined
+    }
+  } catch (_) {}
+})
 
 const getContent = PCancelable.fn(
   (
@@ -372,12 +385,7 @@ module.exports = PCancelable.fn(
 
     let shadowDOM = hasShadowDOM($)
 
-    if (
-      mode === 'fetch' &&
-      getBrowserless &&
-      shadowDOM &&
-      prerender !== false
-    ) {
+    if (mode === 'fetch' && getBrowserless && shadowDOM && prerender !== false) {
       debug('shadow DOM detected, retrying with prerender', { url: targetUrl })
       const prerenderPromise = getContent(targetUrl, 'prerender', {
         getBrowserless,
@@ -411,3 +419,4 @@ module.exports.PDF_SIZE_TRESHOLD = PDF_SIZE_TRESHOLD
 module.exports.isFetchMode = isFetchMode
 module.exports.getContent = getContent
 module.exports.defaultMutool = defaultMutool
+module.exports.defaultPandoc = defaultPandoc

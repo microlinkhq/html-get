@@ -3,6 +3,7 @@
 const cheerio = require('cheerio')
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
 
 const { getBrowserContext, runServer, test } = require('./helpers')
 const { getOfficeFormat, isOfficeUrl } = require('../src/office')
@@ -261,6 +262,85 @@ test.serial(
     // no extension on the url: fetch mode is forced, content-type drives detection
     const { html } = await getHTML(baseUrl.toString(), { prerender: false })
     t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+  }
+)
+
+test.serial('falls back when pandoc returns empty output', async t => {
+  const { html } = await convert(t, {
+    file: 'sample.docx',
+    contentType: CONTENT_TYPE.docx,
+    opts: {
+      pandoc: async () => ''
+    }
+  })
+  t.false(cheerio.load(html).text().includes('Lorem ipsum'))
+  t.false(html.includes('name="generator" content="pandoc"'))
+  t.true(html.length > 0)
+})
+
+test.serial('falls back when pandoc does not support the format', async t => {
+  const { html } = await convert(t, {
+    file: 'sample.xlsx',
+    contentType: CONTENT_TYPE.xlsx,
+    opts: {
+      pandoc: async format => {
+        t.is(format, 'xlsx')
+      }
+    }
+  })
+  t.false(html.includes('name="generator" content="pandoc"'))
+  t.true(html.length > 0)
+})
+
+test.serial(
+  'defaultPandoc skips formats the installed pandoc cannot read',
+  async t => {
+    // exercises the real `--list-input-formats` probe, which the mock-injection
+    // tests above bypass
+    const pandoc = getHTML.defaultPandoc()
+    if (!pandoc) return t.pass('pandoc not installed in this environment')
+
+    const file = path.join(__dirname, 'fixtures', 'office', 'sample.docx')
+
+    // a supported format is converted
+    const html = await pandoc('docx', file)
+    t.true(typeof html === 'string' && html.includes('Lorem ipsum'))
+
+    // a format the installed pandoc cannot read (legacy OLE .doc) is skipped,
+    // returning undefined instead of empty/garbage output, and never throws
+    t.is(await pandoc('doc', file), undefined)
+  }
+)
+
+test.serial('defaultPandoc probes the binary once', async t => {
+  // memoized: repeated calls return the same runner rather than re-spawning
+  t.is(getHTML.defaultPandoc(), getHTML.defaultPandoc())
+})
+
+test.serial(
+  'a broken pandoc probe disables conversion instead of throwing',
+  t => {
+    // pandoc is on PATH but `--list-input-formats` fails: the probe must swallow
+    // it and disable conversion, not throw out of the default-parameter evaluation
+    // and break every getHTML call
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pandoc-probe-'))
+    fs.writeFileSync(path.join(dir, 'pandoc'), '#!/bin/sh\nexit 1\n', {
+      mode: 0o755
+    })
+
+    const originalPath = process.env.PATH
+    process.env.PATH = dir + path.delimiter + originalPath
+
+    // fresh module so memoizeOne re-probes with the broken pandoc on PATH
+    delete require.cache[require.resolve('..')]
+    const fresh = require('..')
+
+    try {
+      t.is(fresh.defaultPandoc(), undefined)
+    } finally {
+      process.env.PATH = originalPath
+      delete require.cache[require.resolve('..')]
+    }
   }
 )
 
