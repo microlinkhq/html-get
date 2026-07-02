@@ -1,11 +1,6 @@
 'use strict'
 
-const {
-  parseUrl,
-  isMediaUrl,
-  isPdfUrl,
-  memoizeOne
-} = require('@metascraper/helpers')
+const { parseUrl, isMediaUrl, isPdfUrl, memoizeOne } = require('@metascraper/helpers')
 const { readFile, writeFile } = require('fs/promises')
 const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
@@ -33,15 +28,7 @@ const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
 const fetch = PCancelable.fn(
   async (
     url,
-    {
-      getTemporalFile,
-      mutool,
-      pandoc,
-      reflect = false,
-      timeout = REQ_TIMEOUT,
-      toEncode,
-      ...opts
-    },
+    { getTemporalFile, mutool, pandoc, reflect = false, timeout = REQ_TIMEOUT, toEncode, ...opts },
     onCancel
   ) => {
     const reqTimeout = reflect ? timeout / 2 : timeout
@@ -60,9 +47,7 @@ const fetch = PCancelable.fn(
     })
 
     const redirects = []
-    req.on('redirect', res =>
-      redirects.push({ statusCode: res.statusCode, url: res.url })
-    )
+    req.on('redirect', res => redirects.push({ statusCode: res.statusCode, url: res.url }))
 
     try {
       const res = await req
@@ -70,8 +55,7 @@ const fetch = PCancelable.fn(
       const html = await (async () => {
         const contentType = getContentType(res.headers)
 
-        const officeFormat =
-          pandoc && getOfficeFormat({ contentType, url: [res.url, url] })
+        const officeFormat = pandoc && getOfficeFormat({ contentType, url: [res.url, url] })
 
         // a recognized office file never goes through mutool, even if the
         // response is mislabeled as application/pdf
@@ -247,12 +231,7 @@ const isFetchMode = url => {
 }
 
 const defaultGetMode = (url, { prerender }) => {
-  if (
-    prerender === false ||
-    isMediaUrl(url) ||
-    isPdfUrl(url) ||
-    isOfficeUrl(url)
-  ) {
+  if (prerender === false || isMediaUrl(url) || isPdfUrl(url) || isOfficeUrl(url)) {
     return 'fetch'
   }
   if (prerender === true) return 'prerender'
@@ -261,10 +240,7 @@ const defaultGetMode = (url, { prerender }) => {
 
 const defaultGetTemporalFile = (input, ext) => {
   const hash = crypto.createHash('sha256').update(input).digest('hex')
-  const filepath = path.join(
-    os.tmpdir(),
-    ext === undefined ? hash : `${hash}.${ext}`
-  )
+  const filepath = path.join(os.tmpdir(), ext === undefined ? hash : `${hash}.${ext}`)
   return { path: filepath }
 }
 
@@ -409,12 +385,7 @@ module.exports = PCancelable.fn(
 
     let shadowDOM = hasShadowDOM($)
 
-    if (
-      mode === 'fetch' &&
-      getBrowserless &&
-      shadowDOM &&
-      prerender !== false
-    ) {
+    if (mode === 'fetch' && getBrowserless && shadowDOM && prerender !== false) {
       debug('shadow DOM detected, retrying with prerender', { url: targetUrl })
       const prerenderPromise = getContent(targetUrl, 'prerender', {
         getBrowserless,
