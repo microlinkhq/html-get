@@ -429,8 +429,9 @@ module.exports.getContent = getContent
 module.exports.defaultMutool = defaultMutool
 module.exports.defaultPandoc = defaultPandoc
 
-// html-get already resolves pandoc for office conversion; expose the cached
-// path so a consumer (e.g. the microlink api markdown pipeline) reuses it
-// instead of running its own `which pandoc`. Returns undefined when pandoc is
-// not installed. Lazy: nothing runs until first call.
+// html-get already resolves pandoc/mutool for office and PDF conversion; expose
+// the cached paths so a consumer (e.g. the microlink api markdown pipeline)
+// reuses them instead of running its own `which`. Each returns undefined when
+// the binary is not installed. Lazy: nothing runs until first call.
 module.exports.getPandocPath = () => whichSync('pandoc')
+module.exports.getMutoolPath = () => whichSync('mutool')

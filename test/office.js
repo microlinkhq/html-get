@@ -300,6 +300,17 @@ test.serial('getPandocPath exposes the resolved pandoc path', t => {
   t.is(getHTML.getPandocPath(), expected)
 })
 
+test.serial('getMutoolPath exposes the resolved mutool path', t => {
+  let expected
+  try {
+    expected = require('child_process')
+      .execFileSync('which', ['mutool'], { stdio: ['pipe', 'pipe', 'ignore'] })
+      .toString()
+      .trim()
+  } catch (_) {} // mutool not installed -> undefined, must match
+  t.is(getHTML.getMutoolPath(), expected)
+})
+
 test.serial('a broken pandoc probe disables conversion instead of throwing', t => {
   // pandoc is on PATH but `--list-input-formats` fails: the probe must swallow
   // it and disable conversion, not throw out of the default-parameter evaluation
