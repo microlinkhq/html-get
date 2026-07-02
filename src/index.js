@@ -1,6 +1,11 @@
 'use strict'
 
-const { parseUrl, isMediaUrl, isPdfUrl } = require('@metascraper/helpers')
+const {
+  parseUrl,
+  isMediaUrl,
+  isPdfUrl,
+  memoizeOne
+} = require('@metascraper/helpers')
 const { readFile, writeFile } = require('fs/promises')
 const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
@@ -263,21 +268,6 @@ const defaultGetTemporalFile = (input, ext) => {
   return { path: filepath }
 }
 
-// run the binary probe once, not per request: the default runners are wired as
-// default parameters (evaluated on every call), so without memoization each
-// request would re-spawn `which` and, for pandoc, `--list-input-formats`.
-const memoize = fn => {
-  let value
-  let cached = false
-  return () => {
-    if (!cached) {
-      value = fn()
-      cached = true
-    }
-    return value
-  }
-}
-
 // use execFileSync (no shell) to resolve the binary path: faster than execSync
 // and free of any interpolation surface.
 const whichSync = bin => {
@@ -290,13 +280,16 @@ const whichSync = bin => {
   } catch (_) {}
 }
 
-const defaultMutool = memoize(() => {
+// probe the binary once, not per request: the default runners are wired as
+// default parameters (evaluated on every call), so memoizeOne keeps the probe
+// (`which` and, for pandoc, `--list-input-formats`) from re-spawning each time.
+const defaultMutool = memoizeOne(() => {
   const mutoolPath = whichSync('mutool')
   if (!mutoolPath) return
   return (...args) => $(`${mutoolPath} draw -q -F html ${args}`)
 })
 
-const defaultPandoc = memoize(() => {
+const defaultPandoc = memoizeOne(() => {
   const pandocPath = whichSync('pandoc')
   if (!pandocPath) return
   const supported = new Set(
