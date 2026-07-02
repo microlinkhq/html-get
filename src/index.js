@@ -244,21 +244,29 @@ const defaultGetTemporalFile = (input, ext) => {
   return { path: filepath }
 }
 
-// use execFileSync (no shell) to resolve the binary path: faster than execSync
-// and free of any interpolation surface.
+// Resolve a binary path once and cache it: html-get owns the pandoc/mutool
+// lookup, so both the internal runners and the exposed accessors share a single
+// `which` per binary for the whole process. execFileSync (no shell) is faster
+// than execSync and free of any interpolation surface.
+const whichCache = new Map()
 const whichSync = bin => {
-  try {
-    return execFileSync('which', [bin], {
-      stdio: ['pipe', 'pipe', 'ignore']
-    })
-      .toString()
-      .trim()
-  } catch (_) {}
+  if (!whichCache.has(bin)) {
+    let resolved
+    try {
+      resolved = execFileSync('which', [bin], {
+        stdio: ['pipe', 'pipe', 'ignore']
+      })
+        .toString()
+        .trim()
+    } catch (_) {}
+    whichCache.set(bin, resolved)
+  }
+  return whichCache.get(bin)
 }
 
-// probe the binary once, not per request: the default runners are wired as
-// default parameters (evaluated on every call), so memoizeOne keeps the probe
-// (`which` and, for pandoc, `--list-input-formats`) from re-spawning each time.
+// The default runners are wired as default parameters (evaluated on every
+// call), so memoizeOne builds each runner once instead of re-running the pandoc
+// `--list-input-formats` probe and rebuilding the closure per request.
 const defaultMutool = memoizeOne(() => {
   const mutoolPath = whichSync('mutool')
   if (!mutoolPath) return
@@ -420,3 +428,9 @@ module.exports.isFetchMode = isFetchMode
 module.exports.getContent = getContent
 module.exports.defaultMutool = defaultMutool
 module.exports.defaultPandoc = defaultPandoc
+
+// html-get already resolves pandoc for office conversion; expose the cached
+// path so a consumer (e.g. the microlink api markdown pipeline) reuses it
+// instead of running its own `which pandoc`. Returns undefined when pandoc is
+// not installed. Lazy: nothing runs until first call.
+module.exports.getPandocPath = () => whichSync('pandoc')
