@@ -29,8 +29,7 @@ const UNSUPPORTED = {
   odp: 'application/vnd.oasis.opendocument.presentation'
 }
 
-const officeFixture = name =>
-  fs.readFileSync(path.join(__dirname, 'fixtures', 'office', name))
+const officeFixture = name => fs.readFileSync(path.join(__dirname, 'fixtures', 'office', name))
 
 // --- unit: format detection ---
 
@@ -57,14 +56,8 @@ test('getOfficeFormat falls back to the url extension', t => {
 
 test('an explicit web content-type is not overridden by the url extension', t => {
   // HTML/media served at a .docx vanity URL stays a web page, not an office doc
-  t.is(
-    getOfficeFormat({ contentType: 'text/html', url: 'https://x.com/a.docx' }),
-    undefined
-  )
-  t.is(
-    getOfficeFormat({ contentType: 'image/png', url: 'https://x.com/a.xlsx' }),
-    undefined
-  )
+  t.is(getOfficeFormat({ contentType: 'text/html', url: 'https://x.com/a.docx' }), undefined)
+  t.is(getOfficeFormat({ contentType: 'image/png', url: 'https://x.com/a.xlsx' }), undefined)
 })
 
 test('a mislabeled binary content-type still resolves by extension', t => {
@@ -187,83 +180,68 @@ test.serial('epub is converted to HTML', async t => {
   t.true(cheerio.load(html).text().includes('Lorem ipsum'))
 })
 
-test.serial(
-  'detects format by extension when content-type is generic',
-  async t => {
-    const { html, stats } = await convert(t, {
-      file: 'sample.docx',
-      contentType: 'application/octet-stream'
-    })
-    t.is(stats.mode, 'fetch')
-    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-  }
-)
+test.serial('detects format by extension when content-type is generic', async t => {
+  const { html, stats } = await convert(t, {
+    file: 'sample.docx',
+    contentType: 'application/octet-stream'
+  })
+  t.is(stats.mode, 'fetch')
+  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+})
 
-test.serial(
-  'extension fallback uses the final url after a redirect',
-  async t => {
-    // octet-stream + extension only on the redirected URL: detection must look at
-    // res.url, not the original request url
-    const base = await runServer(t, (req, res) => {
-      if (req.url.endsWith('.docx')) {
-        res.setHeader('content-type', 'application/octet-stream')
-        return res.end(officeFixture('sample.docx'))
-      }
-      res.writeHead(302, { location: '/redirected.docx' })
-      res.end()
-    })
+test.serial('extension fallback uses the final url after a redirect', async t => {
+  // octet-stream + extension only on the redirected URL: detection must look at
+  // res.url, not the original request url
+  const base = await runServer(t, (req, res) => {
+    if (req.url.endsWith('.docx')) {
+      res.setHeader('content-type', 'application/octet-stream')
+      return res.end(officeFixture('sample.docx'))
+    }
+    res.writeHead(302, { location: '/redirected.docx' })
+    res.end()
+  })
 
-    const { html, stats } = await getHTML(`${base}download`, {
-      prerender: false
-    })
-    t.is(stats.mode, 'fetch')
-    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-  }
-)
+  const { html, stats } = await getHTML(`${base}download`, {
+    prerender: false
+  })
+  t.is(stats.mode, 'fetch')
+  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+})
 
-test.serial(
-  'extension fallback survives redirect to an extensionless target',
-  async t => {
-    // original url has the .docx extension, redirect target is extensionless
-    // octet-stream: detection must fall back to the original request url
-    const base = await runServer(t, (req, res) => {
-      if (req.url.includes('download')) {
-        res.setHeader('content-type', 'application/octet-stream')
-        return res.end(officeFixture('sample.docx'))
-      }
-      res.writeHead(302, { location: '/download' })
-      res.end()
-    })
+test.serial('extension fallback survives redirect to an extensionless target', async t => {
+  // original url has the .docx extension, redirect target is extensionless
+  // octet-stream: detection must fall back to the original request url
+  const base = await runServer(t, (req, res) => {
+    if (req.url.includes('download')) {
+      res.setHeader('content-type', 'application/octet-stream')
+      return res.end(officeFixture('sample.docx'))
+    }
+    res.writeHead(302, { location: '/download' })
+    res.end()
+  })
 
-    const { html, stats } = await getHTML(`${base}sample.docx`, {
-      getBrowserless: () => getBrowserContext(t)
-    })
-    t.is(stats.mode, 'fetch')
-    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-  }
-)
+  const { html, stats } = await getHTML(`${base}sample.docx`, {
+    getBrowserless: () => getBrowserContext(t)
+  })
+  t.is(stats.mode, 'fetch')
+  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+})
 
-test.serial(
-  'office file mislabeled as application/pdf is converted by pandoc',
-  async t => {
-    const { html, stats } = await convert(t, {
-      file: 'sample.docx',
-      contentType: 'application/pdf'
-    })
-    t.is(stats.mode, 'fetch')
-    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-  }
-)
+test.serial('office file mislabeled as application/pdf is converted by pandoc', async t => {
+  const { html, stats } = await convert(t, {
+    file: 'sample.docx',
+    contentType: 'application/pdf'
+  })
+  t.is(stats.mode, 'fetch')
+  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+})
 
-test.serial(
-  'detects format by content-type when the url has no extension',
-  async t => {
-    const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
-    // no extension on the url: fetch mode is forced, content-type drives detection
-    const { html } = await getHTML(baseUrl.toString(), { prerender: false })
-    t.true(cheerio.load(html).text().includes('Lorem ipsum'))
-  }
-)
+test.serial('detects format by content-type when the url has no extension', async t => {
+  const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
+  // no extension on the url: fetch mode is forced, content-type drives detection
+  const { html } = await getHTML(baseUrl.toString(), { prerender: false })
+  t.true(cheerio.load(html).text().includes('Lorem ipsum'))
+})
 
 test.serial('falls back when pandoc returns empty output', async t => {
   const { html } = await convert(t, {
@@ -292,57 +270,67 @@ test.serial('falls back when pandoc does not support the format', async t => {
   t.true(html.length > 0)
 })
 
-test.serial(
-  'defaultPandoc skips formats the installed pandoc cannot read',
-  async t => {
-    // exercises the real `--list-input-formats` probe, which the mock-injection
-    // tests above bypass
-    const pandoc = getHTML.defaultPandoc()
-    if (!pandoc) return t.pass('pandoc not installed in this environment')
+test.serial('defaultPandoc skips formats the installed pandoc cannot read', async t => {
+  // exercises the real `--list-input-formats` probe, which the mock-injection
+  // tests above bypass
+  const pandoc = getHTML.defaultPandoc()
+  if (!pandoc) return t.pass('pandoc not installed in this environment')
 
-    const file = path.join(__dirname, 'fixtures', 'office', 'sample.docx')
+  const file = path.join(__dirname, 'fixtures', 'office', 'sample.docx')
 
-    // a supported format is converted
-    const html = await pandoc('docx', file)
-    t.true(typeof html === 'string' && html.includes('Lorem ipsum'))
+  // a supported format is converted
+  const html = await pandoc('docx', file)
+  t.true(typeof html === 'string' && html.includes('Lorem ipsum'))
 
-    // a format the installed pandoc cannot read (legacy OLE .doc) is skipped,
-    // returning undefined instead of empty/garbage output, and never throws
-    t.is(await pandoc('doc', file), undefined)
-  }
-)
+  // a format the installed pandoc cannot read (legacy OLE .doc) is skipped,
+  // returning undefined instead of empty/garbage output, and never throws
+  t.is(await pandoc('doc', file), undefined)
+})
 
 test.serial('defaultPandoc probes the binary once', async t => {
   // memoized: repeated calls return the same runner rather than re-spawning
   t.is(getHTML.defaultPandoc(), getHTML.defaultPandoc())
 })
 
-test.serial(
-  'a broken pandoc probe disables conversion instead of throwing',
-  t => {
-    // pandoc is on PATH but `--list-input-formats` fails: the probe must swallow
-    // it and disable conversion, not throw out of the default-parameter evaluation
-    // and break every getHTML call
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pandoc-probe-'))
-    fs.writeFileSync(path.join(dir, 'pandoc'), '#!/bin/sh\nexit 1\n', {
-      mode: 0o755
-    })
-
-    const originalPath = process.env.PATH
-    process.env.PATH = dir + path.delimiter + originalPath
-
-    // fresh module so memoizeOne re-probes with the broken pandoc on PATH
-    delete require.cache[require.resolve('..')]
-    const fresh = require('..')
-
+for (const [bin, accessor] of [
+  ['pandoc', 'getPandocPath'],
+  ['mutool', 'getMutoolPath']
+]) {
+  test.serial(`${accessor} exposes the resolved ${bin} path`, t => {
+    let expected
     try {
-      t.is(fresh.defaultPandoc(), undefined)
-    } finally {
-      process.env.PATH = originalPath
-      delete require.cache[require.resolve('..')]
-    }
+      expected = require('child_process')
+        .execFileSync('which', [bin], { stdio: ['pipe', 'pipe', 'ignore'] })
+        .toString()
+        .trim()
+    } catch (_) {} // binary not installed -> undefined, must match
+    t.is(getHTML[accessor](), expected)
+  })
+}
+
+test.serial('a broken pandoc probe disables conversion instead of throwing', t => {
+  // pandoc is on PATH but `--list-input-formats` fails: the probe must swallow
+  // it and disable conversion, not throw out of the default-parameter evaluation
+  // and break every getHTML call
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pandoc-probe-'))
+  fs.writeFileSync(path.join(dir, 'pandoc'), '#!/bin/sh\nexit 1\n', {
+    mode: 0o755
+  })
+
+  const originalPath = process.env.PATH
+  process.env.PATH = dir + path.delimiter + originalPath
+
+  // fresh module so memoizeOne re-probes with the broken pandoc on PATH
+  delete require.cache[require.resolve('..')]
+  const fresh = require('..')
+
+  try {
+    t.is(fresh.defaultPandoc(), undefined)
+  } finally {
+    process.env.PATH = originalPath
+    delete require.cache[require.resolve('..')]
   }
-)
+})
 
 test.serial('disable if `pandoc` is not installed', async t => {
   const { html } = await convert(t, {
@@ -354,22 +342,19 @@ test.serial('disable if `pandoc` is not installed', async t => {
   t.false(cheerio.load(html).text().includes('Lorem ipsum'))
 })
 
-test.serial(
-  'unsupported office formats pass through without conversion or crashing',
-  async t => {
-    // real demo files for legacy (.doc/.xls/.ppt) and ODF sheet/presentation
-    // (.ods/.odp): Pandoc can't read them, so they must be left untouched, not
-    // fed to pandoc and not throw
-    for (const [ext, contentType] of Object.entries(UNSUPPORTED)) {
-      const baseUrl = await serveOffice(t, `sample.${ext}`, contentType)
-      const { html, stats } = await getHTML(`${baseUrl}sample.${ext}`, {
-        prerender: false
-      })
-      t.is(stats.mode, 'fetch', ext)
-      t.is(typeof html, 'string', ext)
-      // pandoc's standalone output carries this marker; its absence proves the
-      // file was never converted
-      t.false(html.includes('name="generator" content="pandoc"'), ext)
-    }
+test.serial('unsupported office formats pass through without conversion or crashing', async t => {
+  // real demo files for legacy (.doc/.xls/.ppt) and ODF sheet/presentation
+  // (.ods/.odp): Pandoc can't read them, so they must be left untouched, not
+  // fed to pandoc and not throw
+  for (const [ext, contentType] of Object.entries(UNSUPPORTED)) {
+    const baseUrl = await serveOffice(t, `sample.${ext}`, contentType)
+    const { html, stats } = await getHTML(`${baseUrl}sample.${ext}`, {
+      prerender: false
+    })
+    t.is(stats.mode, 'fetch', ext)
+    t.is(typeof html, 'string', ext)
+    // pandoc's standalone output carries this marker; its absence proves the
+    // file was never converted
+    t.false(html.includes('name="generator" content="pandoc"'), ext)
   }
-)
+})
