@@ -86,7 +86,10 @@ const fetch = PCancelable.fn(
         if (officeFormat) {
           const file = getTemporalFile(res.url, officeFormat)
           await writeFile(file.path, res.body)
-          return pandoc(officeFormat, file.path)
+          try {
+            const converted = await pandoc(officeFormat, file.path)
+            if (converted) return converted
+          } catch (_) {}
         }
 
         return contentType === 'text/html' || !isMediaUrl(url)
@@ -273,11 +276,20 @@ const defaultPandoc = () =>
       })
         .toString()
         .trim()
+      const supported = new Set(
+        execSync(`${pandocPath} --list-input-formats`, {
+          stdio: ['pipe', 'pipe', 'ignore']
+        })
+          .toString()
+          .trim()
+          .split(/\s+/)
+      )
       return async (format, filepath) => {
+        if (!supported.has(format)) return
         const { stdout } = await $(
           `${pandocPath} --from=${format} --to=html --standalone --embed-resources ${filepath}`
         )
-        return stdout
+        return stdout.trim() ? stdout : undefined
       }
     } catch (_) {}
   })()

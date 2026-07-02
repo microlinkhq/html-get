@@ -264,6 +264,33 @@ test.serial(
   }
 )
 
+test.serial('falls back when pandoc returns empty output', async t => {
+  const { html } = await convert(t, {
+    file: 'sample.docx',
+    contentType: CONTENT_TYPE.docx,
+    opts: {
+      pandoc: async () => ''
+    }
+  })
+  t.false(cheerio.load(html).text().includes('Lorem ipsum'))
+  t.false(html.includes('name="generator" content="pandoc"'))
+  t.true(html.length > 0)
+})
+
+test.serial('falls back when pandoc does not support the format', async t => {
+  const { html } = await convert(t, {
+    file: 'sample.xlsx',
+    contentType: CONTENT_TYPE.xlsx,
+    opts: {
+      pandoc: async format => {
+        t.is(format, 'xlsx')
+      }
+    }
+  })
+  t.false(html.includes('name="generator" content="pandoc"'))
+  t.true(html.length > 0)
+})
+
 test.serial('disable if `pandoc` is not installed', async t => {
   const { html } = await convert(t, {
     file: 'sample.docx',
