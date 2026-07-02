@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.25.0 (2026-07-02)
+
+
+### Features
+
+* expose getPandocPath/getMutoolPath to reuse resolved binary paths ([#266](https://github.com/microlinkhq/html-get/issues/266)) ([f459ce1](https://github.com/microlinkhq/html-get/commit/f459ce11f6dba33d14a0d6b5f15202e2dbb6a0d5))
+
 ### 2.24.11 (2026-07-02)
 
 
