@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.26.0 (2026-07-03)
+
+
+### Features
+
+* **auto-domains:** fetch-mode houzz to surface 429 block ([#267](https://github.com/microlinkhq/html-get/issues/267)) ([a1845d9](https://github.com/microlinkhq/html-get/commit/a1845d9090fb48f5501ed2ee0090660dad4466e4))
+
 ## 2.25.0 (2026-07-02)
 
 
