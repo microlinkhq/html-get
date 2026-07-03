@@ -26,6 +26,7 @@ const domains = [
   [['domainWithoutSuffix', 'github']],
   [['domainWithoutSuffix', 'gitlab']],
   [['domainWithoutSuffix', 'google']],
+  [['domainWithoutSuffix', 'houzz']],
   [['domainWithoutSuffix', 'huffingtonpost']],
   [['domainWithoutSuffix', 'imdb']],
   [['domainWithoutSuffix', 'imgur']],
