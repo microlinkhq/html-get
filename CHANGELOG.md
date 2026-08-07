@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.26.5 (2026-08-07)
+
+
+### Bug Fixes
+
+* fall back when mutool fails instead of returning empty HTML ([#272](https://github.com/microlinkhq/html-get/issues/272)) ([32202ad](https://github.com/microlinkhq/html-get/commit/32202add8fbc6224b9f40e955a01faaf48151d7e)), closes [#265](https://github.com/microlinkhq/html-get/issues/265)
+
 ### 2.26.4 (2026-08-03)
 
 ### 2.26.3 (2026-08-03)
