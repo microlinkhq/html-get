@@ -62,14 +62,24 @@ const fetch = PCancelable.fn(
         if (mutool && !officeFormat && contentType === 'application/pdf') {
           const file = getTemporalFile(url, 'pdf')
           await writeFile(file.path, res.body)
-          if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
-            const ofile = getTemporalFile(`${url}-pdf`, 'pdf')
-            await mutool(`-o ${ofile.path} ${file.path}`)
-            return readFile(ofile.path, 'utf-8')
-          } else {
-            const { stdout } = await mutool(file.path)
-            return stdout
+          try {
+            let converted
+            if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
+              const ofile = getTemporalFile(`${url}-pdf`, 'pdf')
+              await mutool(`-o ${ofile.path} ${file.path}`)
+              converted = await readFile(ofile.path, 'utf-8')
+            } else {
+              converted = (await mutool(file.path)).stdout
+            }
+            if (converted) return converted
+            debug('mutool:empty', { url: res.url })
+          } catch (error) {
+            debug('mutool:error', {
+              url: res.url,
+              message: error.message || error
+            })
           }
+          return ''
         }
 
         if (officeFormat) {
