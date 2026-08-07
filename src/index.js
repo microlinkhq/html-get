@@ -63,17 +63,16 @@ const fetch = PCancelable.fn(
           const file = getTemporalFile(url, 'pdf')
           await writeFile(file.path, res.body)
           try {
+            let converted
             if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
               const ofile = getTemporalFile(`${url}-pdf`, 'pdf')
               await mutool(`-o ${ofile.path} ${file.path}`)
-              const converted = await readFile(ofile.path, 'utf-8')
-              if (converted) return converted
-              debug('mutool:empty', { url: res.url })
+              converted = await readFile(ofile.path, 'utf-8')
             } else {
-              const { stdout } = await mutool(file.path)
-              if (stdout) return stdout
-              debug('mutool:empty', { url: res.url })
+              converted = (await mutool(file.path)).stdout
             }
+            if (converted) return converted
+            debug('mutool:empty', { url: res.url })
           } catch (error) {
             debug('mutool:error', {
               url: res.url,
