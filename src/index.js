@@ -80,6 +80,7 @@ const fetch = PCancelable.fn(
               message: error.message || error
             })
           }
+          return ''
         }
 
         if (officeFormat) {

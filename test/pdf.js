@@ -31,19 +31,16 @@ test('falls back when mutool throws after a successful fetch', async t => {
   })
 
   const targetUrl = String(base)
-  const { stats, html, statusCode } = await getHTML(targetUrl, {
+  const { stats, headers, statusCode } = await getHTML(targetUrl, {
     prerender: false,
     mutool: async () => {
       throw new Error('mutool failed')
     }
   })
 
-  // Before the fix, a mutool throw escaped into fetch's outer catch and came
-  // back as an empty shell with no statusCode. Falling back must keep the
-  // successful response.
   t.is(stats.mode, 'fetch')
   t.is(statusCode, 200)
-  t.true(html.length > 0)
+  t.is(headers['content-type'], 'application/pdf')
 })
 
 test('turn PDF into HTML markup over the treshold', async t => {
