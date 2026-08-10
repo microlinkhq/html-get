@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.26.7 (2026-08-10)
+
+
+### Bug Fixes
+
+* don't infer the date from response headers ([#274](https://github.com/microlinkhq/html-get/issues/274)) ([cea9616](https://github.com/microlinkhq/html-get/commit/cea9616a69e5ffe4ee65257e48fc9b7553fd5cff))
+
 ### 2.26.6 (2026-08-10)
 
 ### 2.26.5 (2026-08-07)
