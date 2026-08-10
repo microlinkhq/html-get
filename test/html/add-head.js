@@ -6,8 +6,16 @@ const createHtml = require('../../src/html')
 
 const EMPTY_HTML = '<html><head></head><body></body></html>'
 
-const head = ({ html = EMPTY_HTML, headers = {} }) =>
-  createHtml({ url: 'https://kikobeats.com', html, headers })('head').html()
+const DATE_SELECTOR = [
+  'meta[name="date" i]',
+  'meta[name="article:published_time" i]',
+  'meta[property="article:published_time" i]'
+].join(', ')
+
+const dates = ({ html = EMPTY_HTML, headers = {} }) =>
+  createHtml({ url: 'https://kikobeats.com', html, headers })(DATE_SELECTOR)
+    .map((_, el) => `${el.name}:${el.attribs.name ?? el.attribs.property}=${el.attribs.content}`)
+    .get()
 
 test('do not infer a date from response headers', t => {
   const headers = {
@@ -16,12 +24,12 @@ test('do not infer a date from response headers', t => {
     'last-modified': 'Fri, 04 Aug 2023 21:10:56 GMT'
   }
 
-  t.false(head({ headers }).includes('name="date"'))
+  t.deepEqual(dates({ headers }), [])
 })
 
 test('preserve a date present in the markup', t => {
   const html =
     '<html><head><meta name="date" content="2020-01-01T00:00:00.000Z"></head><body></body></html>'
 
-  t.true(head({ html }).includes('content="2020-01-01T00:00:00.000Z"'))
+  t.deepEqual(dates({ html }), ['meta:date=2020-01-01T00:00:00.000Z'])
 })
