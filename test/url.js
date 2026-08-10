@@ -6,9 +6,7 @@ const getHTML = require('..')
 ;[false, true].forEach(prerender => {
   const mode = prerender ? 'prerender' : 'fetch'
   test(`${mode} » as string`, async t => {
-    const url = await runServer(t, (_, res) =>
-      res.end('<!doctype html><title>.</title>')
-    )
+    const url = await runServer(t, (_, res) => res.end('<!doctype html><title>.</title>'))
     const { html } = await getHTML(url.toString(), {
       getBrowserless: () => getBrowserContext(t),
       prerender,
@@ -21,7 +19,6 @@ const getHTML = require('..')
     <html>
       <head>
         <title>.</title>
-        <meta name="date" content="{DATE}">
         <link rel="canonical" href="${url.toString()}">
       </head>
       <body></body>
@@ -30,9 +27,7 @@ const getHTML = require('..')
   })
 
   test(`${mode} » as WHATWG URL object`, async t => {
-    const url = await runServer(t, (_, res) =>
-      res.end('<!doctype html><title>.</title>')
-    )
+    const url = await runServer(t, (_, res) => res.end('<!doctype html><title>.</title>'))
     const { html } = await getHTML(url, {
       getBrowserless: () => getBrowserContext(t),
       prerender,
@@ -45,7 +40,6 @@ const getHTML = require('..')
     <html>
       <head>
         <title>.</title>
-        <meta name="date" content="{DATE}">
         <link rel="canonical" href="${url.toString()}">
       </head>
       <body></body>
