@@ -14,11 +14,8 @@ test('disable if `mutool` is not installed', async t => {
     getBrowserless: () => getBrowserContext(t)
   })
 
-  const $ = cheerio.load(html)
-  $('meta[name="date"]').remove()
-
   t.is(url, targetUrl)
-  t.snapshot(prettyHtml($.html()))
+  t.snapshot(prettyHtml(html))
   t.is(stats.mode, 'fetch')
 })
 

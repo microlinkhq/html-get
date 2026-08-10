@@ -1,7 +1,7 @@
 'use strict'
 
 const debug = require('debug-logfmt')('html-get:rewrite')
-const { get, castArray, forEach } = require('lodash')
+const { castArray, forEach } = require('lodash')
 const isLocalAddress = require('is-local-address')
 const { TAGS: URL_TAGS } = require('html-urls')
 const isHTML = require('is-html-content')
@@ -11,7 +11,7 @@ const cheerio = require('cheerio')
 const { URL } = require('url')
 const path = require('path')
 
-const { date: toDate, isMime, isUrl, mimeExtension, parseUrl } = require('@metascraper/helpers')
+const { isMime, isUrl, mimeExtension, parseUrl } = require('@metascraper/helpers')
 
 const { getContentType, getCharset } = require('./util')
 
@@ -19,25 +19,9 @@ const has = el => el.length !== 0
 
 const upsert = (el, collection, item) => !has(el) && collection.push(item)
 
-/**
- * Infer the content timestamp from the `last-modified` response header.
- *
- * `date` and `age` describe when the response was produced, not when the
- * content was authored: deriving the timestamp from them stamps every
- * dynamically served page with the moment of the request.
- */
-const getDate = headers => toDate(get(headers, 'last-modified'))
-
-const PUBLISHED_TIME_SELECTOR = [
-  'meta[name="date" i]',
-  'meta[name="article:published_time" i]',
-  'meta[property="article:published_time" i]'
-].join(', ')
-
 const addHead = ({ $, url, headers }) => {
   const tags = []
   const charset = getCharset(headers)
-  const date = getDate(headers)
   const { domain } = parseUrl(url)
   const head = $('head')
 
@@ -49,10 +33,6 @@ const addHead = ({ $, url, headers }) => {
       tags,
       `<meta property="og:site_name" content="${domain}">`
     )
-  }
-
-  if (date) {
-    upsert(head.find(PUBLISHED_TIME_SELECTOR), tags, `<meta name="date" content="${date}" />`)
   }
 
   upsert(head.find('link[rel="canonical"]'), tags, `<link rel="canonical" href="${url}">`)
@@ -216,5 +196,3 @@ module.exports = ({
 
   return rewriteUrls ? rewriteCssUrls({ $, url }) : $
 }
-
-module.exports.getDate = getDate
