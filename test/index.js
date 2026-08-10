@@ -1,7 +1,6 @@
 'use strict'
 
 const PCancelable = require('p-cancelable')
-const cheerio = require('cheerio')
 const { getBrowserContext, runServer, prettyHtml, test } = require('./helpers')
 const getHTML = require('..')
 
@@ -122,8 +121,7 @@ test('unreachable URL', async t => {
 })
 
 test('from audio URL', async t => {
-  const targetUrl =
-    'https://audiodemos.github.io/vctk_set0/embedadapt_100sample.wav'
+  const targetUrl = 'https://audiodemos.github.io/vctk_set0/embedadapt_100sample.wav'
   const { url, stats, html } = await getHTML(targetUrl, {
     getBrowserless: () => getBrowserContext(t),
     prerender: false
@@ -143,10 +141,7 @@ test('from image URL', async t => {
   t.is(stats.mode, 'fetch')
   t.is(url, targetUrl)
 
-  const $ = cheerio.load(html)
-  $('meta[name="date"]').remove()
-
-  t.snapshot(prettyHtml($.html()))
+  t.snapshot(prettyHtml(html))
 })
 
 test('from SVG image URL', async t => {

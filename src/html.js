@@ -1,7 +1,7 @@
 'use strict'
 
 const debug = require('debug-logfmt')('html-get:rewrite')
-const { get, castArray, forEach } = require('lodash')
+const { castArray, forEach } = require('lodash')
 const isLocalAddress = require('is-local-address')
 const { TAGS: URL_TAGS } = require('html-urls')
 const isHTML = require('is-html-content')
@@ -11,13 +11,7 @@ const cheerio = require('cheerio')
 const { URL } = require('url')
 const path = require('path')
 
-const {
-  date: toDate,
-  isMime,
-  isUrl,
-  mimeExtension,
-  parseUrl
-} = require('@metascraper/helpers')
+const { isMime, isUrl, mimeExtension, parseUrl } = require('@metascraper/helpers')
 
 const { getContentType, getCharset } = require('./util')
 
@@ -25,20 +19,9 @@ const has = el => el.length !== 0
 
 const upsert = (el, collection, item) => !has(el) && collection.push(item)
 
-/**
- * Infer timestamp from `last-modified`, `date`, or `age` response headers.
- */
-const getDate = headers => {
-  const timestamp = get(headers, 'last-modified') || get(headers, 'date')
-  return timestamp
-    ? toDate(timestamp)
-    : toDate(Date.now() - Number(get(headers, 'age')) * 1000)
-}
-
 const addHead = ({ $, url, headers }) => {
   const tags = []
   const charset = getCharset(headers)
-  const date = getDate(headers)
   const { domain } = parseUrl(url)
   const head = $('head')
 
@@ -52,19 +35,7 @@ const addHead = ({ $, url, headers }) => {
     )
   }
 
-  if (date) {
-    upsert(
-      head.find('meta[property="article:published_time"]'),
-      tags,
-      `<meta name="date" content="${date}" />`
-    )
-  }
-
-  upsert(
-    head.find('link[rel="canonical"]'),
-    tags,
-    `<link rel="canonical" href="${url}">`
-  )
+  upsert(head.find('link[rel="canonical"]'), tags, `<link rel="canonical" href="${url}">`)
 
   if (charset) {
     upsert(head.find('meta[charset]'), tags, `<meta charset="${charset}">`)
@@ -90,8 +61,7 @@ const addBody = ({ url, headers, html }) => {
   return `<!DOCTYPE html><html><head></head><body>${element}</body></html>`
 }
 
-const isOpenGraph = (prop = '') =>
-  ['og:', 'fb:', 'al:'].some(prefix => prop.startsWith(prefix))
+const isOpenGraph = (prop = '') => ['og:', 'fb:', 'al:'].some(prefix => prop.startsWith(prefix))
 
 const rewriteMetaTags = ({ $ }) => {
   $('meta').each((_, element) => {
@@ -133,22 +103,16 @@ const rewriteHtmlUrls = ({ $, url }) => {
 }
 
 const replaceCssUrls = (url, stylesheet) => {
-  const cssUrls = Array.from(execall(cssUrl(), stylesheet)).reduce(
-    (acc, match) => {
-      match.subMatches.forEach(match => acc.add(match))
-      return acc
-    },
-    new Set()
-  )
+  const cssUrls = Array.from(execall(cssUrl(), stylesheet)).reduce((acc, match) => {
+    match.subMatches.forEach(match => acc.add(match))
+    return acc
+  }, new Set())
 
   cssUrls.forEach(cssUrl => {
     if (/^(?:https?|data):/.test(cssUrl)) return
     try {
       const absoluteUrl = new URL(cssUrl, url).toString()
-      stylesheet = stylesheet.replaceAll(
-        `url(${cssUrl})`,
-        `url(${absoluteUrl})`
-      )
+      stylesheet = stylesheet.replaceAll(`url(${cssUrl})`, `url(${absoluteUrl})`)
     } catch (_) {}
   })
 
@@ -158,9 +122,7 @@ const replaceCssUrls = (url, stylesheet) => {
 const rewriteCssUrls = ({ $, url }) => {
   // Process <style> tags
   // e.g., <style>body { background-image: url('/image.jpg'); }</style>
-  $('style').each((_, element) =>
-    $(element).html(replaceCssUrls(url, $(element).html()))
-  )
+  $('style').each((_, element) => $(element).html(replaceCssUrls(url, $(element).html())))
 
   // Process elements with style attributes
   // e.g., <div style="background-image: url('/image.jpg');"></div>
@@ -189,8 +151,7 @@ const injectScripts = ({ $, scripts, type }) =>
     )
   )
 
-const addDocType = html =>
-  html.startsWith('<!') ? html : `<!DOCTYPE html>${html}`
+const addDocType = html => (html.startsWith('<!') ? html : `<!DOCTYPE html>${html}`)
 
 module.exports = ({
   html,
@@ -204,9 +165,7 @@ module.exports = ({
   scripts,
   modules
 }) => {
-  const content = addDocType(
-    isHTML(html) ? html : addBody({ url, headers, html })
-  )
+  const content = addDocType(isHTML(html) ? html : addBody({ url, headers, html }))
 
   const $ = cheerio.load(content)
 
@@ -237,5 +196,3 @@ module.exports = ({
 
   return rewriteUrls ? rewriteCssUrls({ $, url }) : $
 }
-
-module.exports.getDate = getDate
