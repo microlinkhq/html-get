@@ -185,6 +185,15 @@ const prerender = PCancelable.fn(
       )
 
       const payload = await getPayload(url, opts)
+      // page.content() succeeds on 4xx/5xx challenge pages; only cancel
+      // fetch when prerender is actually usable, otherwise keep a 2xx/3xx fetch.
+      if (payload.statusCode >= 400) {
+        const { isRejected, ...dataProps } = await fetchRes
+        if (!isRejected && dataProps.statusCode < 400) {
+          debug('prerender', { url, state: 'fallback', statusCode: payload.statusCode })
+          return dataProps
+        }
+      }
       await fetchRes.cancel()
       debug('prerender', { url, state: 'success' })
       return payload
