@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.26.9 (2026-08-17)
+
+
+### Bug Fixes
+
+* fall back to fetch when prerender returns 4xx ([#276](https://github.com/microlinkhq/html-get/issues/276)) ([c4b1ab4](https://github.com/microlinkhq/html-get/commit/c4b1ab432d74935e250798957017e599e6180788))
+
 ### 2.26.8 (2026-08-12)
 
 ### 2.26.7 (2026-08-10)
