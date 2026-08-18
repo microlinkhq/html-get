@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.26.10 (2026-08-18)
+
+
+### Bug Fixes
+
+* keep fetch when shadow-DOM prerender retry is 4xx ([#277](https://github.com/microlinkhq/html-get/issues/277)) ([de35952](https://github.com/microlinkhq/html-get/commit/de35952147c8941bbfeb0d90802ed0c8d2b8947b)), closes [#276](https://github.com/microlinkhq/html-get/issues/276)
+
 ### 2.26.9 (2026-08-17)
 
 
