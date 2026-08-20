@@ -430,7 +430,11 @@ module.exports = PCancelable.fn(
       // Same rule as the prerender 4xx fetch fallback: challenge HTML is
       // still a successful page.content(), so only replace a working fetch
       // when the retry is actually usable.
-      if (prerenderResult.html && prerenderResult.statusCode < 400) {
+      if (
+        prerenderResult.mode === 'prerender' &&
+        prerenderResult.html &&
+        prerenderResult.statusCode < 400
+      ) {
         ;({ mode, html, $, ...payload } = prerenderResult)
         shadowDOM = hasShadowDOM($)
       }

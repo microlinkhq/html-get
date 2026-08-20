@@ -105,6 +105,40 @@ test('auto mode does not upgrade for SVG hyphenated tags', async t => {
   t.true(result.html.includes('plain fetch content'))
 })
 
+test('auto mode keeps fetch when prerender retry falls back to a later fetch', async t => {
+  let hits = 0
+  const url = await runServer(t, (_, res) => {
+    hits++
+    res.setHeader('content-type', 'text/html')
+    if (hits === 1) return res.end(SHADOW_DOM_HTML)
+    res.end('<!doctype html><title>soft block</title>')
+  })
+
+  const blockedBrowserless = () => ({
+    evaluate: () => async () => ({
+      headers: { 'content-type': 'text/html' },
+      html: '<html><title>ERROR: The request could not be satisfied</title></html>',
+      mode: 'prerender',
+      url: String(url),
+      statusCode: 403,
+      redirects: []
+    })
+  })
+
+  const result = await getHTML(String(url), {
+    prerender: 'auto',
+    getMode: () => 'fetch',
+    getBrowserless: blockedBrowserless,
+    puppeteerOpts: { adblock: false }
+  })
+
+  t.is(result.stats.mode, 'fetch')
+  t.is(result.statusCode, 200)
+  t.true(result.html.includes('Shadow DOM Table'))
+  t.false(result.html.includes('soft block'))
+  t.false(result.html.includes('The request could not be satisfied'))
+})
+
 test('auto mode keeps fetch when prerender retry returns 4xx', async t => {
   let hits = 0
   const url = await runServer(t, (_, res) => {
