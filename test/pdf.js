@@ -1,7 +1,7 @@
 'use strict'
 
 const cheerio = require('cheerio')
-const { getBrowserContext, prettyHtml, runServer, test } = require('./helpers')
+const { getBrowserContext, runServer, test } = require('./helpers')
 const getHTML = require('..')
 
 const PDF_OVER_TRESHOLD = 'https://cdn.microlink.io/file-examples/sample.pdf'
@@ -14,8 +14,12 @@ test('disable if `mutool` is not installed', async t => {
     getBrowserless: () => getBrowserContext(t)
   })
 
+  const $ = cheerio.load(html)
   t.is(url, targetUrl)
-  t.snapshot(prettyHtml(html))
+  t.is($('title').text(), 'S A M P L E')
+  t.is($('html').attr('lang'), 'en')
+  t.is($('meta[property="og:site_name"]').attr('content'), 'Microlink')
+  t.true($('meta[name="description"]').attr('content').length > 20)
   t.is(stats.mode, 'fetch')
 })
 

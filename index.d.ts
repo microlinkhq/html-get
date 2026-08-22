@@ -97,4 +97,43 @@ export const ABORT_TYPES: string[]
  */
 export const PDF_SIZE_TRESHOLD: number
 
+export interface PdfMeta {
+  title?: string | null
+  author?: string | null
+  authors?: string | null
+  description?: string | null
+  publisher?: string | null
+  date?: string | null
+  lang?: string | null
+  image?: string | null
+  logo?: string | null
+}
+
+/** Read title, author, date, and the rest from PDF bytes. */
+export function extractPdf(input: {
+  url: string
+  pdf: ArrayBuffer | ArrayBufferView
+  maxPages?: number
+}): Promise<PdfMeta>
+
+/** `extractPdf` that returns undefined on a non-PDF or a parse error. */
+export function extractPdfSafe(
+  input: ArrayBuffer | ArrayBufferView,
+  url: string,
+  opts?: { maxPages?: number }
+): Promise<PdfMeta | undefined>
+
+/** `true` when the bytes start with `%PDF` (junk before the header is allowed). */
+export function isPdf(input: ArrayBuffer | ArrayBufferView): boolean
+
+/** `true` when `url` looks like a PDF link. */
+export function isPdfLink(url?: string): boolean
+
+/** Empty HTML document with PDF metadata stamped as meta tags. */
+export function pdfToHtml(
+  input: ArrayBuffer | ArrayBufferView,
+  url: string,
+  opts?: { maxPages?: number }
+): Promise<string>
+
 export default htmlGet
