@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.27.0 (2026-08-22)
+
+
+### Features
+
+* stamp PDF metadata into HTML ([#280](https://github.com/microlinkhq/html-get/issues/280)) ([4fc9bf8](https://github.com/microlinkhq/html-get/commit/4fc9bf8944e25ad6296d8f9ea67d001c3378ffec))
+
 ### 2.26.13 (2026-08-21)
 
 ### 2.26.12 (2026-08-20)
