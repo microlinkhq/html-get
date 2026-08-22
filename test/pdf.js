@@ -9,18 +9,19 @@ const PDF_UNDER_TRESHOLD = 'https://pdfobject.com/pdf/sample.pdf'
 
 test('disable if `mutool` is not installed', async t => {
   const targetUrl = 'https://cdn.microlink.io/file-examples/sample.pdf'
-  const { url, stats, html } = await getHTML(targetUrl, {
+  const result = await getHTML(targetUrl, {
     mutool: false,
     getBrowserless: () => getBrowserContext(t)
   })
 
-  const $ = cheerio.load(html)
-  t.is(url, targetUrl)
+  const $ = cheerio.load(result.html)
+  t.is(result.url, targetUrl)
   t.is($('title').text(), 'S A M P L E')
   t.is($('html').attr('lang'), 'en')
   t.is($('meta[property="og:site_name"]').attr('content'), 'Microlink')
   t.true($('meta[name="description"]').attr('content').length > 20)
-  t.is(stats.mode, 'fetch')
+  t.is(result.stats.mode, 'fetch')
+  t.false('pdfMeta' in result)
 })
 
 test('falls back when mutool throws after a successful fetch', async t => {

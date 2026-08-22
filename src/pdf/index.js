@@ -71,7 +71,7 @@ const withoutContext = (names, context) => {
 }
 
 const extract = async ({ url, pdf, maxPages = MAX_PAGES }) => {
-  const document = await readDocument(pdf, { maxPages })
+  const document = await readDocument(toBytes(pdf), { maxPages })
   const embedded = readEmbedded(document)
   const rawEmbedded = {
     description: document.info.Subject,

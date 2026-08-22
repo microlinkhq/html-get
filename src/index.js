@@ -355,14 +355,16 @@ const getContent = PCancelable.fn(
     onCancel(() => promise.cancel())
 
     return promise.then(content => {
+      const { pdfMeta, ...rest } = content
       const $ = addHtml({
-        ...content,
+        ...rest,
+        pdfMeta,
         ...(isFetchMode ? puppeteerOpts : undefined),
         rewriteUrls,
         rewriteHtml
       })
 
-      return { ...content, $ }
+      return { ...rest, $ }
     })
   }
 )
