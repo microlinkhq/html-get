@@ -19,19 +19,27 @@ const has = el => el.length !== 0
 
 const upsert = (el, collection, item) => !has(el) && collection.push(item)
 
-const addHead = ({ $, url, headers }) => {
+const escapeAttr = value =>
+  String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+
+const metaTag = (key, value, attr = 'name') =>
+  `<meta ${attr}="${key}" content="${escapeAttr(value)}">`
+
+const addHead = ({ $, url, headers, pdfMeta = {} }) => {
   const tags = []
   const charset = getCharset(headers)
   const { domain } = parseUrl(url)
   const head = $('head')
+  const title = pdfMeta.title || path.basename(url)
+  const siteName = pdfMeta.publisher || domain
 
-  upsert(head.find('title'), tags, `<title>${path.basename(url)}</title>`)
+  upsert(head.find('title'), tags, `<title>${escapeAttr(title)}</title>`)
 
-  if (domain) {
+  if (siteName) {
     upsert(
       head.find('meta[property="og:site_name"]'),
       tags,
-      `<meta property="og:site_name" content="${domain}">`
+      metaTag('og:site_name', siteName, 'property')
     )
   }
 
@@ -39,6 +47,23 @@ const addHead = ({ $, url, headers }) => {
 
   if (charset) {
     upsert(head.find('meta[charset]'), tags, `<meta charset="${charset}">`)
+  }
+
+  if (pdfMeta.title) tags.push(metaTag('og:title', pdfMeta.title, 'property'))
+  if (pdfMeta.author) tags.push(metaTag('author', pdfMeta.author))
+  if (pdfMeta.description) {
+    tags.push(metaTag('description', pdfMeta.description))
+    tags.push(metaTag('og:description', pdfMeta.description, 'property'))
+  }
+  if (pdfMeta.date) {
+    tags.push(metaTag('date', pdfMeta.date))
+    tags.push(metaTag('article:published_time', pdfMeta.date, 'property'))
+  }
+  if (pdfMeta.image) tags.push(metaTag('og:image', pdfMeta.image, 'property'))
+  if (pdfMeta.logo) tags.push(metaTag('og:logo', pdfMeta.logo, 'property'))
+  if (pdfMeta.lang) {
+    tags.push(metaTag('og:locale', pdfMeta.lang, 'property'))
+    $('html').attr('lang', pdfMeta.lang)
   }
 
   tags.forEach(tag => head.append(tag))
@@ -157,6 +182,7 @@ module.exports = ({
   html,
   url,
   headers = {},
+  pdfMeta,
   styles,
   hide,
   remove,
@@ -173,7 +199,7 @@ module.exports = ({
 
   if (rewriteHtml) rewriteMetaTags({ $, url })
 
-  addHead({ $, url, headers })
+  addHead({ $, url, headers, pdfMeta })
 
   if (styles) injectStyle({ $, styles })
 

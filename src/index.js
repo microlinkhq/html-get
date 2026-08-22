@@ -16,6 +16,7 @@ const os = require('os')
 
 const { getContentLength, getContentType } = require('./util')
 const { getOfficeFormat, isOfficeUrl } = require('./office')
+const { extractSafe } = require('./pdf')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
@@ -52,6 +53,7 @@ const fetch = PCancelable.fn(
     try {
       const res = await req
 
+      let pdfMeta
       const html = await (async () => {
         const contentType = getContentType(res.headers)
 
@@ -59,7 +61,9 @@ const fetch = PCancelable.fn(
 
         // a recognized office file never goes through mutool, even if the
         // response is mislabeled as application/pdf
-        if (mutool && !officeFormat && contentType === 'application/pdf') {
+        if (!officeFormat && contentType === 'application/pdf') {
+          pdfMeta = await extractSafe(res.body, res.url)
+          if (!mutool) return ''
           const file = getTemporalFile(url, 'pdf')
           await writeFile(file.path, res.body)
           try {
@@ -106,6 +110,7 @@ const fetch = PCancelable.fn(
       return {
         headers: res.headers,
         html,
+        pdfMeta,
         mode: 'fetch',
         url: res.url,
         statusCode: res.statusCode,
@@ -350,14 +355,16 @@ const getContent = PCancelable.fn(
     onCancel(() => promise.cancel())
 
     return promise.then(content => {
+      const { pdfMeta, ...rest } = content
       const $ = addHtml({
-        ...content,
+        ...rest,
+        pdfMeta,
         ...(isFetchMode ? puppeteerOpts : undefined),
         rewriteUrls,
         rewriteHtml
       })
 
-      return { ...content, $ }
+      return { ...rest, $ }
     })
   }
 )
@@ -461,3 +468,16 @@ module.exports.defaultPandoc = defaultPandoc
 // the binary is not installed. Lazy: nothing runs until first call.
 module.exports.getPandocPath = () => whichSync('pandoc')
 module.exports.getMutoolPath = () => whichSync('mutool')
+module.exports.extractPdf = require('./pdf').extract
+module.exports.extractPdfSafe = extractSafe
+module.exports.isPdf = require('./pdf').isPdf
+module.exports.isPdfLink = require('./pdf').isPdfLink
+module.exports.pdfToHtml = async (input, url, opts) => {
+  const pdfMeta = await extractSafe(input, url, opts)
+  return addHtml({
+    html: '',
+    url,
+    headers: { 'content-type': 'application/pdf' },
+    pdfMeta
+  }).html()
+}
