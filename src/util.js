@@ -11,24 +11,18 @@ const SEPARATOR = /,|\r?\n/
 
 const parseContentType = contentType => {
   if (typeof contentType !== 'string') return UNKNOWN_CONTENT_TYPE
-  try {
-    return parse(contentType.split(SEPARATOR)[0])
-  } catch {
-    return UNKNOWN_CONTENT_TYPE
-  }
+  const parsed = parse(contentType.split(SEPARATOR)[0])
+  return parsed.type?.includes('/') ? parsed : UNKNOWN_CONTENT_TYPE
 }
 
 const contentType = headers => {
   const contentType = headers['content-type']
-  return (
-    CACHE[contentType] || (CACHE[contentType] = parseContentType(contentType))
-  )
+  return CACHE[contentType] || (CACHE[contentType] = parseContentType(contentType))
 }
 
 const getContentType = headers => contentType(headers).type
 
-const getCharset = headers =>
-  contentType(headers).parameters.charset?.toLowerCase()
+const getCharset = headers => contentType(headers).parameters.charset?.toLowerCase()
 
 const getContentLength = headers => Number(headers['content-length'])
 
