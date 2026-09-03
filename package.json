@@ -52,7 +52,7 @@
     "css-url-regex": "~4.0.0",
     "debug-logfmt": "~1.4.12",
     "execall": "~2.0.0",
-    "got": "~11.8.6",
+    "got": "~16.0.0",
     "html-encode": "~2.1.15",
     "html-urls": "~2.5.0",
     "is-html-content": "~1.0.0",
