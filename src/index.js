@@ -22,6 +22,8 @@ const addHtml = require('./html')
 
 const REQ_TIMEOUT = 8000
 
+const REQ_RETRY = 0
+
 const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
 const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
@@ -29,13 +31,23 @@ const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
 const fetch = PCancelable.fn(
   async (
     url,
-    { getTemporalFile, mutool, pandoc, reflect = false, timeout = REQ_TIMEOUT, toEncode, ...opts },
+    {
+      getTemporalFile,
+      mutool,
+      pandoc,
+      reflect = false,
+      retry = REQ_RETRY,
+      timeout = REQ_TIMEOUT,
+      toEncode,
+      ...opts
+    },
     onCancel
   ) => {
     const reqTimeout = reflect ? timeout / 2 : timeout
 
     const req = got(url, {
       ...opts,
+      retry,
       timeout: reqTimeout,
       responseType: 'buffer'
     })

@@ -115,6 +115,8 @@ Type: `object`
 
 It passes configuration object to [got](https://www.npmjs.com/package/got) under `'fetch'` strategy.
 
+Retries are disabled by default (`retry: 0`). On Node.js 24.20, got v11 retrying a network error (e.g. `ENOTFOUND`, `ECONNREFUSED`) rejects with `ERR_SOCKET_CLOSED_BEFORE_CONNECTION` and then throws the original error as an uncaught exception, so pass `gotOpts.retry` only for status code retries or on an unaffected Node.js version.
+
 ##### headers
 
 Type: `object`
