@@ -115,6 +115,8 @@ Type: `object`
 
 It passes configuration object to [got](https://www.npmjs.com/package/got) under `'fetch'` strategy.
 
+`restoreEndCallback` is always appended to `hooks.beforeRequest` (see below).
+
 ##### headers
 
 Type: `object`
@@ -177,6 +179,17 @@ When is `true`, it will rewrite some common mistake related with HTML meta tags.
 It determines how HTML should be serialied before returning.
 
 It's serialized `$ => ({ html: $.html() })` by default.
+
+### getHTML.restoreEndCallback
+
+A got v11 `beforeRequest` hook. Node.js 24.20 calls `ClientRequest#end` callbacks with the error that prevented the flush ([nodejs/node#64847](https://github.com/nodejs/node/pull/64847)). got v11 turns it into an `ERR_SOCKET_CLOSED_BEFORE_CONNECTION` rejection while a retry is pending, and the retried request fails as an uncaught exception.
+
+The hook restores the previous callback contract, keeping retries and reporting the original network error. html-get applies it to its own requests; add it to any other got v11 instance that retries:
+
+```js
+const { restoreEndCallback } = require('html-get')
+const got = require('got').extend({ hooks: { beforeRequest: [restoreEndCallback] } })
+```
 
 ## License
 

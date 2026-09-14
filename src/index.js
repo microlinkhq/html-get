@@ -16,6 +16,7 @@ const os = require('os')
 
 const { getContentLength, getContentType } = require('./util')
 const { getOfficeFormat, isOfficeUrl } = require('./office')
+const { restoreEndCallback } = require('./got-hooks')
 const { extractSafe } = require('./pdf')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
@@ -25,6 +26,11 @@ const REQ_TIMEOUT = 8000
 const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
 const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
+
+const withRestoreEndCallback = (hooks = {}) => ({
+  ...hooks,
+  beforeRequest: [...(hooks.beforeRequest ?? []), restoreEndCallback]
+})
 
 const fetch = PCancelable.fn(
   async (
@@ -36,6 +42,7 @@ const fetch = PCancelable.fn(
 
     const req = got(url, {
       ...opts,
+      hooks: withRestoreEndCallback(opts.hooks),
       timeout: reqTimeout,
       responseType: 'buffer'
     })
@@ -459,6 +466,7 @@ module.exports.ABORT_TYPES = ABORT_TYPES
 module.exports.PDF_SIZE_TRESHOLD = PDF_SIZE_TRESHOLD
 module.exports.isFetchMode = isFetchMode
 module.exports.getContent = getContent
+module.exports.restoreEndCallback = restoreEndCallback
 module.exports.defaultMutool = defaultMutool
 module.exports.defaultPandoc = defaultPandoc
 
