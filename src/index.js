@@ -11,7 +11,7 @@ const htmlEncode = require('html-encode')
 const crypto = require('crypto')
 const $ = require('tinyspawn')
 const path = require('path')
-const got = require('got')
+const got = require('@kikobeats/got')
 const os = require('os')
 
 const { getContentLength, getContentType } = require('./util')
