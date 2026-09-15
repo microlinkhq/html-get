@@ -10,6 +10,7 @@ on:
 
 env:
   SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
+  pnpm_config_minimum_release_age: 0
 
 jobs:
   test:
