@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.27.2 (2026-09-15)
+
+
+### Bug Fixes
+
+* use @kikobeats/got to support Node.js 24.20 ([#286](https://github.com/microlinkhq/html-get/issues/286)) ([d23c6ce](https://github.com/microlinkhq/html-get/commit/d23c6ceebd540d409d61af8eb7203918c437b88e)), closes [nodejs/node#64847](https://github.com/nodejs/node/issues/64847)
+
 ### 2.27.1 (2026-08-24)
 
 ## 2.27.0 (2026-08-22)
