@@ -88,7 +88,7 @@
     "metascraper-manifest": "~5.58.1",
     "metascraper-publisher": "~5.56.2",
     "metascraper-title": "~5.56.2",
-    "metascraper-url": "~5.56.2",
+    "metascraper-url": "~5.58.4",
     "nano-staged": "latest",
     "pretty": "latest",
     "puppeteer": "latest",
