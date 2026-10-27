@@ -40,10 +40,7 @@ test('rewrites relative root URLs inside html markup', t => {
   const output = html({
     rewriteUrls: true,
     url: 'https://browserless.js.org',
-    html: fs.readFileSync(
-      path.resolve(__dirname, '../fixtures/browserless.html'),
-      'utf8'
-    ),
+    html: fs.readFileSync(path.resolve(__dirname, '../fixtures/browserless.html'), 'utf8'),
     headers: {
       'content-type': 'text/html; charset=utf-8'
     }
@@ -167,6 +164,94 @@ test("don't modify data URIs", t => {
   )
 
   t.snapshot(prettyHtml(output))
+})
+
+test('keeps rewriting the other url attributes on an element', t => {
+  const output = html({
+    rewriteUrls: true,
+    url: 'https://example.com/dir/page',
+    html: `
+      <a href="mailto:a@b.c" ping="/track">mail</a>
+      <a ping="/only">ping</a>
+      <a href="http://[" ping="/next">bad</a>
+      <a href="javascript:alert(1)" ping="/script">js</a>
+      <a href="/ok" ping="https://example.com/p">both</a>
+      <input type="image" src="/a.png" formaction="/submit">
+      <A HREF="/Up" PING="/upper">U</A>
+      <svg><a href="/svg">s</a><image href="/img.svg"></image></svg>
+    `,
+    headers: { 'content-type': 'text/html; charset=utf-8' }
+  })
+
+  t.true(output.includes('href="mailto:a@b.c"'))
+  t.true(output.includes('ping="https://example.com/track"'))
+  t.true(output.includes('ping="https://example.com/only"'))
+  t.true(output.includes('href="http://["'))
+  t.true(output.includes('ping="https://example.com/next"'))
+  t.true(output.includes('href="javascript:alert(1)"'))
+  t.true(output.includes('ping="https://example.com/script"'))
+  t.true(output.includes('href="https://example.com/ok"'))
+  t.true(output.includes('ping="https://example.com/p"'))
+  t.true(output.includes('src="https://example.com/a.png"'))
+  t.true(output.includes('formaction="https://example.com/submit"'))
+  t.true(output.includes('href="https://example.com/Up"'))
+  t.true(output.includes('ping="https://example.com/upper"'))
+  t.true(output.includes('href="https://example.com/svg"'))
+  t.true(output.includes('href="/img.svg"'))
+})
+
+test('removes an element when any of its url attributes is local', t => {
+  const output = html({
+    rewriteUrls: true,
+    url: 'https://example.com/dir/page',
+    html: `
+      <a href="/ok" ping="http://127.0.0.1/x">local-later</a>
+      <a href="http://localhost/x" ping="/track">local-first</a>
+      <a href="/stay">stay</a>
+      <video poster="http://127.0.0.1/p.jpg" src="/movie.mp4"></video>
+      <input type="image" src="/kept.png" formaction="http://10.0.0.1/submit">
+      <div><a href="http://192.168.0.1/a"><img src="/nested.png"></a></div>
+    `,
+    headers: { 'content-type': 'text/html; charset=utf-8' }
+  })
+
+  t.false(output.includes('local-later'))
+  t.false(output.includes('local-first'))
+  t.false(output.includes('127.0.0.1'))
+  t.false(output.includes('localhost'))
+  t.false(output.includes('10.0.0.1'))
+  t.false(output.includes('192.168.0.1'))
+  t.false(output.includes('movie.mp4'))
+  t.false(output.includes('kept.png'))
+  t.false(output.includes('nested.png'))
+  t.true(output.includes('href="https://example.com/stay"'))
+})
+
+test.serial('stops at the attribute that removes the element', t => {
+  const localPath = require.resolve('is-local-address')
+  const real = require(localPath)
+  const hosts = []
+  require.cache[localPath].exports = host => {
+    hosts.push(host)
+    return real(host)
+  }
+  const htmlPath = require.resolve('../../src/html')
+  delete require.cache[htmlPath]
+
+  try {
+    const output = require(htmlPath)({
+      rewriteUrls: true,
+      url: 'https://example.com/dir/page',
+      headers: { 'content-type': 'text/html' },
+      html: '<a href="http://127.0.0.1/a" ping="https://example.com/p">x</a>'
+    }).html()
+    t.false(output.includes('127.0.0.1'))
+    t.false(output.includes('example.com/p'))
+    t.deepEqual(hosts, ['127.0.0.1'])
+  } finally {
+    require.cache[localPath].exports = real
+    delete require.cache[htmlPath]
+  }
 })
 
 test("don't modify undefined attributes", t => {
