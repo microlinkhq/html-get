@@ -9,28 +9,15 @@ const { createHeaders } = require('../helpers')
 const contentType = createHeaders('content-type')
 
 test('return media type', t => {
-  t.is(
-    getContentType(contentType('application/pdf; charset=utf-8')),
-    'application/pdf'
-  )
-  t.is(
-    getContentType(contentType('APPLICATION/PDF; charset=utf-8')),
-    'application/pdf'
-  )
-  t.is(
-    getContentType(contentType('INVALID/TYPE; charset=utf-8')),
-    'invalid/type'
-  )
+  t.is(getContentType(contentType('application/pdf; charset=utf-8')), 'application/pdf')
+  t.is(getContentType(contentType('APPLICATION/PDF; charset=utf-8')), 'application/pdf')
+  t.is(getContentType(contentType('INVALID/TYPE; charset=utf-8')), 'invalid/type')
 })
 
 test('handle comma-duplicated content-type headers', t => {
   t.is(getContentType(contentType('text/html,text/html')), 'text/html')
   t.is(
-    getContentType(
-      contentType(
-        'application/pdf; charset=utf-8,application/pdf; charset=utf-8'
-      )
-    ),
+    getContentType(contentType('application/pdf; charset=utf-8,application/pdf; charset=utf-8')),
     'application/pdf'
   )
 })
@@ -43,4 +30,12 @@ test('return undefined for invalid media type instead of throwing', t => {
   t.is(getContentType(contentType('')), undefined)
   t.is(getContentType(contentType('not-a-media-type')), undefined)
   t.is(getContentType({}), undefined)
+})
+
+test('keep resolving after many distinct content-type headers', t => {
+  for (let i = 0; i < 5000; i++) {
+    t.is(getContentType(contentType(`text/html; boundary=${i}`)), 'text/html')
+  }
+  t.is(getContentType(contentType('application/pdf; charset=utf-8')), 'application/pdf')
+  t.is(getContentType(contentType('text/html; boundary=0')), 'text/html')
 })
