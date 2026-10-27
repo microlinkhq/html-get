@@ -3,7 +3,10 @@
 const NullProtoObj = require('null-prototype-object')
 const { parse } = require('content-type')
 
-const CACHE = new NullProtoObj()
+const CACHE_SIZE = 1000
+
+let cache = new NullProtoObj()
+let cacheSize = 0
 
 const UNKNOWN_CONTENT_TYPE = { type: undefined, parameters: {} }
 
@@ -17,7 +20,13 @@ const parseContentType = contentType => {
 
 const contentType = headers => {
   const contentType = headers['content-type']
-  return CACHE[contentType] || (CACHE[contentType] = parseContentType(contentType))
+  const cached = cache[contentType]
+  if (cached !== undefined) return cached
+  if (++cacheSize > CACHE_SIZE) {
+    cache = new NullProtoObj()
+    cacheSize = 1
+  }
+  return (cache[contentType] = parseContentType(contentType))
 }
 
 const getContentType = headers => contentType(headers).type

@@ -57,11 +57,12 @@ const fetch = PCancelable.fn(
       const html = await (async () => {
         const contentType = getContentType(res.headers)
 
-        const officeFormat = pandoc && getOfficeFormat({ contentType, url: [res.url, url] })
+        const officeFormat = getOfficeFormat({ contentType, url: [res.url, url] })
+        const convertOffice = officeFormat && (await resolvePandoc(pandoc))
 
         // a recognized office file never goes through mutool, even if the
         // response is mislabeled as application/pdf
-        if (!officeFormat && contentType === 'application/pdf') {
+        if (!convertOffice && contentType === 'application/pdf') {
           pdfMeta = await extractSafe(res.body, res.url)
           if (!mutool) return ''
           const file = getTemporalFile(url, 'pdf')
@@ -86,11 +87,11 @@ const fetch = PCancelable.fn(
           return ''
         }
 
-        if (officeFormat) {
+        if (convertOffice) {
           const file = getTemporalFile(res.url, officeFormat)
           await writeFile(file.path, res.body)
           try {
-            const converted = await pandoc(officeFormat, file.path)
+            const converted = await convertOffice(officeFormat, file.path)
             if (converted) return converted
             debug('pandoc:empty', { url: res.url, format: officeFormat })
           } catch (error) {
@@ -288,44 +289,61 @@ const whichSync = bin => {
   return whichCache.get(bin)
 }
 
-// The default runners are wired as default parameters (evaluated on every
-// call), so memoizeOne builds each runner once instead of re-running the pandoc
-// `--list-input-formats` probe and rebuilding the closure per request.
+// The default mutool runner is wired as a default parameter (evaluated on every
+// call), so memoizeOne builds it once instead of rebuilding it per request.
 const defaultMutool = memoizeOne(() => {
   const mutoolPath = whichSync('mutool')
   if (!mutoolPath) return
   return (...args) => $(`${mutoolPath} draw -q -F html ${args}`)
 })
 
+const PANDOC_LIST_FORMATS = ['--list-input-formats']
+
+const createPandoc = (pandocPath, inputFormats) => {
+  const supported = new Set(inputFormats.toString().trim().split(/\s+/))
+  return async (format, filepath) => {
+    if (!supported.has(format)) return
+    // array form keeps `filepath` a single argv entry even if it has spaces
+    const { stdout } = await $(pandocPath, [
+      `--from=${format}`,
+      '--to=html',
+      '--standalone',
+      '--embed-resources',
+      filepath
+    ])
+    return stdout.trim() ? stdout : undefined
+  }
+}
+
+// a broken/incompatible pandoc can throw while probing (or on the runner); in
+// either case conversion stays disabled instead of breaking the request
 const defaultPandoc = memoizeOne(() => {
   try {
     const pandocPath = whichSync('pandoc')
     if (!pandocPath) return
-    // a broken/incompatible pandoc can throw here (or on the runner below); in
-    // either case conversion stays disabled instead of breaking every getHTML
-    // call through the default-parameter evaluation
-    const supported = new Set(
-      execFileSync(pandocPath, ['--list-input-formats'], {
+    return createPandoc(
+      pandocPath,
+      execFileSync(pandocPath, PANDOC_LIST_FORMATS, {
         stdio: ['pipe', 'pipe', 'ignore']
       })
-        .toString()
-        .trim()
-        .split(/\s+/)
     )
-    return async (format, filepath) => {
-      if (!supported.has(format)) return
-      // array form keeps `filepath` a single argv entry even if it has spaces
-      const { stdout } = await $(pandocPath, [
-        `--from=${format}`,
-        '--to=html',
-        '--standalone',
-        '--embed-resources',
-        filepath
-      ])
-      return stdout.trim() ? stdout : undefined
-    }
   } catch (_) {}
 })
+
+// The pandoc probe spawns the binary (~30-100ms). Most processes never fetch an
+// office document, so getHTML defers it to the first one and runs it async.
+const loadDefaultPandoc = memoizeOne(async () => {
+  try {
+    const pandocPath = whichSync('pandoc')
+    if (!pandocPath) return
+    const { stdout } = await $(pandocPath, PANDOC_LIST_FORMATS)
+    return createPandoc(pandocPath, stdout)
+  } catch (_) {}
+})
+
+const DEFAULT_PANDOC = Symbol('defaultPandoc')
+
+const resolvePandoc = pandoc => (pandoc === DEFAULT_PANDOC ? loadDefaultPandoc() : pandoc)
 
 const getContent = PCancelable.fn(
   (
@@ -380,7 +398,7 @@ module.exports = PCancelable.fn(
       gotOpts,
       headers,
       mutool = defaultMutool(),
-      pandoc = defaultPandoc(),
+      pandoc = DEFAULT_PANDOC,
       prerender = 'auto',
       puppeteerOpts,
       rewriteHtml = false,

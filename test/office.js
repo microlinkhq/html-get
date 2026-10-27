@@ -332,6 +332,163 @@ test.serial('a broken pandoc probe disables conversion instead of throwing', t =
   }
 })
 
+const probeCount = log => log.split('\n').filter(line => line === '--list-input-formats').length
+
+const fakePandocScript = calls => `#!/usr/bin/env node
+const fs = require('fs')
+fs.appendFileSync(${JSON.stringify(calls)}, (process.argv[2] || '') + String.fromCharCode(10))
+if (process.argv[2] === '--list-input-formats') {
+  process.stdout.write('docx\\n')
+  process.exit(0)
+}
+process.stdout.write('<html><body>converted by fake pandoc</body></html>\\n')
+`
+
+const withFakePandoc = async (source, fn) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pandoc-lazy-'))
+  const calls = path.join(dir, 'calls')
+  fs.writeFileSync(path.join(dir, 'pandoc'), source(calls), { mode: 0o755 })
+  const originalPath = process.env.PATH
+  process.env.PATH = `${dir}${path.delimiter}${originalPath}`
+  const entry = require.resolve('..')
+  delete require.cache[entry]
+  try {
+    const fresh = require('..')
+    const readCalls = () => (fs.existsSync(calls) ? fs.readFileSync(calls, 'utf8') : '')
+    await fn(fresh, readCalls)
+  } finally {
+    process.env.PATH = originalPath
+    delete require.cache[entry]
+    fs.rmSync(dir, { recursive: true, force: true })
+  }
+}
+
+test.serial('the default pandoc is probed on the first office document, not before', async t => {
+  await withFakePandoc(fakePandocScript, async (fresh, readCalls) => {
+    const htmlUrl = await runServer(t, (_, res) => {
+      res.setHeader('content-type', 'text/html')
+      res.end('<html><body>plain page</body></html>')
+    })
+    const plain = await fresh(htmlUrl.toString(), { prerender: false })
+    t.true(plain.html.includes('plain page'))
+    t.is(readCalls(), '')
+
+    const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
+    const first = fresh(`${baseUrl}sample.docx`, { prerender: false })
+    const second = fresh(`${baseUrl}sample.docx`, { prerender: false })
+    const [office, again] = await Promise.all([first, second])
+    t.true(office.html.includes('converted by fake pandoc'))
+    t.true(again.html.includes('converted by fake pandoc'))
+    t.is(probeCount(readCalls()), 1)
+
+    const third = await fresh(`${baseUrl}sample.docx`, { prerender: false })
+    t.true(third.html.includes('converted by fake pandoc'))
+    t.is(probeCount(readCalls()), 1)
+  })
+})
+
+test.serial('an explicit pandoc does not probe the default binary', async t => {
+  await withFakePandoc(fakePandocScript, async (fresh, readCalls) => {
+    const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
+    const custom = await fresh(`${baseUrl}sample.docx`, {
+      prerender: false,
+      pandoc: async () => '<html><body>from caller</body></html>'
+    })
+    t.true(custom.html.includes('from caller'))
+    t.false(custom.html.includes('converted by fake pandoc'))
+    t.is(readCalls(), '')
+
+    const disabled = await fresh(`${baseUrl}sample.docx`, {
+      prerender: false,
+      pandoc: false
+    })
+    t.false(disabled.html.includes('from caller'))
+    t.false(disabled.html.includes('converted by fake pandoc'))
+    t.false(cheerio.load(disabled.html).text().includes('Lorem ipsum'))
+    t.is(readCalls(), '')
+  })
+})
+
+test.serial('a broken default pandoc probe leaves the office bytes in place', async t => {
+  await withFakePandoc(
+    () => '#!/bin/sh\nexit 1\n',
+    async fresh => {
+      const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
+      const { html } = await fresh(`${baseUrl}sample.docx`, { prerender: false })
+      t.true(html.length > 0)
+      t.false(html.includes('converted by fake pandoc'))
+      t.false(cheerio.load(html).text().includes('Lorem ipsum'))
+    }
+  )
+})
+
+test.serial('a missing pandoc does not spawn a probe', async t => {
+  const tinyspawnPath = require.resolve('tinyspawn')
+  const realSpawn = require(tinyspawnPath)
+  let spawns = 0
+  require.cache[tinyspawnPath].exports = (...args) => {
+    spawns++
+    return realSpawn(...args)
+  }
+
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pandoc-missing-'))
+  const originalPath = process.env.PATH
+  const entry = require.resolve('..')
+  process.env.PATH = dir
+  delete require.cache[entry]
+
+  try {
+    const fresh = require('..')
+    const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
+    const { html } = await fresh(`${baseUrl}sample.docx`, { prerender: false })
+    t.is(spawns, 0)
+    t.true(html.length > 0)
+    t.false(cheerio.load(html).text().includes('Lorem ipsum'))
+  } finally {
+    process.env.PATH = originalPath
+    require.cache[tinyspawnPath].exports = realSpawn
+    delete require.cache[entry]
+    fs.rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test.serial('a pdf-labeled office file uses mutool when pandoc is disabled', async t => {
+  let calls = 0
+  const baseUrl = await serveOffice(t, 'sample.docx', 'application/pdf')
+  const { html } = await getHTML(`${baseUrl}sample.docx`, {
+    prerender: false,
+    pandoc: false,
+    mutool: async () => {
+      calls++
+      return { stdout: '<html><body>from mutool</body></html>' }
+    }
+  })
+  t.is(calls, 1)
+  t.true(html.includes('from mutool'))
+})
+
+test.serial('pandoc disabled does not send an office document through mutool', async t => {
+  let mutoolCalls = 0
+  let temporalFiles = 0
+  const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
+  const { html } = await getHTML(`${baseUrl}sample.docx`, {
+    prerender: false,
+    pandoc: false,
+    getTemporalFile: () => {
+      temporalFiles++
+      return { path: path.join(os.tmpdir(), 'html-get-not-pandoc.docx') }
+    },
+    mutool: async () => {
+      mutoolCalls++
+      return { stdout: '<html><body>from mutool</body></html>' }
+    }
+  })
+  t.is(mutoolCalls, 0)
+  t.is(temporalFiles, 0)
+  t.false(html.includes('from mutool'))
+  t.false(cheerio.load(html).text().includes('Lorem ipsum'))
+})
+
 test.serial('disable if `pandoc` is not installed', async t => {
   const { html } = await convert(t, {
     file: 'sample.docx',
