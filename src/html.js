@@ -108,22 +108,30 @@ const rewriteMetaTags = ({ $ }) => {
   })
 }
 
+const URL_ATTRS_BY_TAG = {}
+
+forEach(URL_TAGS, (tagNames, urlAttr) =>
+  tagNames.forEach(tagName => (URL_ATTRS_BY_TAG[tagName] ||= []).push(urlAttr))
+)
+
+const URL_TAGS_SELECTOR = Object.keys(URL_ATTRS_BY_TAG).join(',')
+
 const rewriteHtmlUrls = ({ $, url }) => {
-  forEach(URL_TAGS, (tagName, urlAttr) => {
-    $(tagName.join(',')).each(function () {
-      const el = $(this)
+  $(URL_TAGS_SELECTOR).each(function () {
+    const el = $(this)
+    for (const urlAttr of URL_ATTRS_BY_TAG[this.tagName]) {
       const attr = el.attr(urlAttr)
-      if (typeof attr !== 'string') return
+      if (typeof attr !== 'string') continue
       try {
         const urlObj = new URL(attr, url)
-        if (!urlObj.protocol.startsWith('http')) return
+        if (!urlObj.protocol.startsWith('http')) continue
         if (isLocalAddress(urlObj.hostname)) {
           el.remove()
-        } else {
-          el.attr(urlAttr, urlObj.toString())
+          return
         }
+        el.attr(urlAttr, urlObj.toString())
       } catch (_) {}
-    })
+    }
   })
 }
 
