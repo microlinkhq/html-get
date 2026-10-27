@@ -332,6 +332,47 @@ test.serial('a broken pandoc probe disables conversion instead of throwing', t =
   }
 })
 
+test.serial('the default pandoc is probed on the first office document, not before', async t => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pandoc-lazy-'))
+  const calls = path.join(dir, 'calls')
+  fs.writeFileSync(
+    path.join(dir, 'pandoc'),
+    `#!/bin/sh\necho "$1" >> ${calls}\n` +
+      'if [ "$1" = "--list-input-formats" ]; then echo docx; exit 0; fi\n' +
+      'echo "<html><body>converted by fake pandoc</body></html>"\n',
+    { mode: 0o755 }
+  )
+  const readCalls = () => (fs.existsSync(calls) ? fs.readFileSync(calls, 'utf8') : '')
+
+  const originalPath = process.env.PATH
+  process.env.PATH = dir + path.delimiter + originalPath
+  delete require.cache[require.resolve('..')]
+  const fresh = require('..')
+
+  try {
+    const htmlUrl = await runServer(t, (_, res) => {
+      res.setHeader('content-type', 'text/html')
+      res.end('<html><body>plain page</body></html>')
+    })
+    const plain = await fresh(htmlUrl.toString(), { prerender: false })
+    t.true(plain.html.includes('plain page'))
+    t.is(readCalls(), '')
+
+    const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
+    const office = await fresh(`${baseUrl}sample.docx`, { prerender: false })
+    t.true(office.html.includes('converted by fake pandoc'))
+    t.is(
+      readCalls()
+        .split('\n')
+        .filter(line => line === '--list-input-formats').length,
+      1
+    )
+  } finally {
+    process.env.PATH = originalPath
+    delete require.cache[require.resolve('..')]
+  }
+})
+
 test.serial('disable if `pandoc` is not installed', async t => {
   const { html } = await convert(t, {
     file: 'sample.docx',
