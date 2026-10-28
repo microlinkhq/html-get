@@ -95,7 +95,8 @@
     "regex-iso-date": "latest",
     "simple-git-hooks": "latest",
     "standard": "latest",
-    "standard-version": "latest"
+    "standard-version": "latest",
+    "typescript": "latest"
   },
   "engines": {
     "node": ">= 22"
@@ -117,7 +118,7 @@
     "release": "standard-version -a",
     "release:github": "github-generate-release",
     "release:tags": "git push --follow-tags origin HEAD:master",
-    "test": "c8 ava"
+    "test": "tsc --noEmit --strict --module nodenext --moduleResolution nodenext --target es2022 test/types.mts && c8 ava"
   },
   "license": "MIT",
   "ava": {
