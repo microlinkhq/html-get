@@ -9,6 +9,7 @@ on:
       - master
 
 env:
+  pnpm_config_dangerously_allow_all_builds: true
   SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
   pnpm_config_minimum_release_age: 0
 
@@ -30,7 +31,7 @@ jobs:
         with:
           version: latest
       - name: Install
-        run: pnpm install --dangerously-allow-all-builds
+        run: pnpm install
       - name: Install mupdf-tools
         run: sudo apt-get install -y mupdf-tools
       - name: Install pandoc
