@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.27.16 (2026-10-29)
+
+
+### Bug Fixes
+
+* **types:** describe the CommonJS export with export = ([#307](https://github.com/microlinkhq/html-get/issues/307)) ([b7ee8f0](https://github.com/microlinkhq/html-get/commit/b7ee8f02aecefe035df7dc051361cd2e2ea1e7bd))
+
 ### 2.27.15 (2026-10-28)
 
 
