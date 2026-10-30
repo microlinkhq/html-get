@@ -26,6 +26,8 @@ const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
 const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
 
+// `URL#hash` is empty both when the fragment is missing and when it is
+// empty. An empty fragment is still present on `href`, and it must win.
 const inheritRequestFragment = (options, response) => {
   if (!options.url.href.includes('#')) options.url.hash = new URL(response.url).hash
 }
