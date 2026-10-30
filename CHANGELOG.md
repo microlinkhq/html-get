@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.27.17 (2026-10-30)
+
+
+### Bug Fixes
+
+* **fetch:** inherit the URL fragment across redirects ([#309](https://github.com/microlinkhq/html-get/issues/309)) ([b5e33f3](https://github.com/microlinkhq/html-get/commit/b5e33f3fadde53dd538cc1c20c0a3048266a0863)), closes [#209](https://github.com/microlinkhq/html-get/issues/209)
+
 ### 2.27.16 (2026-10-29)
 
 
