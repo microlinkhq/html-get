@@ -30,7 +30,7 @@ const addHead = ({ $, url, headers, pdfMeta = {} }) => {
   const charset = getCharset(headers)
   const { domain } = parseUrl(url)
   const head = $('head')
-  const title = pdfMeta.title || path.basename(url)
+  const title = pdfMeta.title || path.basename(url.split('#')[0])
   const siteName = pdfMeta.publisher || domain
 
   upsert(head.find('title'), tags, `<title>${escapeAttr(title)}</title>`)

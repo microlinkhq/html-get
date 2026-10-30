@@ -26,6 +26,10 @@ const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
 const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
 
+const inheritRequestFragment = (options, response) => {
+  if (!options.url.href.includes('#')) options.url.hash = new URL(response.url).hash
+}
+
 const fetch = PCancelable.fn(
   async (
     url,
@@ -36,6 +40,10 @@ const fetch = PCancelable.fn(
 
     const req = got(url, {
       ...opts,
+      hooks: {
+        ...opts.hooks,
+        beforeRedirect: [inheritRequestFragment].concat(opts.hooks?.beforeRedirect ?? [])
+      },
       timeout: reqTimeout,
       responseType: 'buffer'
     })
