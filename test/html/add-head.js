@@ -33,3 +33,11 @@ test('preserve a date present in the markup', t => {
 
   t.deepEqual(dates({ html }), ['meta:date=2020-01-01T00:00:00.000Z'])
 })
+
+test('do not use the fragment as fallback title', t => {
+  const title = url => createHtml({ url, html: EMPTY_HTML, headers: {} })('title').text()
+
+  t.is(title('https://kikobeats.com/image.png#hello'), 'image.png')
+  t.is(title('https://kikobeats.com/page#/route/section'), 'page')
+  t.is(title('https://kikobeats.com/#hello'), 'kikobeats.com')
+})
