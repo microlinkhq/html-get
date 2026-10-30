@@ -134,7 +134,7 @@ test('fetch » user `beforeRedirect` hooks still run after inheriting the fragme
   t.deepEqual(seen, [target])
 })
 
-test('fetch » a `beforeRedirect` hook that is not an array does not reject', async t => {
+test('fetch » a falsy `beforeRedirect` hook is ignored', async t => {
   const server = await runServer(t, (req, res) => {
     if (req.url === '/one') {
       res.statusCode = 302
@@ -143,8 +143,10 @@ test('fetch » a `beforeRedirect` hook that is not an array does not reject', as
     }
     res.end('<!doctype html><title>.</title>')
   })
-  const url = new URL('/one#hello', server).toString()
-  await t.notThrowsAsync(
-    getHTML(url, { prerender: false, gotOpts: { hooks: { beforeRedirect: false } } })
-  )
+  const { url, statusCode } = await getHTML(new URL('/one#hello', server).toString(), {
+    prerender: false,
+    gotOpts: { hooks: { beforeRedirect: false } }
+  })
+  t.is(url, new URL('/target#hello', server).toString())
+  t.is(statusCode, 200)
 })

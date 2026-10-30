@@ -42,7 +42,7 @@ const fetch = PCancelable.fn(
       ...opts,
       hooks: {
         ...opts.hooks,
-        beforeRedirect: [inheritRequestFragment].concat(opts.hooks?.beforeRedirect ?? [])
+        beforeRedirect: [inheritRequestFragment].concat(opts.hooks?.beforeRedirect || [])
       },
       timeout: reqTimeout,
       responseType: 'buffer'
