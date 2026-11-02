@@ -5,6 +5,11 @@ const { deflateSync } = require('node:zlib')
 const MIN_SIDE = 16
 const MAX_PIXELS = 400 * 400
 const MAX_LOGO_SIDE = 256
+const RGBA_CHANNELS = 4
+const PNG_COLOR_TYPE_RGBA = 6
+const PNG_BIT_DEPTH = 8
+const OPAQUE = 255
+const TRANSPARENT = 0
 
 const crcTable = new Uint32Array(256)
 for (let n = 0; n < 256; n++) {
@@ -30,10 +35,10 @@ const chunk = (type, data) => {
   return Buffer.concat([length, body, crc])
 }
 
-/** Encode raw RGB/RGBA from unpdf into a PNG data URI. node:zlib only. */
-const toPngDataUri = ({ width, height, channels, data }) => {
+/** Encode the raw RGBA pixels unpdf extracts into a PNG data URI. node:zlib only. */
+const toPngDataUri = ({ width, height, data }) => {
   const source = Buffer.from(data.buffer, data.byteOffset, data.byteLength)
-  const stride = width * channels
+  const stride = width * RGBA_CHANNELS
   const raw = Buffer.alloc((stride + 1) * height)
   for (let y = 0; y < height; y++) {
     source.copy(raw, y * (stride + 1) + 1, y * stride, y * stride + stride)
@@ -41,8 +46,8 @@ const toPngDataUri = ({ width, height, channels, data }) => {
   const ihdr = Buffer.alloc(13)
   ihdr.writeUInt32BE(width, 0)
   ihdr.writeUInt32BE(height, 4)
-  ihdr[8] = 8
-  ihdr[9] = channels === 4 ? 6 : 2
+  ihdr[8] = PNG_BIT_DEPTH
+  ihdr[9] = PNG_COLOR_TYPE_RGBA
   const png = Buffer.concat([
     Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
     chunk('IHDR', ihdr),
@@ -50,6 +55,16 @@ const toPngDataUri = ({ width, height, channels, data }) => {
     chunk('IEND', Buffer.alloc(0))
   ])
   return `data:image/png;base64,${png.toString('base64')}`
+}
+
+/** An image mask has no color of its own: unpdf paints it opaque black on transparent. */
+const isStencil = ({ data }) => {
+  for (let offset = 0; offset < data.length; offset += RGBA_CHANNELS) {
+    if (data[offset] || data[offset + 1] || data[offset + 2]) return false
+    const alpha = data[offset + 3]
+    if (alpha !== OPAQUE && alpha !== TRANSPARENT) return false
+  }
+  return true
 }
 
 const usable = images =>
@@ -60,7 +75,7 @@ const usable = images =>
       img.width >= MIN_SIDE &&
       img.height >= MIN_SIDE &&
       img.width * img.height <= MAX_PIXELS &&
-      (img.channels === 3 || img.channels === 4)
+      !isStencil(img)
   )
 
 const isLogo = img =>

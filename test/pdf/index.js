@@ -1,6 +1,8 @@
 'use strict'
 
-const { extractPdfSafe, isPdf, isPdfLink, pdfToHtml } = require('../..')
+const { inflateSync } = require('node:zlib')
+
+const { extractPdf, extractPdfSafe, isPdf, isPdfLink, pdfToHtml } = require('../..')
 const { runServer, test } = require('../helpers')
 const { createPdf } = require('./helpers')
 const { scrapePdf } = require('./scrape')
@@ -53,6 +55,61 @@ const JOURNAL = createPdf([
     size: 9
   }
 ])
+
+const JOURNAL_URL = 'https://journals.plos.org/plosone/article/file?id=10.1371/x&type=printable'
+const FIGURE_SIDE = 32
+const FIGURE_COLOR = [200, 30, 60]
+const PNG_COLOR_TYPE_RGBA = 6
+
+const decodePng = dataUri => {
+  const png = Buffer.from(dataUri.replace('data:image/png;base64,', ''), 'base64')
+  const idatLength = png.readUInt32BE(33)
+  return {
+    width: png.readUInt32BE(16),
+    height: png.readUInt32BE(20),
+    colorType: png[25],
+    scanlines: inflateSync(png.subarray(41, 41 + idatLength))
+  }
+}
+
+const PNG_FILTER_NONE = 0
+const OPAQUE = 255
+
+const solidScanlines = (side, color) => {
+  const row = [PNG_FILTER_NONE]
+  for (let column = 0; column < side; column++) row.push(...color, OPAQUE)
+  return Buffer.from(Array.from({ length: side }, () => row).flat())
+}
+
+const paperWith = image =>
+  createPdf([{ text: 'Figures of a paper', size: 14 }], {
+    images: [{ width: FIGURE_SIDE, height: FIGURE_SIDE, ...image }]
+  })
+
+test('a picture painted on the first page is the image and the logo, as RGBA', async t => {
+  const { image, logo } = await extractPdf({
+    url: JOURNAL_URL,
+    pdf: paperWith({ color: FIGURE_COLOR })
+  })
+
+  t.is(logo, image)
+  t.deepEqual(decodePng(image), {
+    width: FIGURE_SIDE,
+    height: FIGURE_SIDE,
+    colorType: PNG_COLOR_TYPE_RGBA,
+    scanlines: solidScanlines(FIGURE_SIDE, FIGURE_COLOR)
+  })
+})
+
+test('an image mask is neither the image nor the logo', async t => {
+  const { image, logo } = await extractPdf({ url: JOURNAL_URL, pdf: paperWith({ mask: true }) })
+
+  t.is(image, null)
+  t.is(
+    logo,
+    `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(JOURNAL_URL)}&sz=128`
+  )
+})
 
 test('isPdfLink only accepts a PDF url', t => {
   t.true(isPdfLink('https://arxiv.org/pdf/1706.03762v7'))

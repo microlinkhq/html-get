@@ -182,13 +182,22 @@ test('lang comes from the host or the words on the page', t => {
   )
 })
 
+const rgbaImage = (side, pixelAt) => {
+  const data = Buffer.alloc(side * side * 4)
+  for (let index = 0; index < side * side; index++) data.set(pixelAt(index), index * 4)
+  return { width: side, height: side, data }
+}
+
+const OPAQUE_BLACK = [0, 0, 0, 255]
+const TRANSPARENT = [0, 0, 0, 0]
+const SIDE = 16
+const URL = 'https://journals.plos.org/article.pdf'
+const FAVICON = `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(URL)}&sz=128`
+
 test('a small square image is the logo; otherwise the host favicon', t => {
-  const pixels = Buffer.alloc(16 * 16 * 3, 80)
-  const { image, logo } = getMedia([{ width: 16, height: 16, channels: 3, data: pixels }], {
-    url: 'https://journals.plos.org/article.pdf'
-  })
+  const { image, logo } = getMedia([rgbaImage(SIDE, () => [80, 80, 80, 255])], { url: URL })
   t.true(image.startsWith('data:image/png;base64,'))
-  t.true(logo.startsWith('data:image/png;base64,'))
+  t.is(logo, image)
 
   const fallback = getMedia([], { url: 'https://arxiv.org/pdf/x' })
   t.is(fallback.image, null)
@@ -198,4 +207,28 @@ test('a small square image is the logo; otherwise the host favicon', t => {
       'https://arxiv.org/pdf/x'
     )}&sz=128`
   )
+})
+
+test('an image mask, opaque black on transparent, is not an image', t => {
+  const stencil = rgbaImage(SIDE, index => (index % 2 ? OPAQUE_BLACK : TRANSPARENT))
+  t.deepEqual(getMedia([stencil], { url: URL }), { image: null, logo: FAVICON })
+
+  const painted = rgbaImage(SIDE, () => OPAQUE_BLACK)
+  t.deepEqual(getMedia([painted], { url: URL }), { image: null, logo: FAVICON })
+})
+
+test('a black image that is not a stencil is an image', t => {
+  const siblings = {
+    'black and white': index => (index % 2 ? OPAQUE_BLACK : [255, 255, 255, 255]),
+    'antialiased black': index => (index % 2 ? OPAQUE_BLACK : [0, 0, 0, 128]),
+    'red channel': index => (index % 2 ? OPAQUE_BLACK : [1, 0, 0, 255]),
+    'green channel': index => (index % 2 ? OPAQUE_BLACK : [0, 1, 0, 255]),
+    'blue channel': index => (index % 2 ? OPAQUE_BLACK : [0, 0, 1, 255])
+  }
+
+  for (const [name, pixelAt] of Object.entries(siblings)) {
+    const { image, logo } = getMedia([rgbaImage(SIDE, pixelAt)], { url: URL })
+    t.true(image.startsWith('data:image/png;base64,'), name)
+    t.is(logo, image, name)
+  }
 })
