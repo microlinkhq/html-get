@@ -221,9 +221,9 @@ test('a black image that is not a stencil is an image', t => {
   const siblings = {
     'black and white': index => (index % 2 ? OPAQUE_BLACK : [255, 255, 255, 255]),
     'antialiased black': index => (index % 2 ? OPAQUE_BLACK : [0, 0, 0, 128]),
-    'tinted black': index => (index % 2 ? OPAQUE_BLACK : [0, 0, 1, 255]),
-    'red channel': () => [1, 0, 0, 255],
-    'green channel': () => [0, 1, 0, 255]
+    'red channel': index => (index % 2 ? OPAQUE_BLACK : [1, 0, 0, 255]),
+    'green channel': index => (index % 2 ? OPAQUE_BLACK : [0, 1, 0, 255]),
+    'blue channel': index => (index % 2 ? OPAQUE_BLACK : [0, 0, 1, 255])
   }
 
   for (const [name, pixelAt] of Object.entries(siblings)) {
