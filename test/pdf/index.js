@@ -68,8 +68,17 @@ const decodePng = dataUri => {
     width: png.readUInt32BE(16),
     height: png.readUInt32BE(20),
     colorType: png[25],
-    firstPixel: [...inflateSync(png.subarray(41, 41 + idatLength)).subarray(1, 5)]
+    scanlines: inflateSync(png.subarray(41, 41 + idatLength))
   }
+}
+
+const PNG_FILTER_NONE = 0
+const OPAQUE = 255
+
+const solidScanlines = (side, color) => {
+  const row = [PNG_FILTER_NONE]
+  for (let column = 0; column < side; column++) row.push(...color, OPAQUE)
+  return Buffer.from(Array.from({ length: side }, () => row).flat())
 }
 
 const paperWith = image =>
@@ -88,7 +97,7 @@ test('a picture painted on the first page is the image and the logo, as RGBA', a
     width: FIGURE_SIDE,
     height: FIGURE_SIDE,
     colorType: PNG_COLOR_TYPE_RGBA,
-    firstPixel: [...FIGURE_COLOR, 255]
+    scanlines: solidScanlines(FIGURE_SIDE, FIGURE_COLOR)
   })
 })
 
