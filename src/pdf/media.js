@@ -8,6 +8,8 @@ const MAX_LOGO_SIDE = 256
 const RGBA_CHANNELS = 4
 const PNG_COLOR_TYPE_RGBA = 6
 const PNG_BIT_DEPTH = 8
+const OPAQUE = 255
+const TRANSPARENT = 0
 
 const crcTable = new Uint32Array(256)
 for (let n = 0; n < 256; n++) {
@@ -54,9 +56,6 @@ const toPngDataUri = ({ width, height, data }) => {
   ])
   return `data:image/png;base64,${png.toString('base64')}`
 }
-
-const OPAQUE = 255
-const TRANSPARENT = 0
 
 /** An image mask has no color of its own: unpdf paints it opaque black on transparent. */
 const isStencil = ({ data }) => {
