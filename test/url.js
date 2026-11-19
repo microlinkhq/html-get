@@ -257,3 +257,13 @@ test('fetch » other got hooks still run', async t => {
   t.is(failed.statusCode, 500)
   t.deepEqual(errors, [500])
 })
+
+test('fetch » a connection failure reports the requested url', async t => {
+  const url = 'http://127.0.0.1:1/'
+  const { url: resultUrl, statusCode } = await getHTML(url, {
+    prerender: false,
+    gotOpts: { retry: { limit: 0 }, timeout: { request: 1000 } }
+  })
+  t.is(resultUrl, url)
+  t.is(statusCode, undefined)
+})
