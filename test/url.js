@@ -104,6 +104,21 @@ const getHTML = require('..')
     t.deepEqual(redirects, [{ statusCode: 302, url: new URL('/blocked', server).toString() }])
   })
 
+  if (prerender) {
+    test('prerender » a browser failure reports the url that answered', async t => {
+      const server = await runRedirectServer(t)
+      const { url, statusCode, stats } = await getHTML(new URL('/blocked', server).toString(), {
+        prerender: true,
+        getBrowserless: () => {
+          throw new Error('browser down')
+        }
+      })
+      t.is(stats.mode, 'prerender')
+      t.is(statusCode, 403)
+      t.is(url, new URL('/denied', server).toString())
+    })
+  }
+
   test(`${mode} » a redirect with its own fragment replaces it`, async t => {
     const server = await runRedirectServer(t)
     const { url } = await getFragmentResult(t, new URL('/own#hello', server).toString())
