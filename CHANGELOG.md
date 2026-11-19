@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.27.21 (2026-11-19)
+
+
+### Bug Fixes
+
+* **fetch:** report the url that answered an http error ([#316](https://github.com/microlinkhq/html-get/issues/316)) ([5392bc2](https://github.com/microlinkhq/html-get/commit/5392bc26bd60cb2d874a7f0261669f8e749ccb86))
+
 ### 2.27.20 (2026-11-17)
 
 ### 2.27.19 (2026-11-06)
