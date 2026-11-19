@@ -55,13 +55,15 @@ const getHTML = require('..')
         '/own': '/target#own',
         '/empty': '/target#',
         '/empty-then-none': '/empty-mid#',
-        '/empty-mid': '/target'
+        '/empty-mid': '/target',
+        '/blocked': '/denied'
       }[req.url]
       if (location) {
         res.statusCode = 302
         res.setHeader('location', location)
         return res.end()
       }
+      if (req.url === '/denied') res.statusCode = 403
       res.setHeader('content-type', 'text/html')
       res.end('<!doctype html><title>.</title>')
     })
@@ -89,6 +91,17 @@ const getHTML = require('..')
       { statusCode: 302, url: new URL('/one#hello', server).toString() },
       { statusCode: 302, url: new URL('/two#hello', server).toString() }
     ])
+  })
+
+  test(`${mode} » a redirect to an error page reports the url that answered`, async t => {
+    const server = await runRedirectServer(t)
+    const { url, statusCode, redirects } = await getFragmentResult(
+      t,
+      new URL('/blocked', server).toString()
+    )
+    t.is(statusCode, 403)
+    t.is(url, new URL('/denied', server).toString())
+    t.deepEqual(redirects, [{ statusCode: 302, url: new URL('/blocked', server).toString() }])
   })
 
   test(`${mode} » a redirect with its own fragment replaces it`, async t => {

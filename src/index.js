@@ -132,7 +132,7 @@ const fetch = PCancelable.fn(
       return reflect
         ? { isRejected: true, error }
         : {
-            url,
+            url: error.response ? error.response.url : url,
             html: '',
             mode: 'fetch',
             headers: error.response ? error.response.headers : {},
