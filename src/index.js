@@ -129,10 +129,11 @@ const fetch = PCancelable.fn(
       }
     } catch (error) {
       debug('fetch:error', { url, message: error.message || error, reflect })
+      const finalUrl = error.response ? error.response.url : url
       return reflect
-        ? { isRejected: true, error }
+        ? { isRejected: true, error, url: finalUrl }
         : {
-            url,
+            url: finalUrl,
             html: '',
             mode: 'fetch',
             headers: error.response ? error.response.headers : {},
@@ -230,7 +231,7 @@ const prerender = PCancelable.fn(
       ? {
           headers: data.headers || {},
           html: '',
-          url,
+          url: data.url,
           mode: 'prerender',
           statusCode: data.error?.response?.statusCode,
           redirects: []
