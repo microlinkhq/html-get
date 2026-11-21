@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.27.22 (2026-11-21)
+
+
+### Bug Fixes
+
+* **prerender:** keep the headers of the http error the fetch got ([#317](https://github.com/microlinkhq/html-get/issues/317)) ([7750204](https://github.com/microlinkhq/html-get/commit/77502044d58e6e3765e885a9fa3369547dde0794))
+
 ### 2.27.21 (2026-11-19)
 
 
