@@ -260,10 +260,33 @@ test('fetch » other got hooks still run', async t => {
 
 test('fetch » a connection failure reports the requested url', async t => {
   const url = 'http://127.0.0.1:1/'
-  const { url: resultUrl, statusCode } = await getHTML(url, {
+  const {
+    url: resultUrl,
+    statusCode,
+    headers,
+    stats
+  } = await getHTML(url, {
     prerender: false,
     gotOpts: { retry: { limit: 0 }, timeout: { request: 1000 } }
   })
   t.is(resultUrl, url)
   t.is(statusCode, undefined)
+  t.is(stats.mode, 'fetch')
+  t.deepEqual(headers, {})
+})
+
+test('fetch » an http error drops the response body', async t => {
+  const server = await runServer(t, (_, res) => {
+    res.statusCode = 500
+    res.setHeader('content-type', 'application/json')
+    res.end('{"secret":true}')
+  })
+  const { stats, html, statusCode } = await getHTML(String(server), {
+    prerender: false,
+    gotOpts: { retry: { limit: 0 } }
+  })
+  t.is(stats.mode, 'fetch')
+  t.is(statusCode, 500)
+  t.false(html.includes('secret'))
+  t.true(html.includes('<pre></pre>'))
 })
