@@ -85,6 +85,30 @@ test('prerender 4xx is kept when fetch is also unsuccessful', async t => {
   t.true(html.includes('The request could not be satisfied'))
 })
 
+test('a failed prerender keeps the headers of the http error the fetch got', async t => {
+  const url = await runServer(t, (_, res) => {
+    res.statusCode = 403
+    res.setHeader('cf-mitigated', 'challenge')
+    res.setHeader('content-type', 'text/html')
+    res.end('<!doctype html><title>Canva</title>')
+  })
+
+  const emptyBrowserless = () => ({
+    evaluate: () => async () => {
+      throw new Error('empty response')
+    }
+  })
+
+  const { stats, headers, statusCode } = await getHTML(String(url), {
+    prerender: true,
+    getBrowserless: emptyBrowserless
+  })
+
+  t.is(stats.mode, 'prerender')
+  t.is(statusCode, 403)
+  t.is(headers['cf-mitigated'], 'challenge')
+})
+
 test.skip('prerender error fallback into fetch mode', async t => {
   const url =
     'https://www.sportsnet.ca/hockey/nhl/leafs-john-tavares-return-new-york-hope-positive/'

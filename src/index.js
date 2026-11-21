@@ -129,17 +129,14 @@ const fetch = PCancelable.fn(
       }
     } catch (error) {
       debug('fetch:error', { url, message: error.message || error, reflect })
-      const finalUrl = error.response ? error.response.url : url
+      const answer = {
+        url: error.response ? error.response.url : url,
+        headers: error.response ? error.response.headers : {},
+        statusCode: error.response ? error.response.statusCode : undefined
+      }
       return reflect
-        ? { isRejected: true, error, url: finalUrl }
-        : {
-            url: finalUrl,
-            html: '',
-            mode: 'fetch',
-            headers: error.response ? error.response.headers : {},
-            statusCode: error.response ? error.response.statusCode : undefined,
-            redirects
-          }
+        ? { isRejected: true, error, ...answer }
+        : { ...answer, html: '', mode: 'fetch', redirects }
     }
   }
 )
@@ -229,11 +226,11 @@ const prerender = PCancelable.fn(
 
     return isFetchResRejected
       ? {
-          headers: data.headers || {},
+          headers: data.headers,
           html: '',
           url: data.url,
           mode: 'prerender',
-          statusCode: data.error?.response?.statusCode,
+          statusCode: data.statusCode,
           redirects: []
         }
       : data
