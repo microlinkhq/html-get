@@ -57,6 +57,26 @@ withPandoc('pandoc is killed when its signal aborts', async t => {
   t.is(error.name, 'AbortError')
 })
 
+const isAlive = pid => {
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch {
+    return false
+  }
+}
+
+withPandoc('a running pandoc is killed when its signal aborts', async t => {
+  const controller = new AbortController()
+  const running = pandoc('html', '-', { signal: controller.signal, timeout: FETCH_TIMEOUT })
+  await new Promise(resolve => setTimeout(resolve, 300))
+  controller.abort()
+  const error = await t.throwsAsync(running)
+  t.is(error.name, 'AbortError')
+  await new Promise(resolve => setTimeout(resolve, 100))
+  t.false(isAlive(error.pid))
+})
+
 withMutool('mutool is killed when its signal aborts', async t => {
   const error = await t.throwsAsync(
     mutool(SAMPLE_PDF, { signal: abortedSignal(), timeout: FETCH_TIMEOUT })
