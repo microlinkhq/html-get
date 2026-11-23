@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.27.23 (2026-11-23)
+
+
+### Bug Fixes
+
+* **fetch:** kill pandoc and mutool when the fetch times out or is canceled ([#318](https://github.com/microlinkhq/html-get/issues/318)) ([4464eee](https://github.com/microlinkhq/html-get/commit/4464eeec7d8ece9206b8e5f27ad2f9c1696a8948))
+
 ### 2.27.22 (2026-11-21)
 
 
