@@ -39,6 +39,14 @@ const fetch = PCancelable.fn(
     onCancel
   ) => {
     const reqTimeout = reflect ? timeout / 2 : timeout
+    const deadline = Date.now() + reqTimeout
+    const conversion = new AbortController()
+    const convertOpts = () => ({
+      signal: conversion.signal,
+      timeout: Number.isFinite(deadline)
+        ? Math.max(Math.floor(deadline - Date.now()), 1)
+        : undefined
+    })
 
     const req = got(url, {
       ...opts,
@@ -55,6 +63,7 @@ const fetch = PCancelable.fn(
     onCancel(() => {
       debug('fetch:cancel', { url, reflect })
       req.cancel()
+      conversion.abort()
     })
 
     const redirects = []
@@ -81,10 +90,10 @@ const fetch = PCancelable.fn(
             let converted
             if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
               const ofile = getTemporalFile(`${url}-pdf`, 'pdf')
-              await mutool(`-o ${ofile.path} ${file.path}`)
+              await mutool(`-o ${ofile.path} ${file.path}`, convertOpts())
               converted = await readFile(ofile.path, 'utf-8')
             } else {
-              converted = (await mutool(file.path)).stdout
+              converted = (await mutool(file.path, convertOpts())).stdout
             }
             if (converted) return converted
             debug('mutool:empty', { url: res.url })
@@ -101,7 +110,7 @@ const fetch = PCancelable.fn(
           const file = getTemporalFile(res.url, officeFormat)
           await writeFile(file.path, res.body)
           try {
-            const converted = await convertOffice(officeFormat, file.path)
+            const converted = await convertOffice(officeFormat, file.path, convertOpts())
             if (converted) return converted
             debug('pandoc:empty', { url: res.url, format: officeFormat })
           } catch (error) {
@@ -111,6 +120,7 @@ const fetch = PCancelable.fn(
               message: error.message || error
             })
           }
+          if (conversion.signal.aborted) return ''
         }
 
         return contentType === 'text/html' || !isMediaUrl(url)
@@ -297,28 +307,28 @@ const whichSync = bin => {
   return whichCache.get(bin)
 }
 
+const spawnOptions = ({ signal, timeout } = {}) => ({ signal, timeout, killSignal: 'SIGKILL' })
+
 // The default mutool runner is wired as a default parameter (evaluated on every
 // call), so memoizeOne builds it once instead of rebuilding it per request.
 const defaultMutool = memoizeOne(() => {
   const mutoolPath = whichSync('mutool')
   if (!mutoolPath) return
-  return (...args) => $(`${mutoolPath} draw -q -F html ${args}`)
+  return (args, opts) => $(`${mutoolPath} draw -q -F html ${args}`, spawnOptions(opts))
 })
 
 const PANDOC_LIST_FORMATS = ['--list-input-formats']
 
 const createPandoc = (pandocPath, inputFormats) => {
   const supported = new Set(inputFormats.toString().trim().split(/\s+/))
-  return async (format, filepath) => {
+  return async (format, filepath, opts) => {
     if (!supported.has(format)) return
     // array form keeps `filepath` a single argv entry even if it has spaces
-    const { stdout } = await $(pandocPath, [
-      `--from=${format}`,
-      '--to=html',
-      '--standalone',
-      '--embed-resources',
-      filepath
-    ])
+    const { stdout } = await $(
+      pandocPath,
+      [`--from=${format}`, '--to=html', '--standalone', '--embed-resources', filepath],
+      spawnOptions(opts)
+    )
     return stdout.trim() ? stdout : undefined
   }
 }

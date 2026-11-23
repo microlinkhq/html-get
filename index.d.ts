@@ -31,9 +31,20 @@ declare namespace htmlGet {
     $: CheerioAPI
   }
 
-  type Pandoc = (format: string, filepath: string) => Promise<string | undefined>
+  interface ConvertOptions {
+    /** Aborted when the fetch is canceled; the default runners kill the process */
+    signal: AbortSignal
+    /** Milliseconds left of the fetch timeout, undefined when it is not a number; the default runners kill the process after it */
+    timeout?: number
+  }
 
-  type Mutool = (...args: string[]) => any
+  type Pandoc = (
+    format: string,
+    filepath: string,
+    options?: ConvertOptions
+  ) => Promise<string | undefined>
+
+  type Mutool = (args: string, options?: ConvertOptions) => any
 
   /**
    * Options for html-get

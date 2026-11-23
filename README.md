@@ -130,6 +130,8 @@ It returns a function that receives that executes [mutool](https://mupdf.com/) b
 
 It can explicitly disabled passing `false`.
 
+A custom function receives the arguments and `{ signal, timeout }`: `timeout` is what is left of the fetch timeout, and `signal` aborts when the fetch is canceled. The default runner kills mutool with `SIGKILL` on either.
+
 ##### pandoc
 
 Type: `function`|`boolean`<br>
@@ -140,6 +142,8 @@ It returns a function that executes the [pandoc](https://pandoc.org/) binary for
 The format is resolved from the response content-type, falling back to the URL extension.
 
 It can be explicitly disabled passing `false`.
+
+A custom function receives `(format, filepath, { signal, timeout })`, with the same meaning as for `mutool`. The default runner kills pandoc with `SIGKILL` on either, so a conversion never outlives its fetch: pandoc has no limit of its own, and a 4.5MB spreadsheet once took it 34s and 10.9GB.
 
 ##### prerender
 
