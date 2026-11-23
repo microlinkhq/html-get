@@ -140,6 +140,23 @@ test('mutool gets an open signal and what is left of the fetch timeout', async t
   t.true(received.timeout <= FETCH_TIMEOUT)
 })
 
+test('a pdf over the size threshold gets the output arguments and the time left', async t => {
+  let received
+  const body = Buffer.alloc(getHTML.PDF_SIZE_TRESHOLD + 1)
+  body.write('%PDF-1.4 ')
+  await getHTML(String(await serve(t, 'application/pdf', body)), {
+    prerender: false,
+    gotOpts: { timeout: FETCH_TIMEOUT },
+    mutool: async (args, opts) => {
+      received = { args, opts }
+    }
+  })
+  t.true(received.args.includes('-o '))
+  t.false(received.opts.signal.aborted)
+  t.true(received.opts.timeout > 0)
+  t.true(received.opts.timeout <= FETCH_TIMEOUT)
+})
+
 test('canceling getHTML aborts a conversion in progress', async t => {
   let converting
   const started = new Promise(resolve => {
@@ -183,6 +200,33 @@ test('a fractional fetch timeout still hands an integer timeout to the converter
     }
   })
   t.true(Number.isInteger(received.timeout))
+})
+
+test.serial('a conversion that starts after the deadline gets a 1ms timeout', async t => {
+  const start = Date.now()
+  let jump = false
+  const realNow = Date.now
+  Date.now = () => (jump ? start + 120000 : start)
+  t.teardown(() => {
+    Date.now = realNow
+  })
+  let received
+  const url = await runServer(t, (_, res) => {
+    jump = true
+    const body = fs.readFileSync(SAMPLE_XLSX)
+    res.setHeader('content-type', XLSX)
+    res.setHeader('content-length', String(body.length))
+    res.end(body)
+  })
+  await getHTML(`${url}sheet.xlsx`, {
+    prerender: false,
+    gotOpts: { timeout: FETCH_TIMEOUT },
+    pandoc: async (format, filepath, opts) => {
+      received = opts
+      return '<table></table>'
+    }
+  })
+  t.is(received.timeout, 1)
 })
 
 const encodedAfter = async (t, { cancel }) => {
