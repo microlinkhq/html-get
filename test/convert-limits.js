@@ -3,6 +3,8 @@
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
+const { promisify } = require('util')
+const execFile = promisify(require('child_process').execFile)
 
 const { runServer, test } = require('./helpers')
 const getHTML = require('..')
@@ -61,20 +63,44 @@ const isAlive = pid => {
   try {
     process.kill(pid, 0)
     return true
-  } catch {
-    return false
+  } catch (error) {
+    if (error.code === 'ESRCH') return false
+    throw error
+  }
+}
+
+const pidReading = file =>
+  execFile('pgrep', ['-f', file]).then(
+    ({ stdout }) => Number(stdout.split('\n')[0]),
+    () => undefined
+  )
+
+const waitFor = async (read, attempts = 50) => {
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    const value = await read()
+    if (value) return value
+    await new Promise(resolve => setTimeout(resolve, 20))
   }
 }
 
 withPandoc('a running pandoc is killed when its signal aborts', async t => {
+  const fifo = path.join(os.tmpdir(), `html-get-convert-limits-${process.pid}-${Date.now()}.fifo`)
+  await execFile('mkfifo', [fifo])
+  const writer = fs.openSync(fifo, fs.constants.O_RDWR)
+  t.teardown(() => {
+    fs.closeSync(writer)
+    fs.rmSync(fifo, { force: true })
+  })
   const controller = new AbortController()
-  const running = pandoc('html', '-', { signal: controller.signal, timeout: FETCH_TIMEOUT })
-  await new Promise(resolve => setTimeout(resolve, 300))
+  const running = pandoc('html', fifo, { signal: controller.signal, timeout: FETCH_TIMEOUT })
+  running.catch(() => {})
+  const pid = await waitFor(() => pidReading(fifo))
+  t.true(Number.isInteger(pid) && pid > 0)
+  t.true(isAlive(pid))
   controller.abort()
   const error = await t.throwsAsync(running)
   t.is(error.name, 'AbortError')
-  await new Promise(resolve => setTimeout(resolve, 100))
-  t.false(isAlive(error.pid))
+  t.true(await waitFor(() => !isAlive(pid)))
 })
 
 withMutool('mutool is killed when its signal aborts', async t => {
