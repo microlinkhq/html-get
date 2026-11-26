@@ -132,6 +132,10 @@ It can explicitly disabled passing `false`.
 
 A custom function receives the arguments and `{ signal, timeout }`: `timeout` is what is left of the fetch timeout, and `signal` aborts when the fetch is canceled. The default runner kills mutool with `SIGKILL` on either.
 
+The PDF is converted with `-O preserve-images=no`, because mutool otherwise inlines every image as base64: a 151MB scanned PDF of 688 pages became 232MB of HTML, and parsing it took a 7GB heap. MuPDF 1.19 accepts the option and ignores it; 1.28 honors it (the same PDF is 35MB of HTML).
+
+The PDF reader only looks at page one and skips images of more than 400x400 pixels in total, with a side under 16px, or used as stencil masks. When it finds none for `og:image`, mutool draws the PDF one page at a time, up to the first 20, and the first image it inlines in a page becomes `og:image`: the image a metadata reader picked from the inlined HTML before. A custom function receives `<file> <page>` for those calls and must resolve `{ stdout }` with mutool's HTML, whose `<div id="pageN">` tells the search which page it got; output without it ends the search.
+
 ##### pandoc
 
 Type: `function`|`boolean`<br>

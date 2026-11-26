@@ -16,7 +16,8 @@ const os = require('os')
 
 const { getContentLength, getContentType } = require('./util')
 const { getOfficeFormat, isOfficeUrl } = require('./office')
-const { extractSafe } = require('./pdf')
+const { extractSafe, isPdf } = require('./pdf')
+const { firstImage } = require('./pdf/first-image')
 const autoDomains = require('./auto-domains')
 const addHtml = require('./html')
 
@@ -25,6 +26,16 @@ const REQ_TIMEOUT = 8000
 const ABORT_TYPES = ['image', 'stylesheet', 'font']
 
 const PDF_SIZE_TRESHOLD = 150 * 1024 // 150kb
+
+const WITHOUT_IMAGES = '-O preserve-images=no'
+
+const firstImageSafe = async (filepath, url, opts) => {
+  try {
+    return await firstImage(filepath, opts)
+  } catch (error) {
+    debug('mutool:image:error', { url, message: error.message || error })
+  }
+}
 
 // `URL#hash` is empty both when the fragment is missing and when it is
 // empty. An empty fragment is still present on `href`, and it must win.
@@ -90,12 +101,22 @@ const fetch = PCancelable.fn(
             let converted
             if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
               const ofile = getTemporalFile(`${url}-pdf`, 'pdf')
-              await mutool(`-o ${ofile.path} ${file.path}`, convertOpts())
+              await mutool(`${WITHOUT_IMAGES} -o ${ofile.path} ${file.path}`, convertOpts())
               converted = await readFile(ofile.path, 'utf-8')
             } else {
-              converted = (await mutool(file.path, convertOpts())).stdout
+              converted = (await mutool(`${WITHOUT_IMAGES} ${file.path}`, convertOpts())).stdout
             }
-            if (converted) return converted
+            if (converted) {
+              if (!pdfMeta?.image && isPdf(res.body)) {
+                const image = await firstImageSafe(file.path, res.url, {
+                  mutool,
+                  convertOpts,
+                  signal: conversion.signal
+                })
+                if (image) pdfMeta = { ...pdfMeta, image }
+              }
+              return converted
+            }
             debug('mutool:empty', { url: res.url })
           } catch (error) {
             debug('mutool:error', {
