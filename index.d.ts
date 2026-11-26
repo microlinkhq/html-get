@@ -50,7 +50,7 @@ declare namespace htmlGet {
    * Options for html-get
    */
   interface HtmlGetOptions {
-    /** Milliseconds from the start of the fetch a PDF or office document may take, when longer than the fetch timeout */
+    /** Finite milliseconds from the start of the fetch a PDF or office document may take, when longer than the fetch timeout */
     documentTimeout?: number
     /** Character encoding for HTML (default: 'utf-8') */
     encoding?: string

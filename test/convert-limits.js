@@ -330,6 +330,42 @@ test('a document timeout leaves an unbounded fetch timeout unbounded', async t =
   t.is(timeout, undefined)
 })
 
+test('a non-finite document timeout keeps the fetch timeout', async t => {
+  const timeout = await timeoutOf(await servePdf(t), mutoolRunner, {
+    gotOpts: { timeout: FETCH_TIMEOUT },
+    documentTimeout: Infinity
+  })
+  t.true(timeout > 0)
+  t.true(timeout <= FETCH_TIMEOUT)
+})
+
+test('a document timeout does not lengthen the download', async t => {
+  let converted = false
+  const started = Date.now()
+  const { html } = await getHTML(
+    String(
+      await serve(
+        t,
+        'application/pdf',
+        Buffer.from('%PDF-1.4 convert-limits-fixture'),
+        SHORT_FETCH_TIMEOUT + 300
+      )
+    ),
+    {
+      prerender: false,
+      gotOpts: { timeout: SHORT_FETCH_TIMEOUT, retry: { limit: 0 } },
+      documentTimeout: DOCUMENT_TIMEOUT,
+      mutool: async () => {
+        converted = true
+        return { stdout: '<p>converted</p>' }
+      }
+    }
+  )
+  t.false(converted)
+  t.false(html.includes('converted'))
+  t.true(Date.now() - started < SHORT_FETCH_TIMEOUT + 2000)
+})
+
 const convertsWithin = (url, opts) =>
   getHTML(url, {
     prerender: false,
@@ -337,9 +373,13 @@ const convertsWithin = (url, opts) =>
     ...opts,
     mutool: (args, { timeout }) =>
       new Promise((resolve, reject) => {
-        const done = setTimeout(() => resolve({ stdout: '<p>converted</p>' }), SLOW_CONVERSION)
-        setTimeout(() => {
-          clearTimeout(done)
+        const timers = {}
+        timers.done = setTimeout(() => {
+          clearTimeout(timers.kill)
+          resolve({ stdout: '<p>converted</p>' })
+        }, SLOW_CONVERSION)
+        timers.kill = setTimeout(() => {
+          clearTimeout(timers.done)
           reject(new Error('killed at the deadline'))
         }, timeout)
       })

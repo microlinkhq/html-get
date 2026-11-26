@@ -68,7 +68,9 @@ const fetch = PCancelable.fn(
     const startedAt = Date.now()
     let deadline = startedAt + reqTimeout
     const allowDocumentTime = () => {
-      if (documentTimeout > reqTimeout) deadline = startedAt + documentTimeout
+      if (Number.isFinite(documentTimeout) && documentTimeout > reqTimeout) {
+        deadline = startedAt + documentTimeout
+      }
     }
     const conversion = new AbortController()
     const convertOpts = () => ({
