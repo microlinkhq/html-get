@@ -137,6 +137,17 @@ const inlinedImage = async name =>
     .attr('src')
     .replace(/\s+/g, '')
 
+const CLEANUP_TIMEOUT = 5000
+const CLEANUP_POLL = 10
+
+const removedWithin = async (files, timeout) => {
+  const deadline = Date.now() + timeout
+  while (files.left().length > 0 && Date.now() < deadline) {
+    await new Promise(resolve => setTimeout(resolve, CLEANUP_POLL))
+  }
+  return files.left()
+}
+
 const recordTemporalFiles = () => {
   const paths = []
   const getTemporalFile = (input, ext) => {
@@ -369,6 +380,5 @@ withMutool('the temporal files are removed when getHTML is canceled', async t =>
   })
   promise.catch(() => {})
   await t.throwsAsync(promise)
-  await new Promise(resolve => setTimeout(resolve, 100))
-  t.deepEqual(files.left(), [])
+  t.deepEqual(await removedWithin(files, CLEANUP_TIMEOUT), [])
 })
