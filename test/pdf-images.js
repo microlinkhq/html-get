@@ -153,6 +153,7 @@ withMutool('a large image the pdf reader skips is found on a later page', async 
   const { $ } = await getHTML(url, { prerender: false, mutool: spy.runner, serializeHtml })
   t.regex(ogImage($), /^data:image\/[a-z]+;base64,[A-Za-z0-9+/]+=*$/)
   t.deepEqual(spy.pageCalls(), [1, 2])
+  t.is($('meta[name="authors"]').attr('content'), undefined)
 })
 
 withMutool('the recovered image keeps the metadata the reader found', async t => {
