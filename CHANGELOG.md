@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.27.24 (2026-11-26)
+
+
+### Bug Fixes
+
+* **pdf:** convert without inlined images, read og:image page by page ([#319](https://github.com/microlinkhq/html-get/issues/319)) ([03abffa](https://github.com/microlinkhq/html-get/commit/03abffa196ec2d37269e830d3013a75964d71053))
+
 ### 2.27.23 (2026-11-23)
 
 
