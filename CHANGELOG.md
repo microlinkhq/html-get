@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.28.0 (2026-11-26)
+
+
+### Features
+
+* **fetch:** documentTimeout lets a pdf or office document convert past the fetch timeout ([#320](https://github.com/microlinkhq/html-get/issues/320)) ([9902497](https://github.com/microlinkhq/html-get/commit/9902497f497464ffa1022bd839de2622acf18c66))
+
 ### 2.27.24 (2026-11-26)
 
 
