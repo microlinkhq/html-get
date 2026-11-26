@@ -46,7 +46,16 @@ const inheritRequestFragment = (options, response) => {
 const fetch = PCancelable.fn(
   async (
     url,
-    { getTemporalFile, mutool, pandoc, reflect = false, timeout = REQ_TIMEOUT, toEncode, ...opts },
+    {
+      documentTimeout,
+      getTemporalFile,
+      mutool,
+      pandoc,
+      reflect = false,
+      timeout = REQ_TIMEOUT,
+      toEncode,
+      ...opts
+    },
     onCancel
   ) => {
     const temporalFiles = []
@@ -56,7 +65,11 @@ const fetch = PCancelable.fn(
       return file
     }
     const reqTimeout = reflect ? timeout / 2 : timeout
-    const deadline = Date.now() + reqTimeout
+    const startedAt = Date.now()
+    let deadline = startedAt + reqTimeout
+    const allowDocumentTime = () => {
+      if (documentTimeout > reqTimeout) deadline = startedAt + documentTimeout
+    }
     const conversion = new AbortController()
     const convertOpts = () => ({
       signal: conversion.signal,
@@ -99,6 +112,7 @@ const fetch = PCancelable.fn(
         // a recognized office file never goes through mutool, even if the
         // response is mislabeled as application/pdf
         if (!convertOffice && contentType === 'application/pdf') {
+          allowDocumentTime()
           pdfMeta = await extractSafe(res.body, res.url)
           if (!mutool) return ''
           const file = temporalFile(url, 'pdf')
@@ -134,6 +148,7 @@ const fetch = PCancelable.fn(
         }
 
         if (convertOffice) {
+          allowDocumentTime()
           const file = temporalFile(res.url, officeFormat)
           await writeFile(file.path, res.body)
           try {
@@ -405,6 +420,7 @@ const getContent = PCancelable.fn(
     url,
     mode,
     {
+      documentTimeout,
       getBrowserless,
       getTemporalFile,
       gotOpts,
@@ -421,7 +437,7 @@ const getContent = PCancelable.fn(
     const isFetchMode = mode === 'fetch'
 
     const fetchOpts = isFetchMode
-      ? { headers, toEncode, mutool, pandoc, getTemporalFile, ...gotOpts }
+      ? { headers, toEncode, mutool, pandoc, getTemporalFile, ...gotOpts, documentTimeout }
       : { headers, toEncode, getBrowserless, gotOpts, ...puppeteerOpts }
 
     const promise = modes[mode](url, fetchOpts)
@@ -446,6 +462,7 @@ module.exports = PCancelable.fn(
   async (
     targetUrl,
     {
+      documentTimeout,
       encoding = 'utf-8',
       getBrowserless,
       getMode = defaultGetMode,
@@ -474,6 +491,7 @@ module.exports = PCancelable.fn(
     const duration = timeSpan()
 
     const promise = getContent(targetUrl, reqMode, {
+      documentTimeout,
       getBrowserless,
       getTemporalFile,
       gotOpts,

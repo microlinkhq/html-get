@@ -264,3 +264,93 @@ test('a failed conversion falls back to the raw file', async t => {
 test('a canceled conversion does not fall back to the raw file', async t => {
   t.false(await encodedAfter(t, { cancel: true }))
 })
+
+const DOCUMENT_TIMEOUT = 60000
+const SLOW_CONVERSION = 400
+const SHORT_FETCH_TIMEOUT = 200
+
+const timeoutOf = async (url, runner, opts) => {
+  let received
+  await getHTML(url, {
+    prerender: false,
+    ...opts,
+    ...runner(received$ => {
+      received = received$
+    })
+  })
+  return received.timeout
+}
+
+const mutoolRunner = record => ({
+  mutool: async (args, opts) => {
+    record(opts)
+    return { stdout: '<p>converted</p>' }
+  }
+})
+
+const pandocRunner = record => ({
+  pandoc: async (format, filepath, opts) => {
+    record(opts)
+    return '<table></table>'
+  }
+})
+
+test('a pdf gets the document timeout when it is longer than the fetch timeout', async t => {
+  const timeout = await timeoutOf(await servePdf(t), mutoolRunner, {
+    gotOpts: { timeout: FETCH_TIMEOUT },
+    documentTimeout: DOCUMENT_TIMEOUT
+  })
+  t.true(timeout > FETCH_TIMEOUT)
+  t.true(timeout <= DOCUMENT_TIMEOUT)
+})
+
+test('an office document gets the document timeout when it is longer than the fetch timeout', async t => {
+  const timeout = await timeoutOf(await serveXlsx(t, SERVER_DELAY), pandocRunner, {
+    gotOpts: { timeout: FETCH_TIMEOUT },
+    documentTimeout: DOCUMENT_TIMEOUT
+  })
+  t.true(timeout > FETCH_TIMEOUT)
+  t.true(timeout <= DOCUMENT_TIMEOUT - SERVER_DELAY)
+})
+
+test('a document timeout shorter than the fetch timeout keeps the fetch timeout', async t => {
+  const timeout = await timeoutOf(await servePdf(t), mutoolRunner, {
+    gotOpts: { timeout: FETCH_TIMEOUT },
+    documentTimeout: FETCH_TIMEOUT / 10
+  })
+  t.true(timeout > FETCH_TIMEOUT / 10)
+  t.true(timeout <= FETCH_TIMEOUT)
+})
+
+test('a document timeout leaves an unbounded fetch timeout unbounded', async t => {
+  const timeout = await timeoutOf(await servePdf(t), mutoolRunner, {
+    gotOpts: { timeout: { request: FETCH_TIMEOUT } },
+    documentTimeout: DOCUMENT_TIMEOUT
+  })
+  t.is(timeout, undefined)
+})
+
+const convertsWithin = (url, opts) =>
+  getHTML(url, {
+    prerender: false,
+    gotOpts: { timeout: SHORT_FETCH_TIMEOUT },
+    ...opts,
+    mutool: (args, { timeout }) =>
+      new Promise((resolve, reject) => {
+        const done = setTimeout(() => resolve({ stdout: '<p>converted</p>' }), SLOW_CONVERSION)
+        setTimeout(() => {
+          clearTimeout(done)
+          reject(new Error('killed at the deadline'))
+        }, timeout)
+      })
+  })
+
+test('a conversion slower than the fetch timeout finishes within the document timeout', async t => {
+  const { html } = await convertsWithin(await servePdf(t), { documentTimeout: DOCUMENT_TIMEOUT })
+  t.true(html.includes('converted'))
+})
+
+test('without a document timeout a conversion slower than the fetch timeout is cut', async t => {
+  const { html } = await convertsWithin(await servePdf(t))
+  t.false(html.includes('converted'))
+})
