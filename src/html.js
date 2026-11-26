@@ -51,6 +51,7 @@ const addHead = ({ $, url, headers, pdfMeta = {} }) => {
 
   if (pdfMeta.title) tags.push(metaTag('og:title', pdfMeta.title, 'property'))
   if (pdfMeta.author) tags.push(metaTag('author', pdfMeta.author))
+  if (pdfMeta.authors) tags.push(metaTag('authors', pdfMeta.authors))
   if (pdfMeta.description) {
     tags.push(metaTag('description', pdfMeta.description))
     tags.push(metaTag('og:description', pdfMeta.description, 'property'))
