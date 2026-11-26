@@ -77,6 +77,14 @@ test.before(() => {
     textPage('Cover page'),
     imagePage('large.png', 'Figure page')
   ])
+  pdfs.largeImageOnPageOne = createPdf('large-image-one', [imagePage('large.png', 'Figure page')])
+  pdfs.described = createPdf('described', [
+    '%%Font F1 Helvetica\n' +
+      'BT /F1 18 Tf 72 720 Td (Cover page for the paper and the notes of the study.) Tj ET\n' +
+      'BT /F1 12 Tf 72 680 Td (Ada Lovelace) Tj ET\n' +
+      'BT /F1 11 Tf 72 640 Td (This summary explains the result of the work and why the measurement matters today.) Tj ET\n',
+    imagePage('large.png', 'Figure page')
+  ])
   pdfs.smallImageOnPageOne = createPdf('small-image', [imagePage('small.png', 'Logo page')])
   pdfs.threeTextPages = createPdf(
     'three-text',
@@ -90,12 +98,12 @@ test.before(() => {
 
 test.after.always(() => fs.rmSync(dir, { recursive: true, force: true }))
 
-const servePdf = async (t, body) =>
+const servePdf = async (t, body, name = 'doc.pdf') =>
   `${await runServer(t, (_, res) => {
     res.setHeader('content-type', 'application/pdf')
     res.setHeader('content-length', String(body.length))
     res.end(body)
-  })}doc.pdf`
+  })}${name}`
 
 const spyMutool = ({ fail } = {}) => {
   const calls = []
@@ -131,12 +139,63 @@ withMutool('a small pdf is converted without images too', async t => {
   t.false(spy.calls[0].includes(' -o '))
 })
 
+withMutool('a large image on the first page is recovered', async t => {
+  const url = await servePdf(t, pdfs.largeImageOnPageOne)
+  const spy = spyMutool()
+  const { $ } = await getHTML(url, { prerender: false, mutool: spy.runner, serializeHtml })
+  t.regex(ogImage($), /^data:image\/[a-z]+;base64,[A-Za-z0-9+/]+=*$/)
+  t.deepEqual(spy.pageCalls(), [1])
+})
+
 withMutool('a large image the pdf reader skips is found on a later page', async t => {
   const url = await servePdf(t, pdfs.largeImageOnPageTwo)
   const spy = spyMutool()
   const { $ } = await getHTML(url, { prerender: false, mutool: spy.runner, serializeHtml })
   t.regex(ogImage($), /^data:image\/[a-z]+;base64,[A-Za-z0-9+/]+=*$/)
   t.deepEqual(spy.pageCalls(), [1, 2])
+})
+
+withMutool('the recovered image keeps the metadata the reader found', async t => {
+  const url = await servePdf(t, pdfs.described, '2020/doc.pdf')
+  const { $ } = await getHTML(url, { prerender: false, serializeHtml })
+  t.regex(ogImage($), /^data:image\/[a-z]+;base64,/)
+  t.is(
+    $('meta[property="og:title"]').attr('content'),
+    'Cover page for the paper and the notes of the study.'
+  )
+  t.is($('meta[name="author"]').attr('content'), 'Ada Lovelace')
+  t.is($('meta[name="authors"]').attr('content'), 'Ada Lovelace')
+  t.is(
+    $('meta[name="description"]').attr('content'),
+    'This summary explains the result of the work and why the measurement matters today.'
+  )
+  t.truthy($('meta[property="og:site_name"]').attr('content'))
+  t.is($('meta[name="date"]').attr('content'), '2020-01-01T00:00:00.000Z')
+  t.is($('html').attr('lang'), 'en')
+  t.is($('meta[property="og:locale"]').attr('content'), 'en')
+  t.true(
+    $('meta[property="og:logo"]')
+      .attr('content')
+      .startsWith('https://www.google.com/s2/favicons?domain_url=')
+  )
+})
+
+withMutool('an empty conversion does not search pages for an image', async t => {
+  const url = await servePdf(t, pdfs.largeImageOnPageOne)
+  const calls = []
+  const runner = args => {
+    calls.push(args)
+    if (/\s\d+$/.test(args)) {
+      return Promise.resolve({
+        stdout: '<div id="page1"><img src="data:image/png;base64,aaaa"></div>'
+      })
+    }
+    if (args.includes(' -o ')) fs.writeFileSync(args.split(' -o ')[1].split(' ')[0], '')
+    return Promise.resolve({ stdout: '' })
+  }
+  const { $ } = await getHTML(url, { prerender: false, mutool: runner, serializeHtml })
+  t.is(ogImage($), undefined)
+  t.false(calls.some(args => /\s\d+$/.test(args)))
 })
 
 withMutool('the image is the one metadata readers picked from the inlined html', async t => {

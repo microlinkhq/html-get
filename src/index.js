@@ -113,7 +113,7 @@ const fetch = PCancelable.fn(
                   convertOpts,
                   signal: conversion.signal
                 })
-                if (image) pdfMeta = { ...pdfMeta, image }
+                pdfMeta = { ...pdfMeta, image }
               }
               return converted
             }
