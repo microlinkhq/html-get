@@ -70,12 +70,24 @@ test.before(() => {
     grayPng(640, () => crypto.randomInt(256))
   )
   fs.writeFileSync(
+    path.join(dir, 'other-large.png'),
+    grayPng(640, () => crypto.randomInt(256))
+  )
+  fs.writeFileSync(
     path.join(dir, 'small.png'),
     grayPng(100, (x, y) => (x * 7 + y * 3) % 256)
   )
   pdfs.largeImageOnPageTwo = createPdf('large-image', [
     textPage('Cover page'),
     imagePage('large.png', 'Figure page')
+  ])
+  pdfs.firstOfTwo = createPdf('first-of-two', [
+    textPage('First document'),
+    imagePage('large.png', 'Figure page')
+  ])
+  pdfs.secondOfTwo = createPdf('second-of-two', [
+    textPage('Second document'),
+    imagePage('other-large.png', 'Figure page')
   ])
   pdfs.largeImageOnPageOne = createPdf('large-image-one', [imagePage('large.png', 'Figure page')])
   pdfs.described = createPdf('described', [
@@ -118,6 +130,23 @@ const spyMutool = ({ fail } = {}) => {
 }
 
 const serializeHtml = $ => ({ $ })
+
+const inlinedImage = async name =>
+  cheerio
+    .load((await mutool(path.join(dir, name))).stdout)('img[src]:not([aria-hidden="true"])')
+    .attr('src')
+    .replace(/\s+/g, '')
+
+const recordTemporalFiles = () => {
+  const paths = []
+  const getTemporalFile = (input, ext) => {
+    const file = { path: path.join(dir, `${crypto.randomUUID()}.${ext}`) }
+    paths.push(file.path)
+    return file
+  }
+  const left = () => paths.filter(filepath => fs.existsSync(filepath))
+  return { getTemporalFile, paths, left }
+}
 
 const ogImage = $ => $('meta[property="og:image"]').attr('content')
 
@@ -202,9 +231,7 @@ withMutool('an empty conversion does not search pages for an image', async t => 
 withMutool('the image is the one metadata readers picked from the inlined html', async t => {
   const url = await servePdf(t, pdfs.largeImageOnPageTwo)
   const { $ } = await getHTML(url, { prerender: false, serializeHtml })
-  const inlined = cheerio.load((await mutool(path.join(dir, 'large-image.pdf'))).stdout)
-  const picked = inlined('img[src]:not([aria-hidden="true"])').attr('src').replace(/\s+/g, '')
-  t.is(ogImage($), picked)
+  t.is(ogImage($), await inlinedImage('large-image.pdf'))
 })
 
 withMutool('an image the pdf reader finds is kept, and no page is drawn again', async t => {
@@ -256,4 +283,92 @@ withMutool('canceling getHTML stops the page search', async t => {
   await t.throwsAsync(promise)
   await new Promise(resolve => setTimeout(resolve, 100))
   t.is(pages, 2)
+})
+
+withMutool('two fetches of the same url read only their own pdf', async t => {
+  const bodies = [pdfs.firstOfTwo, pdfs.secondOfTwo]
+  let served = 0
+  const url = `${await runServer(t, (_, res) => {
+    const body = bodies[served++ % bodies.length]
+    res.setHeader('content-type', 'application/pdf')
+    res.setHeader('content-length', String(body.length))
+    res.end(body)
+  })}doc.pdf`
+  let converted = 0
+  let bothConverted
+  const searchMayStart = new Promise(resolve => {
+    bothConverted = resolve
+  })
+  const runner = async (args, opts) => {
+    if (/\s\d+$/.test(args)) {
+      await searchMayStart
+      return mutool(args, opts)
+    }
+    const result = await mutool(args, opts)
+    if (++converted === bodies.length) bothConverted()
+    return result
+  }
+  const results = await Promise.all(
+    bodies.map(() => getHTML(url, { prerender: false, mutool: runner, serializeHtml }))
+  )
+  const byText = Object.fromEntries(
+    results.map(({ $ }) => [
+      $('body').text().includes('First document') ? 'first' : 'second',
+      ogImage($)
+    ])
+  )
+  t.deepEqual(Object.keys(byText).sort(), ['first', 'second'])
+  t.is(byText.first, await inlinedImage('first-of-two.pdf'))
+  t.is(byText.second, await inlinedImage('second-of-two.pdf'))
+})
+
+withMutool('the temporal files are removed once the image is found', async t => {
+  const url = await servePdf(t, pdfs.largeImageOnPageTwo)
+  const files = recordTemporalFiles()
+  const { $ } = await getHTML(url, {
+    prerender: false,
+    getTemporalFile: files.getTemporalFile,
+    serializeHtml
+  })
+  t.regex(ogImage($), /^data:image\//)
+  t.is(files.paths.length, 2)
+  t.deepEqual(files.left(), [])
+})
+
+withMutool('the temporal files are removed when the conversion fails', async t => {
+  const url = await servePdf(t, pdfs.largeImageOnPageTwo)
+  const files = recordTemporalFiles()
+  const spy = spyMutool({ fail: args => args.includes(' -o ') })
+  await getHTML(url, {
+    prerender: false,
+    getTemporalFile: files.getTemporalFile,
+    mutool: spy.runner,
+    serializeHtml
+  })
+  t.is(files.paths.length, 2)
+  t.deepEqual(files.left(), [])
+})
+
+withMutool('the temporal files are removed when getHTML is canceled', async t => {
+  const url = await servePdf(t, pdfs.manyTextPages)
+  const files = recordTemporalFiles()
+  let pages = 0
+  const runner = (args, opts) => {
+    if (!/\s\d+$/.test(args)) return mutool(args, opts)
+    if (++pages === 1) {
+      t.true(files.paths.length > 0)
+      t.deepEqual(files.left(), files.paths)
+      promise.cancel()
+    }
+    return Promise.resolve({ stdout: `<div id="page${pages}"></div>` })
+  }
+  const promise = getHTML(url, {
+    prerender: false,
+    getTemporalFile: files.getTemporalFile,
+    mutool: runner
+  })
+  promise.catch(() => {})
+  await t.throwsAsync(promise)
+  await new Promise(resolve => setTimeout(resolve, 100))
+  t.deepEqual(files.left(), [])
 })

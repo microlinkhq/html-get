@@ -1,7 +1,7 @@
 'use strict'
 
 const { parseUrl, isMediaUrl, isPdfUrl, memoizeOne } = require('@metascraper/helpers')
-const { readFile, writeFile } = require('fs/promises')
+const { readFile, writeFile, rm } = require('fs/promises')
 const timeSpan = require('@kikobeats/time-span')()
 const debug = require('debug-logfmt')('html-get')
 const { execFileSync } = require('child_process')
@@ -49,6 +49,12 @@ const fetch = PCancelable.fn(
     { getTemporalFile, mutool, pandoc, reflect = false, timeout = REQ_TIMEOUT, toEncode, ...opts },
     onCancel
   ) => {
+    const temporalFiles = []
+    const temporalFile = (input, ext) => {
+      const file = getTemporalFile(input, ext)
+      temporalFiles.push(file)
+      return file
+    }
     const reqTimeout = reflect ? timeout / 2 : timeout
     const deadline = Date.now() + reqTimeout
     const conversion = new AbortController()
@@ -95,12 +101,12 @@ const fetch = PCancelable.fn(
         if (!convertOffice && contentType === 'application/pdf') {
           pdfMeta = await extractSafe(res.body, res.url)
           if (!mutool) return ''
-          const file = getTemporalFile(url, 'pdf')
+          const file = temporalFile(url, 'pdf')
           await writeFile(file.path, res.body)
           try {
             let converted
             if (getContentLength(res.headers) > PDF_SIZE_TRESHOLD) {
-              const ofile = getTemporalFile(`${url}-pdf`, 'pdf')
+              const ofile = temporalFile(`${url}-pdf`, 'pdf')
               await mutool(`${WITHOUT_IMAGES} -o ${ofile.path} ${file.path}`, convertOpts())
               converted = await readFile(ofile.path, 'utf-8')
             } else {
@@ -128,7 +134,7 @@ const fetch = PCancelable.fn(
         }
 
         if (convertOffice) {
-          const file = getTemporalFile(res.url, officeFormat)
+          const file = temporalFile(res.url, officeFormat)
           await writeFile(file.path, res.body)
           try {
             const converted = await convertOffice(officeFormat, file.path, convertOpts())
@@ -168,6 +174,8 @@ const fetch = PCancelable.fn(
       return reflect
         ? { isRejected: true, error, ...answer }
         : { ...answer, html: '', mode: 'fetch', redirects }
+    } finally {
+      await removeTemporalFiles(temporalFiles)
     }
   }
 )
@@ -303,10 +311,18 @@ const defaultGetMode = (url, { prerender }) => {
 }
 
 const defaultGetTemporalFile = (input, ext) => {
-  const hash = crypto.createHash('sha256').update(input).digest('hex')
-  const filepath = path.join(os.tmpdir(), ext === undefined ? hash : `${hash}.${ext}`)
-  return { path: filepath }
+  const name = crypto.randomUUID()
+  return { path: path.join(os.tmpdir(), ext === undefined ? name : `${name}.${ext}`) }
 }
+
+const removeTemporalFiles = files =>
+  Promise.all(
+    files.map(file =>
+      rm(file.path, { force: true }).catch(error =>
+        debug('temporal:error', { path: file.path, message: error.message })
+      )
+    )
+  )
 
 // Resolve a binary path once and cache it: html-get owns the pandoc/mutool
 // lookup, so both the internal runners and the exposed accessors share a single

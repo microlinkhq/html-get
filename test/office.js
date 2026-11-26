@@ -515,3 +515,20 @@ test.serial('unsupported office formats pass through without conversion or crash
     t.false(html.includes('name="generator" content="pandoc"'), ext)
   }
 })
+
+test.serial('the office file is removed once it is converted', async t => {
+  const baseUrl = await serveOffice(t, 'sample.docx', CONTENT_TYPE.docx)
+  const filepath = path.join(os.tmpdir(), `html-get-office-${process.pid}.docx`)
+  let written
+  const { html } = await getHTML(`${baseUrl}sample.docx`, {
+    prerender: false,
+    getTemporalFile: () => ({ path: filepath }),
+    pandoc: async (format, input) => {
+      written = fs.existsSync(input)
+      return '<html><body>converted</body></html>'
+    }
+  })
+  t.true(html.includes('converted'))
+  t.true(written)
+  t.false(fs.existsSync(filepath))
+})

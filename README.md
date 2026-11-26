@@ -107,7 +107,9 @@ It determines the strategy to use based on the `url`, being the possibles values
 
 Type: `function`
 
-It creates a temporal file.
+It receives the URL and the file extension, and returns `{ path }` for a file html-get writes the fetched PDF or office document to, and the converted HTML of a large PDF. Every call must return a new path: two fetches of the same URL at once would otherwise read each other's file. The default is a random name in `os.tmpdir()`.
+
+html-get removes every file it asked for once the fetch ends, whether the conversion succeeded, failed or was canceled.
 
 ##### gotOpts
 
