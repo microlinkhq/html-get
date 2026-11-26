@@ -9,7 +9,7 @@ import type {
   Mutool
 } from '../index.js'
 
-const options: HtmlGetOptions = { prerender: false, rewriteUrls: true, pandoc: false }
+const options: HtmlGetOptions = { prerender: false, rewriteUrls: true, pandoc: false, documentTimeout: 60000 }
 const request = getHTML('https://example.com', options)
 request.cancel()
 const result: HtmlGetResult = await request
@@ -17,7 +17,7 @@ const status: number | undefined = result.statusCode
 const mode: 'fetch' | 'prerender' = result.stats.mode
 const shadowDOM: boolean = result.stats.shadowDOM
 
-const contentOptions: GetContentOptions = { mutool: false, toEncode: (content: Uint8Array) => new TextDecoder().decode(content) }
+const contentOptions: GetContentOptions = { mutool: false, documentTimeout: 60000, toEncode: (content: Uint8Array) => new TextDecoder().decode(content) }
 const content: HtmlGetContent = await getHTML.getContent('https://example.com', 'fetch', contentOptions)
 const title: string = content.$('title').text()
 
@@ -42,5 +42,7 @@ console.log(result.mode, hasDefault)
 console.log(getHTML.htmlGet)
 // @ts-expect-error the serialized result has no Cheerio instance
 console.log(result.$)
+// @ts-expect-error documentTimeout is a number of milliseconds
+getHTML('https://example.com', { documentTimeout: '60s' })
 // @ts-expect-error without toEncode, fetch mode drops the response
 getHTML.getContent('https://example.com', 'fetch', {})
