@@ -81,6 +81,15 @@ The target URL for getting the HTML markup.
 
 #### options
 
+##### documentTimeout
+
+Type: `number`<br>
+Default: the fetch timeout (`gotOpts.timeout`)
+
+The time, in milliseconds from the start of the fetch, that a PDF or office document may take once its response says it is one. It covers mutool or pandoc, and the page by page image search. It only lengthens the fetch timeout, never shortens it. A non-finite document timeout leaves the deadline unchanged, as does a fetch timeout that is not a number. The download itself stays within the fetch timeout.
+
+A caller that keeps the fetch short to retry a blocked page elsewhere can still let a document convert: a 151MB scanned PDF of 688 pages downloads in 2.7s and takes mutool 6.3s, more than a 9.5s fetch timeout leaves.
+
 ##### encoding
 
 Type: `string`

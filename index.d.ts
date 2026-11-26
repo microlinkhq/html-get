@@ -50,6 +50,8 @@ declare namespace htmlGet {
    * Options for html-get
    */
   interface HtmlGetOptions {
+    /** Finite milliseconds from the start of the fetch a PDF or office document may take, when longer than the fetch timeout */
+    documentTimeout?: number
     /** Character encoding for HTML (default: 'utf-8') */
     encoding?: string
     /** Function that returns a browserless instance (required unless prerender is false) */
@@ -81,6 +83,7 @@ declare namespace htmlGet {
   interface GetContentOptions
     extends Pick<
       HtmlGetOptions,
+      | 'documentTimeout'
       | 'getBrowserless'
       | 'getTemporalFile'
       | 'gotOpts'
